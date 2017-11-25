@@ -42,4 +42,10 @@ build.
 The implementation of task executor can be easily replaced with externalized jar file and
 configuration change. And different team can wire in only the plugins they need. 
 
- 
+##### Build across Multiple Organizations
+
+In microservices architecture, different teams might have their own organizations and some
+of the dependencies are across multiple organizations. The devops tool need to know how to
+checkout and build repositories from many organization. 
+
+  
