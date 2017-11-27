@@ -19,22 +19,84 @@ pub fn checkout()
     if path_exists(&path) {
         println!("workspace exists");
         path.push("light-4j");
-        if path_exists(&path) {
-            // checkout develop branch
-            checkout_branch("develop", &path);
-            maven_build(&path);
-        } else {
-            clone_repo("git@github.com:networknt/light-4j.git", &path);
-        }
+        check_build_repo("git@github.com:networknt/light-4j.git", &path);
+
+        path.pop();
+        path.push("openapi-parser");
+        check_build_repo("git@github.com:networknt/openapi-parser.git", &path);
+
+        path.pop();
+        path.push("light-rest-4j");
+        check_build_repo("git@github.com:networknt/light-rest-4j.git", &path);
+
+        path.pop();
+        path.push("light-graphql-4j");
+        check_build_repo("git@github.com:networknt/light-graphql-4j.git", &path);
+
+        path.pop();
+        path.push("light-hybrid-4j");
+        check_build_repo("git@github.com:networknt/light-hybrid-4j.git", &path);
+
+        path.pop();
+        path.push("light-codegen");
+        check_build_repo("git@github.com:networknt/light-codegen.git", &path);
+
+        path.pop();
+        path.push("light-eventuate-4j");
+        check_build_repo("git@github.com:networknt/light-eventuate-4j.git", &path);
+
+        path.pop();
+        path.push("light-saga-4j");
+        check_build_repo("git@github.com:networknt/light-saga-4j.git", &path);
+
+        path.pop();
+        path.push("light-session-4j");
+        check_build_repo("git@github.com:networknt/light-session-4j.git", &path);
+
+        path.pop();
+        path.push("light-proxy");
+        check_build_repo("git@github.com:networknt/light-proxy.git", &path);
+
+        path.pop();
+        path.push("light-oauth2");
+        check_build_repo("git@github.com:networknt/light-oauth2.git", &path);
+
+        path.pop();
+        path.push("light-portal");
+        check_build_repo("git@github.com:networknt/light-portal.git", &path);
 
     } else {
         println!("workspace doesn't exist");
         // create it.
         create_workspace(&path);
         clone_repo("git@github.com:networknt/light-4j.git", &path);
+        clone_repo("git@github.com:networknt/openapi-parser.git", &path);
+        clone_repo("git@github.com:networknt/light-rest-4j.git", &path);
+        clone_repo("git@github.com:networknt/light-graphql-4j.git", &path);
+        clone_repo("git@github.com:networknt/light-hybrid-4j.git", &path);
+        clone_repo("git@github.com:networknt/light-codegen.git", &path);
+        clone_repo("git@github.com:networknt/light-eventuate-4j.git", &path);
+        clone_repo("git@github.com:networknt/light-saga-4j.git", &path);
+        clone_repo("git@github.com:networknt/light-session-4j.git", &path);
+        clone_repo("git@github.com:networknt/light-proxy.git", &path);
+        clone_repo("git@github.com:networknt/light-oauth2.git", &path);
+        clone_repo("git@github.com:networknt/light-portal.git", &path);
+
     }
 
 
+}
+
+fn check_build_repo(repo: &str, path: &PathBuf) {
+    println!("path = {:?}", path);
+    if !path_exists(&path) {
+        let mut parent_path = PathBuf::from(path);
+        parent_path.pop();
+        println!("parent path = {:?}", parent_path);
+        clone_repo(repo, &parent_path);
+    }
+    checkout_branch("develop", &path);
+    maven_build(&path);
 }
 
 fn create_workspace(path: &PathBuf) {
