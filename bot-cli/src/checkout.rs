@@ -138,7 +138,20 @@ fn checkout_branch(branch: &str, path: &PathBuf) {
 
     assert!(output.status.success());
 
+    let child = Command::new("git")
+        .arg("pull")
+        .arg("origin")
+        .arg(branch)
+        .current_dir(path.to_str().unwrap())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("failed to execute child");
 
+    let output = child
+        .wait_with_output()
+        .expect("failed to wait on child");
+
+    assert!(output.status.success());
 }
 
 fn clone_repo(repo: &str, path: &PathBuf) {
