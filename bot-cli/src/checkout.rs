@@ -46,6 +46,10 @@ pub fn checkout()
         check_build_repo("git@github.com:networknt/light-eventuate-4j.git", &path);
 
         path.pop();
+        path.push("light-tram-4j");
+        check_build_repo("git@github.com:networknt/light-tram-4j.git", &path);
+
+        path.pop();
         path.push("light-saga-4j");
         check_build_repo("git@github.com:networknt/light-saga-4j.git", &path);
 
@@ -61,9 +65,9 @@ pub fn checkout()
         path.push("light-oauth2");
         check_build_repo("git@github.com:networknt/light-oauth2.git", &path);
 
-        path.pop();
-        path.push("light-portal");
-        check_build_repo("git@github.com:networknt/light-portal.git", &path);
+        //path.pop();
+        //path.push("light-portal");
+        //check_build_repo("git@github.com:networknt/light-portal.git", &path);
 
     } else {
         println!("workspace doesn't exist");
@@ -76,11 +80,12 @@ pub fn checkout()
         clone_repo("git@github.com:networknt/light-hybrid-4j.git", &path);
         clone_repo("git@github.com:networknt/light-codegen.git", &path);
         clone_repo("git@github.com:networknt/light-eventuate-4j.git", &path);
+        clone_repo("git@github.com:networknt/light-tram-4j.git", &path);
         clone_repo("git@github.com:networknt/light-saga-4j.git", &path);
         clone_repo("git@github.com:networknt/light-session-4j.git", &path);
         clone_repo("git@github.com:networknt/light-proxy.git", &path);
         clone_repo("git@github.com:networknt/light-oauth2.git", &path);
-        clone_repo("git@github.com:networknt/light-portal.git", &path);
+        //clone_repo("git@github.com:networknt/light-portal.git", &path);
 
     }
 
