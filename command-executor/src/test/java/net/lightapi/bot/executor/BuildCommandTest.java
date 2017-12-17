@@ -5,11 +5,12 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class CheckoutCommandTest {
+public class BuildCommandTest {
     @Test
     public void testCheckout() throws IOException, InterruptedException {
-        CheckoutCommand cmd = new CheckoutCommand();
+        BuildCommand cmd = new BuildCommand();
         int result = cmd.execute();
         Assert.assertEquals(0, result);
     }
+
 }

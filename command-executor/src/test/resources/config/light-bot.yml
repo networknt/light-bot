@@ -1,4 +1,3 @@
----
 workspace: workspace
 checkout:
   branch: develop
@@ -17,3 +16,18 @@ checkout:
   - git@github.com:networknt/light-oauth2.git
   - git@github.com:networknt/light-example-4j.git
   - git@github.com:networknt/light-docker.git
+build:
+- light-4j
+- openapi-parser
+- light-rest-4j
+- light-graphql-4j
+- light-hybrid-4j
+- light-codegen
+- light-eventuate-4j
+- light-tram-4j
+- light-saga-4j
+- light-session-4j
+- light-proxy
+- light-oauth2
+- light-example-4j/rest/swagger/petstore
+- light-example-4j/rest/openapi/petstore
