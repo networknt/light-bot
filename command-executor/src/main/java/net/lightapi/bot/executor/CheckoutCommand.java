@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class CheckoutCommand implements Command {
     private static final Logger logger = LoggerFactory.getLogger(CheckoutCommand.class);
-    public static final String CONFIG_NAME = "checkout";
+    public static final String CONFIG_NAME = "light-bot";
     Executor executor = SingletonServiceFactory.getBean(Executor.class);
     Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     String workspace = (String)config.get(Constants.WORKSPACE);
