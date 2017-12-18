@@ -53,7 +53,7 @@ public class TestCommand implements Command {
                 }
             }
             // execute test cases
-
+            logger.info("start testing...");
             // shutdown servers
             executor.stopServers();
             if(result != 0) {

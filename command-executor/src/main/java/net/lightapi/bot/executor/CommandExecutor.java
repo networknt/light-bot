@@ -126,9 +126,11 @@ public class CommandExecutor implements Executor {
         int exitValue = 0;
         try
         {
+            File bitbucket = new File("/dev/null");
             ProcessBuilder pb = new ProcessBuilder(commandInformation);
             pb.directory(workingDir);
-            pb.redirectErrorStream(false);
+            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(bitbucket));
+            pb.redirectError(ProcessBuilder.Redirect.appendTo(bitbucket));
             Process process = pb.start();
             processes.add(process);
         }
