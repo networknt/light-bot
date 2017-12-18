@@ -53,9 +53,9 @@ public class CheckoutCommand implements Command {
                 result = executor.execute(commands, wPath.toFile());
                 // get the stdout and stderr from the command that was run
                 StringBuilder stdout = executor.getStdout();
-                if(stdout.length() > 0) logger.debug(stdout.toString());
+                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
                 StringBuilder stderr = executor.getStderr();
-                if(stderr.length() > 0) logger.error(stderr.toString());
+                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
                 if(result != 0) {
                     break;
                 }
@@ -67,9 +67,9 @@ public class CheckoutCommand implements Command {
                 logger.info("git checkout " + branch);
                 result = executor.execute(commands, rPath.toFile());
                 stdout = executor.getStdout();
-                if(stdout.length() > 0) logger.debug(stdout.toString());
+                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
                 stderr = executor.getStderr();
-                if(stderr.length() > 0) logger.error(stderr.toString());
+                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
                 if(result != 0) {
                     break;
                 }
@@ -83,9 +83,9 @@ public class CheckoutCommand implements Command {
                 logger.info("git checkout " + branch + " ; git pull origin " + branch);
                 result = executor.execute(commands, rPath.toFile());
                 StringBuilder stdout = executor.getStdout();
-                if(stdout.length() > 0) logger.debug(stdout.toString());
+                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
                 StringBuilder stderr = executor.getStderr();
-                if(stderr.length() > 0) logger.error(stderr.toString());
+                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
                 if(result != 0) {
                     break;
                 }

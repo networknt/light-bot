@@ -31,3 +31,19 @@ build:
 - light-oauth2
 - light-example-4j/rest/swagger/petstore
 - light-example-4j/rest/openapi/petstore
+test:
+  rest-swagger-petstore:
+    server:
+    - path: light-example-4j/rest/swagger/petstore
+      cmd: target/petstore-1.0.1.jar
+    request:
+    - host: https://localhost:8443
+      path: "/v2/pet/111"
+      method: get
+      response:
+        status: 200
+        header:
+          content-type: application/json
+        body:
+          "$.name": doggie
+          "$.id": 123456789

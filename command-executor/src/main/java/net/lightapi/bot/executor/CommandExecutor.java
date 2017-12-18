@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +41,7 @@ public class CommandExecutor implements Executor {
     private String adminPassword;
     private ThreadedStreamHandler inputStreamHandler;
     private ThreadedStreamHandler errorStreamHandler;
+    public static List<Process> processes = new ArrayList<>();
 
     /**
      * Pass in the system command you want to run as a List of Strings, as shown here:
@@ -71,7 +74,6 @@ public class CommandExecutor implements Executor {
             ProcessBuilder pb = new ProcessBuilder(commandInformation);
             pb.directory(workingDir);
             Process process = pb.start();
-
             // you need this if you're going to write something to the command's input stream
             // (such as when invoking the 'sudo' command, and it prompts you for a password).
             OutputStream stdOutput = process.getOutputStream();
@@ -118,13 +120,40 @@ public class CommandExecutor implements Executor {
         }
     }
 
+    @Override
+    public int startServer(final List<String> commandInformation, File workingDir) throws IOException, InterruptedException
+    {
+        int exitValue = 0;
+        try
+        {
+            ProcessBuilder pb = new ProcessBuilder(commandInformation);
+            pb.directory(workingDir);
+            pb.redirectErrorStream(false);
+            Process process = pb.start();
+            processes.add(process);
+        }
+        catch (IOException e)
+        {
+            // TODO deal with this here, or just throw it?
+            throw e;
+        }
+        finally
+        {
+            return exitValue;
+        }
+    }
+
     /**
      * Get the standard output (stdout) from the command you just exec'd.
      */
     @Override
     public StringBuilder getStdout()
     {
-        return inputStreamHandler.getOutputBuffer();
+        if(inputStreamHandler != null) {
+            return inputStreamHandler.getOutputBuffer();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -133,7 +162,19 @@ public class CommandExecutor implements Executor {
     @Override
     public StringBuilder getStderr()
     {
-        return errorStreamHandler.getOutputBuffer();
+        if(inputStreamHandler != null) {
+            return errorStreamHandler.getOutputBuffer();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void stopServers() {
+        for(int i = 0; i < processes.size(); i++) {
+            Process p = processes.remove(i);
+            p.destroy();
+        }
     }
 
 }
