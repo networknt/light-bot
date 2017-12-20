@@ -2,7 +2,6 @@ package net.lightapi.bot.executor;
 
 import com.networknt.client.Http2Client;
 import com.networknt.config.Config;
-import com.networknt.exception.ClientException;
 import com.networknt.service.SingletonServiceFactory;
 import io.undertow.UndertowOptions;
 import io.undertow.client.ClientConnection;

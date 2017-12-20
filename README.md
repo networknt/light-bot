@@ -7,12 +7,13 @@ A microservice based devops agent that handles multiple repositories and depende
 
 All existing devops tools on the market are focusing on single repo but in a microservices
 architecture, there are a lot of related services need to be built and tested at the same
-time if one upstream repository is changed. 
+time if one upstream repository is changed.  
 
 ##### Fully Automatic Pipeline
 
 Most of existing tools are trying to simplify the UI but it is very hard to build a pipeline
-from one git merge to production.
+from one git merge to production. The cycle git pull-->build-->local unit tests-->scanning-->
+image creation should/will be repeated at every commit, automatically.
 
 ##### Cache Local Repositories
 
@@ -35,7 +36,9 @@ tasks running at the same time.
 
 You can have multiple bots running at different servers or even on the same server with
 different environment tag in the configuration to be responsible for different environment
-build. 
+build. The test cycle in a secure zone against real back-ends needs to be segregated, via 
+config, and includes also an environment specific build (say include a config server), 
+then test against that back-end. 
 
 ##### Easy to Plugin
 
@@ -46,6 +49,14 @@ configuration change. And different team can wire in only the plugins they need.
 
 In microservices architecture, different teams might have their own organizations and some
 of the dependencies are across multiple organizations. The devops tool need to know how to
-checkout and build repositories from many organization. 
+checkout and build repositories from many organization. Also, these related services might 
+reside in different git providers or git servers.
 
-  
+##### Idempotency  
+
+The testing aspect of the build, whether it is against multiple environments or not, should 
+indeed use shared infrastructure (say Kafka across DIT/SIT) but also segregated back-ends. 
+In all cases, testing using multiple bots needs to be idempotent. Idempotent testing is an 
+aspect with most customers are struggling right now, especially in an evolving eco-system 
+(ex, you don't have create and delete APIs available maybe yet you still wish to test 
+adding a product to a customer. this needs to be addressed via other means)
