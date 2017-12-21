@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class BuildCommandTest {
     @Test
-    public void testCheckout() throws IOException, InterruptedException {
+    public void testBuild() throws IOException, InterruptedException {
         BuildCommand cmd = new BuildCommand();
         int result = cmd.execute();
         Assert.assertEquals(0, result);
