@@ -1,4 +1,4 @@
-package net.lightapi.bot.executor;
+package com.networknt.bot.core;
 
 public class Constants {
     public static final String WORKSPACE = "workspace";

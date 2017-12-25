@@ -1,5 +1,5 @@
 # Singleton service factory configuration/IoC injection
 singletons:
 # Executor to CommandExecutor binding
-- net.lightapi.bot.executor.Executor:
-  - net.lightapi.bot.executor.CommandExecutor
+- com.networknt.bot.core.Executor:
+  - com.networknt.bot.core.CommandExecutor

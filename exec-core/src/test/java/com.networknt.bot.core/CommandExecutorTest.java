@@ -1,4 +1,4 @@
-package net.lightapi.bot.executor;
+package com.networknt.bot.core;
 
 import com.networknt.service.SingletonServiceFactory;
 import org.junit.Test;
