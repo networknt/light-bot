@@ -1,0 +1,212 @@
+package com.networknt.bot.develop;
+
+import com.networknt.bot.core.Command;
+import com.networknt.bot.core.Constants;
+import com.networknt.bot.core.Executor;
+import com.networknt.client.Http2Client;
+import com.networknt.config.Config;
+import com.networknt.service.SingletonServiceFactory;
+import io.undertow.UndertowOptions;
+import io.undertow.client.ClientConnection;
+import io.undertow.client.ClientRequest;
+import io.undertow.client.ClientResponse;
+import io.undertow.util.Methods;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xnio.IoUtils;
+import org.xnio.OptionMap;
+
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
+
+public class DevelopCommand implements Command {
+    private static final Logger logger = LoggerFactory.getLogger(DevelopCommand.class);
+    public static final String CONFIG_NAME = "develop";
+    Executor executor = SingletonServiceFactory.getBean(Executor.class);
+    Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
+    String workspace = (String)config.get(Constants.WORKSPACE);
+    Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
+    List<String> builds = (List<String>)config.get(Constants.BUILD);
+    Map<String, Object> test = (Map<String, Object>)config.get(Constants.TEST);
+    String branch = (String)checkout.get(Constants.BRANCH);
+    List<String> repositories = (List<String>)checkout.get(Constants.REPOSITORY);
+    String userHome = System.getProperty("user.home");
+
+    @Override
+    public int execute() throws IOException, InterruptedException {
+        int result = checkout();
+        if(result != 0) return result;
+        result = build();
+        if(result != 0) return result;
+        result = test();
+        return result;
+    }
+
+
+
+    int checkout() throws IOException, InterruptedException {
+        int result = 0;
+
+        // check if there is a directory workspace in home directory.
+        Path wPath = Paths.get(userHome, workspace);
+        if(Files.notExists(wPath)) {
+            Files.createDirectory(wPath);
+        }
+
+        for(String repository: repositories) {
+            Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+            if(Files.notExists(rPath)) {
+                // clone it
+                List<String> commands = new ArrayList<>();
+                commands.add("bash");
+                commands.add("-c");
+                commands.add("git clone " + repository);
+                logger.info("git clone " + repository);
+                // execute the command
+                result = executor.execute(commands, wPath.toFile());
+                // get the stdout and stderr from the command that was run
+                StringBuilder stdout = executor.getStdout();
+                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
+                StringBuilder stderr = executor.getStderr();
+                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+                if(result != 0) {
+                    break;
+                }
+                // need to switch to develop
+                commands = new ArrayList<>();
+                commands.add("bash");
+                commands.add("-c");
+                commands.add("git checkout " + branch);
+                logger.info("git checkout " + branch);
+                result = executor.execute(commands, rPath.toFile());
+                stdout = executor.getStdout();
+                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
+                stderr = executor.getStderr();
+                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+                if(result != 0) {
+                    break;
+                }
+
+            } else {
+                // switch to branch and pull
+                List<String> commands = new ArrayList<>();
+                commands.add("bash");
+                commands.add("-c");
+                commands.add("git checkout " + branch + " ; git pull origin " + branch);
+                logger.info("git checkout " + branch + " ; git pull origin " + branch);
+                result = executor.execute(commands, rPath.toFile());
+                StringBuilder stdout = executor.getStdout();
+                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
+                StringBuilder stderr = executor.getStderr();
+                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+                if(result != 0) {
+                    break;
+                }
+            }
+        }
+        return result;
+
+    }
+
+    int build() throws IOException, InterruptedException {
+        int result = 0;
+        for(String build: builds) {
+            Path path = Paths.get(userHome, workspace, build);
+            if(Files.notExists(path)) {
+                logger.error("Path doesn't exist " + build);
+                result = -1;
+                break;
+            } else {
+                // switch to branch and pull
+                List<String> commands = new ArrayList<>();
+                commands.add("bash");
+                commands.add("-c");
+                commands.add("mvn clean install");
+                logger.info("mvn clean install for " + build);
+                result = executor.execute(commands, path.toFile());
+                StringBuilder stdout = executor.getStdout();
+                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
+                StringBuilder stderr = executor.getStderr();
+                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+                if(result != 0) {
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    int test() throws IOException, InterruptedException {
+        int result = 0;
+
+        for(Map.Entry<String, Object> entry : test.entrySet()) {
+            String testName = entry.getKey();
+            Map<String, Object> testInfo = (Map<String, Object>)entry.getValue();
+
+            // get server entry and start server one by one.
+            List<Map<String, Object>> servers = (List<Map<String, Object>>)testInfo.get(Constants.SERVER);
+            for(Map<String, Object> server: servers) {
+                String path = (String)server.get(Constants.PATH);
+                String cmd = (String)server.get(Constants.CMD);
+                logger.info("start server at " + path + " with " + cmd);
+                Path cmdPath = Paths.get(userHome, workspace, path);
+
+                List<String> commands = new ArrayList<>();
+                commands.add("nohup");
+                commands.add("bash");
+                commands.add("-c");
+                String c = cmdPath.toString() + "/" + cmd;
+                commands.add("java -jar " + c);
+                result = executor.startServer(commands, cmdPath.toFile());
+                StringBuilder stdout = executor.getStdout();
+                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
+                StringBuilder stderr = executor.getStderr();
+                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+                if(result != 0) {
+                    break;
+                }
+            }
+            // execute test cases
+            logger.info("start testing...");
+            final Http2Client client = Http2Client.getInstance();
+            final CountDownLatch latch = new CountDownLatch(1);
+            final ClientConnection connection;
+            try {
+                connection = client.connect(new URI("https://localhost:8443"), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            final AtomicReference<ClientResponse> reference = new AtomicReference<>();
+            try {
+                ClientRequest request = new ClientRequest().setPath("/v2/pet/111").setMethod(Methods.GET);
+
+                connection.sendRequest(request, client.createClientCallback(reference, latch));
+
+                latch.await();
+            } catch (Exception e) {
+                logger.error("Exception: ", e);
+                throw new RuntimeException(e);
+            } finally {
+                IoUtils.safeClose(connection);
+            }
+            int statusCode = reference.get().getResponseCode();
+            String body = reference.get().getAttachment(Http2Client.RESPONSE_BODY);
+            System.out.println("statusCode = " + statusCode);
+            System.out.println("body = " + body);
+            // shutdown servers
+            executor.stopServers();
+            if(result != 0) {
+                break;
+            }
+        }
+        return result;
+    }
+}

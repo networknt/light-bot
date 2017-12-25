@@ -1,1 +1,1 @@
-include("exec-core", "bot-cli")
+include("exec-core", "exec-develop", "bot-cli")
