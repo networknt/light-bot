@@ -54,6 +54,7 @@ public class DevelopCommand implements Command {
 
     int checkout() throws IOException, InterruptedException {
         int result = 0;
+        int numOfError = 0;
 
         // check if there is a directory workspace in home directory.
         Path wPath = Paths.get(userHome, workspace);
@@ -96,7 +97,8 @@ public class DevelopCommand implements Command {
                 }
 
             } else {
-                // switch to branch and pull
+                // switch to branch and pull, if there is no change in the branch, return 1 to skip
+                // the next build step. check how many errors against how many repositories.
                 List<String> commands = new ArrayList<>();
                 commands.add("bash");
                 commands.add("-c");
@@ -106,12 +108,17 @@ public class DevelopCommand implements Command {
                 StringBuilder stdout = executor.getStdout();
                 if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
                 StringBuilder stderr = executor.getStderr();
-                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+                if(stderr != null && stderr.length() > 0) {
+                    logger.error(stderr.toString());
+                    numOfError++;
+                }
                 if(result != 0) {
                     break;
                 }
             }
         }
+        // there is no change for all of the repositories
+        if(numOfError == repositories.size()) result = 1;
         return result;
 
     }
