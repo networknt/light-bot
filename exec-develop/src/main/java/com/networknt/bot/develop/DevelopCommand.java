@@ -8,6 +8,7 @@ import io.undertow.UndertowOptions;
 import io.undertow.client.ClientConnection;
 import io.undertow.client.ClientRequest;
 import io.undertow.client.ClientResponse;
+import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,7 +198,7 @@ public class DevelopCommand implements Command {
                 String host = (String)request.get(Constants.HOST);
                 String path = (String)request.get(Constants.PATH);
                 String method = (String)request.get(Constants.METHOD);
-                logger.info("host = %s, path=%s, method=%s", host, path, method);
+                logger.info("host = {}, path={}, method={}", host, path, method);
                 Map<String, Object> response = (Map<String, Object>)request.get(Constants.RESPONSE);
                 int status = (Integer)response.get(Constants.STATUS);
                 Map<String, Object> header = (Map<String, Object>)response.get(Constants.HEADER);
@@ -223,10 +224,29 @@ public class DevelopCommand implements Command {
                     IoUtils.safeClose(connection);
                 }
                 int statusCode = reference.get().getResponseCode();
+                HeaderMap headerMap = reference.get().getResponseHeaders();
                 String responseBody = reference.get().getAttachment(Http2Client.RESPONSE_BODY);
                 logger.info("statusCode = " + statusCode);
+                logger.info("headerMap = " + headerMap);
                 logger.info("responseBody = " + responseBody);
+                // check response with the config.
+                if(status != statusCode) {
+                    result = -1;
+                    logger.error("config status {} doesn't match the response statusCode {}", status, statusCode);
+                    break;
+                }
 
+                if(!TestUtil.matchHeader(header, headerMap)) {
+                    result = -1;
+                    logger.error("config header {} doesn't match the response headerMap {}", header, headerMap);
+                    break;
+                }
+
+                if(!TestUtil.matchBody(body, responseBody)) {
+                    result = -1;
+                    logger.error("config body {} doesn't match the response body {}", body, responseBody);
+                    break;
+                }
             }
 
             // shutdown servers
