@@ -184,6 +184,7 @@ public class DevelopCommand implements Command {
                     logger.info("Start server failed for " + c);
                     break;
                 }
+                Thread.sleep(1000);
             }
 
 

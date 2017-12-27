@@ -180,10 +180,11 @@ public class CommandExecutor implements Executor {
     @Override
     public void stopServers() {
         for(int i = 0; i < processes.size(); i++) {
-            Process p = processes.remove(i);
+            Process p = processes.get(i);
             logger.info("Removed process from processes list for " + p);
             p.destroy();
         }
+        processes.clear();
     }
 
 }

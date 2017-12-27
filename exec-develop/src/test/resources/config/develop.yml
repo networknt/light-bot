@@ -34,6 +34,10 @@ build:
 - light-example-4j/rest/swagger/proxy-backend
 - light-example-4j/rest/openapi/proxy-backend
 - light-example-4j/rest/openapi/cors
+- light-example-4j/rest/swagger/ms_chain/api_a/httpschain
+- light-example-4j/rest/swagger/ms_chain/api_b/httpschain
+- light-example-4j/rest/swagger/ms_chain/api_c/httpschain
+- light-example-4j/rest/swagger/ms_chain/api_d/httpschain
 test:
   rest-swagger-petstore:
     server:
@@ -172,4 +176,21 @@ test:
         "Access-Control-Request-Headers": X-Requested-With
       response:
         status: 200
-
+  rest-swagger-chain:
+    server:
+    - path: light-example-4j/rest/swagger/ms_chain/api_d/httpschain
+      cmd: target/apid-1.0.0.jar
+    - path: light-example-4j/rest/swagger/ms_chain/api_c/httpschain
+      cmd: target/apic-1.0.0.jar
+    - path: light-example-4j/rest/swagger/ms_chain/api_b/httpschain
+      cmd: target/apib-1.0.0.jar
+    - path: light-example-4j/rest/swagger/ms_chain/api_a/httpschain
+      cmd: target/apia-1.0.0.jar
+    request:
+    - host: https://localhost:7441
+      path: "/v1/data"
+      method: get
+      response:
+        status: 200
+        body:
+          "$.length()": 8
