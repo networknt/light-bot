@@ -159,8 +159,8 @@ public class DevelopCommand implements Command {
 
         for(Map.Entry<String, Object> entry : test.entrySet()) {
             String testName = entry.getKey();
+            logger.info("testName = " + testName);
             Map<String, Object> testInfo = (Map<String, Object>)entry.getValue();
-
             // get server entry and start servers one by one.
             List<Map<String, Object>> servers = (List<Map<String, Object>>)testInfo.get(Constants.SERVER);
             for(Map<String, Object> server: servers) {
