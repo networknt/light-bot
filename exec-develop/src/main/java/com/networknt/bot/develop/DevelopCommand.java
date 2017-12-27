@@ -43,6 +43,11 @@ public class DevelopCommand implements Command {
     String userHome = System.getProperty("user.home");
 
     @Override
+    public String getName() {
+        return "develop";
+    }
+
+    @Override
     public int execute() throws IOException, InterruptedException {
         int result = checkout();
         if(result != 0) return result;
