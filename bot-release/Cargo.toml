@@ -1,6 +1,0 @@
-[package]
-name = "bot-release"
-version = "0.1.0"
-authors = ["Steve Hu <stevehu@gmail.com>"]
-
-[dependencies]
