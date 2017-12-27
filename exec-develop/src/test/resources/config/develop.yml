@@ -163,4 +163,13 @@ test:
         body:
           "$.key": key1
           "$.value": value1
+    - host: https://localhost:8443
+      path: "/v1/postData"
+      method: options
+      header:
+        "Origin": http://example.com
+        "Access-Control-Request-Method": POST
+        "Access-Control-Request-Headers": X-Requested-With
+      response:
+        status: 200
 

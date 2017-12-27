@@ -192,65 +192,68 @@ public class DevelopCommand implements Command {
             // put a sleep 1 second in case the server is not ready.
             Thread.sleep(1000);
 
-            // load tests and perform tests
-            List<Map<String, Object>> requests = (List<Map<String, Object>>)testInfo.get(Constants.REQUEST);
-            for(Map<String, Object> request: requests) {
-                String host = (String)request.get(Constants.HOST);
-                String path = (String)request.get(Constants.PATH);
-                String method = (String)request.get(Constants.METHOD);
-                logger.info("host = {}, path={}, method={}", host, path, method);
-                Map<String, Object> requestHeader = (Map<String, Object>)request.get(Constants.HEADER);
-                String requestBody = (String)request.get(Constants.BODY);
-                logger.info("request header = " + requestHeader);
-                logger.info("request body = " + requestBody);
-                Map<String, Object> response = (Map<String, Object>)request.get(Constants.RESPONSE);
-                int status = (Integer)response.get(Constants.STATUS);
-                Map<String, Object> responseHeader = (Map<String, Object>)response.get(Constants.HEADER);
-                Map<String, Object> responseBodyMap = (Map<String, Object>)response.get(Constants.BODY);
-                logger.info("response header = " + responseHeader);
-                logger.info("response body = " + responseBodyMap);
-                ClientResponse cr = null;
-                switch (method) {
-                    case "get":
-                    case "delete":
-                    case "options":
-                        cr = TestUtil.request(host, path, TestUtil.toHttpString(method), requestHeader);
+            try {
+                // load tests and perform tests
+                List<Map<String, Object>> requests = (List<Map<String, Object>>)testInfo.get(Constants.REQUEST);
+                for(Map<String, Object> request: requests) {
+                    String host = (String)request.get(Constants.HOST);
+                    String path = (String)request.get(Constants.PATH);
+                    String method = (String)request.get(Constants.METHOD);
+                    logger.info("host = {}, path={}, method={}", host, path, method);
+                    Map<String, Object> requestHeader = (Map<String, Object>)request.get(Constants.HEADER);
+                    String requestBody = (String)request.get(Constants.BODY);
+                    logger.info("request header = " + requestHeader);
+                    logger.info("request body = " + requestBody);
+                    Map<String, Object> response = (Map<String, Object>)request.get(Constants.RESPONSE);
+                    int status = (Integer)response.get(Constants.STATUS);
+                    Map<String, Object> responseHeader = (Map<String, Object>)response.get(Constants.HEADER);
+                    Map<String, Object> responseBodyMap = (Map<String, Object>)response.get(Constants.BODY);
+                    logger.info("response header = " + responseHeader);
+                    logger.info("response body = " + responseBodyMap);
+                    ClientResponse cr = null;
+                    switch (method) {
+                        case "get":
+                        case "delete":
+                        case "options":
+                            cr = TestUtil.request(host, path, TestUtil.toHttpString(method), requestHeader);
+                            break;
+                        case "post":
+                        case "put":
+                        case "patch":
+                            cr = TestUtil.requestWithBody(host, path, TestUtil.toHttpString(method), requestHeader, requestBody);
+                            break;
+                    }
+
+                    int statusCode = cr.getResponseCode();
+                    HeaderMap responseHeaderMap = cr.getResponseHeaders();
+                    String responseBody = cr.getAttachment(Http2Client.RESPONSE_BODY);
+                    logger.info("statusCode = " + statusCode);
+                    logger.info("headerMap = " + responseHeaderMap);
+                    logger.info("responseBody = " + responseBody);
+                    // check response with the config.
+                    if(status != statusCode) {
+                        result = -1;
+                        logger.error("config status {} doesn't match the response statusCode {}", status, statusCode);
                         break;
-                    case "post":
-                    case "put":
-                    case "patch":
-                        cr = TestUtil.requestWithBody(host, path, TestUtil.toHttpString(method), requestHeader, requestBody);
+                    }
+
+                    if(!TestUtil.matchHeader(responseHeader, responseHeaderMap)) {
+                        result = -1;
+                        logger.error("config header {} doesn't match the response headerMap {}", responseHeader, responseHeaderMap);
                         break;
-                }
+                    }
 
-                int statusCode = cr.getResponseCode();
-                HeaderMap responseHeaderMap = cr.getResponseHeaders();
-                String responseBody = cr.getAttachment(Http2Client.RESPONSE_BODY);
-                logger.info("statusCode = " + statusCode);
-                logger.info("headerMap = " + responseHeaderMap);
-                logger.info("responseBody = " + responseBody);
-                // check response with the config.
-                if(status != statusCode) {
-                    result = -1;
-                    logger.error("config status {} doesn't match the response statusCode {}", status, statusCode);
-                    break;
+                    if(!TestUtil.matchBody(responseBodyMap, responseBody)) {
+                        result = -1;
+                        logger.error("config body {} doesn't match the response body {}", responseBodyMap, responseBody);
+                        break;
+                    }
                 }
-
-                if(!TestUtil.matchHeader(responseHeader, responseHeaderMap)) {
-                    result = -1;
-                    logger.error("config header {} doesn't match the response headerMap {}", responseHeader, responseHeaderMap);
-                    break;
-                }
-
-                if(!TestUtil.matchBody(responseBodyMap, responseBody)) {
-                    result = -1;
-                    logger.error("config body {} doesn't match the response body {}", responseBodyMap, responseBody);
-                    break;
-                }
+            } finally {
+                // shutdown servers, this needs to be called even if there are exceptions during tests.
+                executor.stopServers();
             }
 
-            // shutdown servers
-            executor.stopServers();
             if(result != 0) {
                 break;
             }

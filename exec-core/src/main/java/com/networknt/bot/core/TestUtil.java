@@ -81,12 +81,14 @@ public class TestUtil {
 
     public static boolean matchHeader(Map<String, Object> header, HeaderMap headerMap) {
         boolean matched = true;
-        for (Map.Entry<String, Object> entry : header.entrySet()) {
-            logger.debug("header key = {} and value = {}", entry.getKey(), entry.getValue());
-            if(!entry.getValue().equals(headerMap.get(entry.getKey(), 0))) {
-                matched = false;
-                logger.error("header {} value {} doesn't match the response header value {}", entry.getKey(), entry.getValue(), headerMap.get(entry.getKey(), 0));
-                break;
+        if(header != null) {
+            for (Map.Entry<String, Object> entry : header.entrySet()) {
+                logger.debug("header key = {} and value = {}", entry.getKey(), entry.getValue());
+                if(!entry.getValue().equals(headerMap.get(entry.getKey(), 0))) {
+                    matched = false;
+                    logger.error("header {} value {} doesn't match the response header value {}", entry.getKey(), entry.getValue(), headerMap.get(entry.getKey(), 0));
+                    break;
+                }
             }
         }
         return matched;
@@ -94,13 +96,15 @@ public class TestUtil {
 
     public static boolean matchBody(Map<String, Object> body, String responseBody) {
         boolean matched = true;
-        for (Map.Entry<String, Object> entry : body.entrySet()) {
-            logger.debug("body key = {} and value = {}", entry.getKey(), entry.getValue());
+        if(body != null) {
+            for (Map.Entry<String, Object> entry : body.entrySet()) {
+                logger.debug("body key = {} and value = {}", entry.getKey(), entry.getValue());
 
-            if(!entry.getValue().equals(JsonPath.read(responseBody, entry.getKey()))) {
-                matched = false;
-                logger.error("body key {} value {} doesn't match the response body value {}", entry.getKey(), entry.getValue(), JsonPath.read(responseBody, entry.getKey()));
-                break;
+                if(!entry.getValue().equals(JsonPath.read(responseBody, entry.getKey()))) {
+                    matched = false;
+                    logger.error("body key {} value {} doesn't match the response body value {}", entry.getKey(), entry.getValue(), JsonPath.read(responseBody, entry.getKey()));
+                    break;
+                }
             }
         }
         return matched;
