@@ -1,5 +1,8 @@
 package com.networknt.bot.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +41,8 @@ import java.util.List;
  *
  */
 public class CommandExecutor implements Executor {
+    static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
+
     private String adminPassword;
     private ThreadedStreamHandler inputStreamHandler;
     private ThreadedStreamHandler errorStreamHandler;
@@ -133,6 +138,7 @@ public class CommandExecutor implements Executor {
             pb.redirectError(ProcessBuilder.Redirect.appendTo(bitbucket));
             Process process = pb.start();
             processes.add(process);
+            logger.info("Added process to processes list for " + process);
         }
         catch (IOException e)
         {
@@ -175,6 +181,7 @@ public class CommandExecutor implements Executor {
     public void stopServers() {
         for(int i = 0; i < processes.size(); i++) {
             Process p = processes.remove(i);
+            logger.info("Removed process from processes list for " + p);
             p.destroy();
         }
     }

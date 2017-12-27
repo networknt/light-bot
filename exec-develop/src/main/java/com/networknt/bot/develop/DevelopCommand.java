@@ -178,11 +178,14 @@ public class DevelopCommand implements Command {
                 StringBuilder stderr = executor.getStderr();
                 if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
                 if(result != 0) {
+                    logger.info("Start server failed for " + c);
                     break;
                 }
             }
             // execute test cases
             logger.info("start testing...");
+            // put a sleep 1 second in case the server is not ready.
+            Thread.sleep(1000);
             final Http2Client client = Http2Client.getInstance();
             final CountDownLatch latch = new CountDownLatch(1);
             final ClientConnection connection;
