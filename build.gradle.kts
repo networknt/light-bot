@@ -13,6 +13,7 @@ allprojects {
     group = "com.networknt.light-bot"
     version = "1.0"
     repositories {
+        mavenLocal()
         jcenter()
     }
 }

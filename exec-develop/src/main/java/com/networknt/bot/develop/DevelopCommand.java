@@ -5,6 +5,7 @@ import com.networknt.bot.core.Constants;
 import com.networknt.bot.core.Executor;
 import com.networknt.client.Http2Client;
 import com.networknt.config.Config;
+import com.networknt.email.EmailSender;
 import com.networknt.service.SingletonServiceFactory;
 import io.undertow.UndertowOptions;
 import io.undertow.client.ClientConnection;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.xnio.IoUtils;
 import org.xnio.OptionMap;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -47,6 +49,15 @@ public class DevelopCommand implements Command {
         result = build();
         if(result != 0) return result;
         result = test();
+        if(result != 0) {
+            // send email to stevehu@gmail.com
+            EmailSender emailSender = new EmailSender();
+            try {
+                emailSender.sendMail("stevehu@gmail.com", "Build Error", "Please check the build log");
+            } catch (MessagingException e) {
+                logger.error("Failed to send email ", e);
+            }
+        }
         return result;
     }
 
