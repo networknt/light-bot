@@ -4,9 +4,11 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.networknt.bot.core.Command;
 import com.networknt.bot.core.TaskRegistry;
+import com.networknt.email.EmailSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.mail.MessagingException;
 import java.util.Set;
 
 public class Cli {
@@ -33,9 +35,19 @@ public class Cli {
             try {
                 int result = command.execute();
                 if(result == 1) {
-                    System.out.println("none of the repo has been changed");
+                    logger.info("none of the repo has been changed, skip build!");
+                } else if(result == 0) {
+                    logger.info("build successfully!");
                 } else {
-                    System.out.println("at least one repo is changed");
+                    logger.error("build or test failed!");
+                    // send email here with the attachment bot.log
+                    // send email to stevehu@gmail.com
+                    EmailSender emailSender = new EmailSender();
+                    try {
+                        emailSender.sendMail("stevehu@gmail.com", "Build Error", "Please check the build log");
+                    } catch (MessagingException e) {
+                        logger.error("Failed to send email ", e);
+                    }
                 }
             } catch (Exception e) {
                 logger.error("Exception", e);
