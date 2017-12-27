@@ -31,6 +31,8 @@ build:
 - light-oauth2
 - light-example-4j/rest/swagger/petstore
 - light-example-4j/rest/openapi/petstore
+- light-example-4j/rest/swagger/proxy-backend
+- light-example-4j/rest/openapi/proxy-backend
 test:
   rest-swagger-petstore:
     server:
@@ -62,3 +64,38 @@ test:
         body:
           "$.name": Jessica Right
           "$.id": 1
+  rest-swagger-proxy-backend:
+    server:
+    - path: light-example-4j/rest/swagger/proxy-backend
+      cmd: target/backend-1.0.0.jar
+    request:
+    - host: https://localhost:8081
+      path: "/v1/getData"
+      method: get
+      response:
+        status: 200
+        header:
+          content-type: application/json
+        body:
+          "$.enableHttp2": true
+          "$.enableHttps": true
+          "$.httpsPort": 8081
+          "$.key": key1
+          "$.value": value1
+    - host: https://localhost:8081
+      path: "/v1/postData"
+      method: post
+      header:
+        "content-type": application/json
+      body: "{\"key\":\"key1\",\"value\":\"value1\"}"
+      response:
+        status: 200
+        header:
+          content-type: application/json
+        body:
+          "$.enableHttp2": true
+          "$.enableHttps": true
+          "$.httpsPort": 8081
+          "$.key": key1
+          "$.value": value1
+

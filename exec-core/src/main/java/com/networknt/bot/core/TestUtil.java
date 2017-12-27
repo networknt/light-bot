@@ -7,18 +7,30 @@ import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
+import com.networknt.client.Http2Client;
+import io.undertow.UndertowOptions;
+import io.undertow.client.ClientConnection;
+import io.undertow.client.ClientRequest;
+import io.undertow.client.ClientResponse;
 import io.undertow.util.HeaderMap;
+import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xnio.IoUtils;
+import org.xnio.OptionMap;
 
+import java.net.URI;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TestUtil {
     static final Logger logger = LoggerFactory.getLogger(TestUtil.class);
+    static final Http2Client client = Http2Client.getInstance();
 
     static {
         Configuration.setDefaults(new Configuration.Defaults() {
@@ -60,6 +72,9 @@ public class TestUtil {
             case "put":
                 httpString = Methods.PUT;
                 break;
+            case "options":
+                httpString = Methods.OPTIONS;
+                break;
         }
         return httpString;
     }
@@ -90,4 +105,62 @@ public class TestUtil {
         }
         return matched;
     }
+
+    public static ClientResponse request(String host, String path, HttpString method, Map<String, Object> requestHeader) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final ClientConnection connection;
+        try {
+            connection = client.connect(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        final AtomicReference<ClientResponse> reference = new AtomicReference<>();
+        try {
+            ClientRequest cr = new ClientRequest().setPath(path).setMethod(method);
+            if(requestHeader != null) {
+                for (Map.Entry<String, Object> entry : requestHeader.entrySet()) {
+                    logger.debug("request header key = {} and value = {}", entry.getKey(), entry.getValue());
+                    cr.getRequestHeaders().put(new HttpString(entry.getKey()), (String)entry.getValue());
+                }
+            }
+            connection.sendRequest(cr, client.createClientCallback(reference, latch));
+            latch.await();
+        } catch (Exception e) {
+            logger.error("Exception: ", e);
+            throw new RuntimeException(e);
+        } finally {
+            IoUtils.safeClose(connection);
+        }
+        return reference.get();
+    }
+
+    public static ClientResponse requestWithBody(String host, String path, HttpString method, Map<String, Object> requestHeader, String requestBody) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final ClientConnection connection;
+        try {
+            connection = client.connect(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        final AtomicReference<ClientResponse> reference = new AtomicReference<>();
+        try {
+            ClientRequest cr = new ClientRequest().setPath(path).setMethod(method);
+            if(requestHeader != null) {
+                for (Map.Entry<String, Object> entry : requestHeader.entrySet()) {
+                    logger.debug("request header key = {} and value = {}", entry.getKey(), entry.getValue());
+                    cr.getRequestHeaders().put(new HttpString(entry.getKey()), (String)entry.getValue());
+                }
+            }
+            cr.getRequestHeaders().put(Headers.TRANSFER_ENCODING, "chunked");
+            connection.sendRequest(cr, client.createClientCallback(reference, latch, requestBody));
+            latch.await();
+        } catch (Exception e) {
+            logger.error("Exception: ", e);
+            throw new RuntimeException(e);
+        } finally {
+            IoUtils.safeClose(connection);
+        }
+        return reference.get();
+    }
+
 }

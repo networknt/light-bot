@@ -199,35 +199,35 @@ public class DevelopCommand implements Command {
                 String path = (String)request.get(Constants.PATH);
                 String method = (String)request.get(Constants.METHOD);
                 logger.info("host = {}, path={}, method={}", host, path, method);
+                Map<String, Object> requestHeader = (Map<String, Object>)request.get(Constants.HEADER);
+                String requestBody = (String)request.get(Constants.BODY);
+                logger.info("request header = " + requestHeader);
+                logger.info("request body = " + requestBody);
                 Map<String, Object> response = (Map<String, Object>)request.get(Constants.RESPONSE);
                 int status = (Integer)response.get(Constants.STATUS);
-                Map<String, Object> header = (Map<String, Object>)response.get(Constants.HEADER);
-                Map<String, Object> body = (Map<String, Object>)response.get(Constants.BODY);
+                Map<String, Object> responseHeader = (Map<String, Object>)response.get(Constants.HEADER);
+                Map<String, Object> responseBodyMap = (Map<String, Object>)response.get(Constants.BODY);
+                logger.info("response header = " + responseHeader);
+                logger.info("response body = " + responseBodyMap);
+                ClientResponse cr = null;
+                switch (method) {
+                    case "get":
+                    case "delete":
+                    case "options":
+                        cr = TestUtil.request(host, path, TestUtil.toHttpString(method), requestHeader);
+                        break;
+                    case "post":
+                    case "put":
+                    case "patch":
+                        cr = TestUtil.requestWithBody(host, path, TestUtil.toHttpString(method), requestHeader, requestBody);
+                        break;
+                }
 
-                final Http2Client client = Http2Client.getInstance();
-                final CountDownLatch latch = new CountDownLatch(1);
-                final ClientConnection connection;
-                try {
-                    connection = client.connect(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                final AtomicReference<ClientResponse> reference = new AtomicReference<>();
-                try {
-                    ClientRequest cr = new ClientRequest().setPath(path).setMethod(TestUtil.toHttpString(method));
-                    connection.sendRequest(cr, client.createClientCallback(reference, latch));
-                    latch.await();
-                } catch (Exception e) {
-                    logger.error("Exception: ", e);
-                    throw new RuntimeException(e);
-                } finally {
-                    IoUtils.safeClose(connection);
-                }
-                int statusCode = reference.get().getResponseCode();
-                HeaderMap headerMap = reference.get().getResponseHeaders();
-                String responseBody = reference.get().getAttachment(Http2Client.RESPONSE_BODY);
+                int statusCode = cr.getResponseCode();
+                HeaderMap responseHeaderMap = cr.getResponseHeaders();
+                String responseBody = cr.getAttachment(Http2Client.RESPONSE_BODY);
                 logger.info("statusCode = " + statusCode);
-                logger.info("headerMap = " + headerMap);
+                logger.info("headerMap = " + responseHeaderMap);
                 logger.info("responseBody = " + responseBody);
                 // check response with the config.
                 if(status != statusCode) {
@@ -236,15 +236,15 @@ public class DevelopCommand implements Command {
                     break;
                 }
 
-                if(!TestUtil.matchHeader(header, headerMap)) {
+                if(!TestUtil.matchHeader(responseHeader, responseHeaderMap)) {
                     result = -1;
-                    logger.error("config header {} doesn't match the response headerMap {}", header, headerMap);
+                    logger.error("config header {} doesn't match the response headerMap {}", responseHeader, responseHeaderMap);
                     break;
                 }
 
-                if(!TestUtil.matchBody(body, responseBody)) {
+                if(!TestUtil.matchBody(responseBodyMap, responseBody)) {
                     result = -1;
-                    logger.error("config body {} doesn't match the response body {}", body, responseBody);
+                    logger.error("config body {} doesn't match the response body {}", responseBodyMap, responseBody);
                     break;
                 }
             }
