@@ -47,3 +47,19 @@ test:
         body:
           "$.name": doggie
           "$.id": 123456789
+
+  rest-openapi-petstore:
+    server:
+    - path: light-example-4j/rest/openapi/petstore
+      cmd: target/petstore-1.0.1.jar
+    request:
+    - host: https://localhost:8443
+      path: "/v1/pets/111"
+      method: get
+      response:
+        status: 200
+        header:
+          content-type: application/json
+        body:
+          "$.name": Jessica Right
+          "$.id": 1

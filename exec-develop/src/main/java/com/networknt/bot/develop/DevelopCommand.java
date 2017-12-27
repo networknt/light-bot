@@ -3,6 +3,7 @@ package com.networknt.bot.develop;
 import com.networknt.bot.core.Command;
 import com.networknt.bot.core.Constants;
 import com.networknt.bot.core.Executor;
+import com.networknt.bot.core.GitUtil;
 import com.networknt.client.Http2Client;
 import com.networknt.config.Config;
 import com.networknt.service.SingletonServiceFactory;
@@ -59,7 +60,7 @@ public class DevelopCommand implements Command {
 
     int checkout() throws IOException, InterruptedException {
         int result = 0;
-        int numOfError = 0;
+        boolean changed = false;
 
         // check if there is a directory workspace in home directory.
         Path wPath = Paths.get(userHome, workspace);
@@ -115,7 +116,7 @@ public class DevelopCommand implements Command {
                 StringBuilder stderr = executor.getStderr();
                 if(stderr != null && stderr.length() > 0) {
                     logger.error(stderr.toString());
-                    numOfError++;
+                    if(!changed) changed = GitUtil.developBranchChanged(stderr.toString());
                 }
                 if(result != 0) {
                     break;
@@ -123,9 +124,8 @@ public class DevelopCommand implements Command {
             }
         }
         // there is no change for all of the repositories
-        if(numOfError == repositories.size()) result = 1;
+        if(result == 0 && !changed) result = 1;
         return result;
-
     }
 
     int build() throws IOException, InterruptedException {
