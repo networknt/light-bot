@@ -33,6 +33,7 @@ build:
 - light-example-4j/rest/openapi/petstore
 - light-example-4j/rest/swagger/proxy-backend
 - light-example-4j/rest/openapi/proxy-backend
+- light-example-4j/rest/openapi/cors
 test:
   rest-swagger-petstore:
     server:
@@ -130,6 +131,36 @@ test:
           "$.enableHttp2": true
           "$.enableHttps": true
           "$.httpsPort": 8081
+          "$.key": key1
+          "$.value": value1
+  rest-openapi-cors:
+    server:
+    - path: light-example-4j/rest/openapi/cors
+      cmd: target/cors-1.0.1.jar
+    request:
+    - host: https://localhost:8443
+      path: "/v1/getData"
+      method: get
+      response:
+        status: 200
+        header:
+          content-type: application/json
+        body:
+          "$.[0].key": key1
+          "$.[1].key": key2
+          "$.[0].value": value1
+          "$.[1].value": value2
+    - host: https://localhost:8443
+      path: "/v1/postData"
+      method: post
+      header:
+        "content-type": application/json
+      body: "{\"key\":\"key1\",\"value\":\"value1\"}"
+      response:
+        status: 200
+        header:
+          content-type: application/json
+        body:
           "$.key": key1
           "$.value": value1
 
