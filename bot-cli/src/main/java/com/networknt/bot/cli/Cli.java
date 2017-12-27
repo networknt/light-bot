@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
+import java.io.File;
 import java.util.Set;
 
 public class Cli {
@@ -44,7 +45,9 @@ public class Cli {
                     // send email to stevehu@gmail.com
                     EmailSender emailSender = new EmailSender();
                     try {
-                        emailSender.sendMail("stevehu@gmail.com", "Build Error", "Please check the build log");
+                        File file = new File("bot.log");
+                        String absolutePath = file.getAbsolutePath();
+                        emailSender.sendMailWithAttachment("stevehu@gmail.com", "Build Error", "Please check the build log", absolutePath);
                     } catch (MessagingException e) {
                         logger.error("Failed to send email ", e);
                     }
