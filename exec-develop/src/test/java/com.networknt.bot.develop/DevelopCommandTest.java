@@ -28,7 +28,7 @@ public class DevelopCommandTest {
         }
     }
 
-    //@Test
+    @Test
     public void testTest() throws IOException, InterruptedException {
         DevelopCommand cmd = new DevelopCommand();
         int result = cmd.test();

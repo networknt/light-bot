@@ -1,9 +1,6 @@
 package com.networknt.bot.develop;
 
-import com.networknt.bot.core.Command;
-import com.networknt.bot.core.Constants;
-import com.networknt.bot.core.Executor;
-import com.networknt.bot.core.GitUtil;
+import com.networknt.bot.core.*;
 import com.networknt.client.Http2Client;
 import com.networknt.config.Config;
 import com.networknt.service.SingletonServiceFactory;
@@ -163,7 +160,7 @@ public class DevelopCommand implements Command {
             String testName = entry.getKey();
             Map<String, Object> testInfo = (Map<String, Object>)entry.getValue();
 
-            // get server entry and start server one by one.
+            // get server entry and start servers one by one.
             List<Map<String, Object>> servers = (List<Map<String, Object>>)testInfo.get(Constants.SERVER);
             for(Map<String, Object> server: servers) {
                 String path = (String)server.get(Constants.PATH);
@@ -187,35 +184,51 @@ public class DevelopCommand implements Command {
                     break;
                 }
             }
+
+
             // execute test cases
             logger.info("start testing...");
             // put a sleep 1 second in case the server is not ready.
             Thread.sleep(1000);
-            final Http2Client client = Http2Client.getInstance();
-            final CountDownLatch latch = new CountDownLatch(1);
-            final ClientConnection connection;
-            try {
-                connection = client.connect(new URI("https://localhost:8443"), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            final AtomicReference<ClientResponse> reference = new AtomicReference<>();
-            try {
-                ClientRequest request = new ClientRequest().setPath("/v2/pet/111").setMethod(Methods.GET);
 
-                connection.sendRequest(request, client.createClientCallback(reference, latch));
+            // load tests and perform tests
+            List<Map<String, Object>> requests = (List<Map<String, Object>>)testInfo.get(Constants.REQUEST);
+            for(Map<String, Object> request: requests) {
+                String host = (String)request.get(Constants.HOST);
+                String path = (String)request.get(Constants.PATH);
+                String method = (String)request.get(Constants.METHOD);
+                logger.info("host = %s, path=%s, method=%s", host, path, method);
+                Map<String, Object> response = (Map<String, Object>)request.get(Constants.RESPONSE);
+                int status = (Integer)response.get(Constants.STATUS);
+                Map<String, Object> header = (Map<String, Object>)response.get(Constants.HEADER);
+                Map<String, Object> body = (Map<String, Object>)response.get(Constants.BODY);
 
-                latch.await();
-            } catch (Exception e) {
-                logger.error("Exception: ", e);
-                throw new RuntimeException(e);
-            } finally {
-                IoUtils.safeClose(connection);
+                final Http2Client client = Http2Client.getInstance();
+                final CountDownLatch latch = new CountDownLatch(1);
+                final ClientConnection connection;
+                try {
+                    connection = client.connect(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                final AtomicReference<ClientResponse> reference = new AtomicReference<>();
+                try {
+                    ClientRequest cr = new ClientRequest().setPath(path).setMethod(TestUtil.toHttpString(method));
+                    connection.sendRequest(cr, client.createClientCallback(reference, latch));
+                    latch.await();
+                } catch (Exception e) {
+                    logger.error("Exception: ", e);
+                    throw new RuntimeException(e);
+                } finally {
+                    IoUtils.safeClose(connection);
+                }
+                int statusCode = reference.get().getResponseCode();
+                String responseBody = reference.get().getAttachment(Http2Client.RESPONSE_BODY);
+                logger.info("statusCode = " + statusCode);
+                logger.info("responseBody = " + responseBody);
+
             }
-            int statusCode = reference.get().getResponseCode();
-            String body = reference.get().getAttachment(Http2Client.RESPONSE_BODY);
-            System.out.println("statusCode = " + statusCode);
-            System.out.println("body = " + body);
+
             // shutdown servers
             executor.stopServers();
             if(result != 0) {
@@ -224,4 +237,6 @@ public class DevelopCommand implements Command {
         }
         return result;
     }
+
+
 }
