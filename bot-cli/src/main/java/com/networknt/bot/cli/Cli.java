@@ -25,6 +25,7 @@ public class Cli {
                 .build()
                 .parse(argv);
         cli.run();
+        System.exit(0);
     }
 
     public void run() {
