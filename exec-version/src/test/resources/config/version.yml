@@ -57,6 +57,18 @@ version:
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: pom.xml
     match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: light-graphql-4j/src/main/resources/templates/graphql/pom.xml.rocker.raw
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: light-hybrid-4j/src/main/resources/templates/hybrid/server/pom.xml.rocker.raw
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: light-hybrid-4j/src/main/resources/templates/hybrid/service/pom.xml.rocker.raw
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: light-rest-4j/src/main/resources/templates/rest/openapi/pom.xml.rocker.raw
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: light-rest-4j/src/main/resources/templates/rest/openapi/pom.xml.rocker.raw
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: light-rest-4j/src/main/resources/templates/rest/swagger/pom.xml.rocker.raw
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   light-eventuate-4j:
   - path: pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
@@ -74,6 +86,8 @@ version:
   light-proxy:
   - path: pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
   light-oauth2:
   - path: pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
