@@ -52,9 +52,7 @@ public class VersionCommand implements Command {
         if(result != 0) return result;
         result = version();
         if(result != 0) return result;
-
-        // TODO uncomment it after testing
-        //result = checkin();
+        result = checkin();
         return result;
     }
 
