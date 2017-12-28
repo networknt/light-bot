@@ -1,0 +1,97 @@
+# Workspace that is used for this operation. Most of time, this is done on local.
+workspace: version
+# old existing version that need to be upgraded
+old_version: 1.5.5
+# new upgraded version. These two versions need to be updated every time to run this command
+new_version: 1.5.6
+# clone and switch to develop branch / checkout and pull from develop branch
+checkout:
+  branch: develop
+  repository:
+  - git@github.com:networknt/light-4j.git
+  - git@github.com:networknt/openapi-parser.git
+  - git@github.com:networknt/light-rest-4j.git
+  - git@github.com:networknt/light-graphql-4j.git
+  - git@github.com:networknt/light-hybrid-4j.git
+  - git@github.com:networknt/light-codegen.git
+  - git@github.com:networknt/light-eventuate-4j.git
+  - git@github.com:networknt/light-tram-4j.git
+  - git@github.com:networknt/light-saga-4j.git
+  - git@github.com:networknt/light-session-4j.git
+  - git@github.com:networknt/light-proxy.git
+  - git@github.com:networknt/light-oauth2.git
+  - git@github.com:networknt/light-example-4j.git
+  - git@github.com:networknt/light-docker.git
+# run mvn versions:set command in the following folders.
+maven:
+  - light-4j
+  - openapi-parser
+  - light-rest-4j
+  - light-graphql-4j
+  - light-hybrid-4j
+  - light-codegen
+  - light-eventuate-4j
+  - light-tram-4j
+  - light-saga-4j
+  - light-session-4j
+  - light-proxy
+  - light-oauth2
+# regex replacement for dependencies
+version:
+  openapi-parser:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  light-rest-4j:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  light-graphql-4j:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  light-hybrid-4j:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  light-codegen:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: light-graphql-4j/src/main/resources/templates/graphql/pom.xml.rocker.raw
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: light-hybrid-4j/src/main/resources/templates/hybrid/server/pom.xml.rocker.raw
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: light-hybrid-4j/src/main/resources/templates/hybrid/service/pom.xml.rocker.raw
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: light-rest-4j/src/main/resources/templates/rest/openapi/pom.xml.rocker.raw
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: light-rest-4j/src/main/resources/templates/rest/openapi/pom.xml.rocker.raw
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: light-rest-4j/src/main/resources/templates/rest/swagger/pom.xml.rocker.raw
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  light-eventuate-4j:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: docs/content/tutorial/todo-list.md
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  light-tram-4j:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  light-saga-4j:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  light-session-4j:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  light-proxy:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  light-oauth2:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+
+# upgrade other files between the two versions. like config files etc.
+# this command will only work on the repo like light-example-4j for built services.
+upgrade:
