@@ -1,6 +1,7 @@
 package com.networknt.bot.develop;
 
 import com.networknt.bot.core.*;
+import com.networknt.bot.core.cmd.CloneBranchCmd;
 import com.networknt.client.Http2Client;
 import com.networknt.config.Config;
 import com.networknt.service.SingletonServiceFactory;
@@ -69,37 +70,10 @@ public class DevelopCommand implements Command {
         for(String repository: repositories) {
             Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
             if(Files.notExists(rPath)) {
-                // clone it
-                List<String> commands = new ArrayList<>();
-                commands.add("bash");
-                commands.add("-c");
-                commands.add("git clone " + repository);
-                logger.info("git clone " + repository);
-                // execute the command
-                result = executor.execute(commands, wPath.toFile());
-                // get the stdout and stderr from the command that was run
-                StringBuilder stdout = executor.getStdout();
-                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
-                StringBuilder stderr = executor.getStderr();
-                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
-                if(result != 0) {
-                    break;
-                }
-                // need to switch to develop
-                commands = new ArrayList<>();
-                commands.add("bash");
-                commands.add("-c");
-                commands.add("git checkout " + branch);
-                logger.info("git checkout " + branch);
-                result = executor.execute(commands, rPath.toFile());
-                stdout = executor.getStdout();
-                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
-                stderr = executor.getStderr();
-                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
-                if(result != 0) {
-                    break;
-                }
-
+                // clone and switch to branch.
+                CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
+                result = cloneBranchCmd.execute();
+                if(result != 0) break;
             } else {
                 // switch to branch and pull, if there is no change in the branch, return 1 to skip
                 // the next build step. check how many errors against how many repositories.
@@ -114,7 +88,7 @@ public class DevelopCommand implements Command {
                 StringBuilder stderr = executor.getStderr();
                 if(stderr != null && stderr.length() > 0) {
                     logger.error(stderr.toString());
-                    if(!changed) changed = GitUtil.developBranchChanged(stderr.toString());
+                    if(!changed) changed = GitUtil.branchChanged(branch, stderr.toString());
                 }
                 if(result != 0) {
                     break;
