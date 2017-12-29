@@ -27,4 +27,6 @@ public class Constants {
     public static final String MAVEN = "maven";
     public static final String VERSION = "version";
 
+    // release
+    public static final String RELEASE = "release";
 }

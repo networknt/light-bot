@@ -6,3 +6,4 @@ singletons:
 - com.networknt.bot.core.Command:
   - com.networknt.bot.develop.DevelopCommand
   - com.networknt.bot.version.VersionCommand
+  - com.networknt.bot.release.ReleaseCommand
