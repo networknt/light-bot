@@ -11,24 +11,34 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MergeMasterCmd implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(MergeMasterCmd.class);
+public class GenChangeLogCmd implements Command {
+    private static final Logger logger = LoggerFactory.getLogger(GenChangeLogCmd.class);
     private Executor executor = SingletonServiceFactory.getBean(Executor.class);
+    private String organization;
+    private String repository;
+    private String version;
     private Path rPath;
+    private String token;
 
-    public MergeMasterCmd(Path rPath) {
+    public GenChangeLogCmd(String organization, String repository, String version, Path rPath) {
+        this.organization = organization;
+        this.repository = repository;
+        this.version = version;
         this.rPath = rPath;
+        // get github token from environment variable
+        this.token = System.getenv("CHANGELOG_GITHUB_TOKEN");
     }
 
     @Override
     public int execute() throws IOException, InterruptedException {
         int result;
-        // merge from develop to master
+        String cmd = String.format("docker run -it --rm -v $s:/usr/local/src/your-app networknt/github-changelog-generator %s/%s --token %s --future-release %s", rPath, organization, repository, token, version);
+        // generate changelog with github-changelog-generator docker
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
-        commands.add("git checkout master; git merge develop ; git push origin master");
-        logger.info("git checkout master; git merge develop ; git push origin master");
+        commands.add(cmd);
+        logger.info(cmd);
         result = executor.execute(commands, rPath.toFile());
         StringBuilder stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
@@ -39,6 +49,6 @@ public class MergeMasterCmd implements Command {
 
     @Override
     public String getName() {
-        return "MergeMaster";
+        return "GenChangeLog";
     }
 }

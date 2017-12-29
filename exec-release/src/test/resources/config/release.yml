@@ -1,5 +1,10 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: release
+# release version that is used to generate changelog. This need to be changed every time
+version: 1.5.6
+# github organization as the token is bound to the org in changelog generator. This
+# means that you can only release multiple repositories within the same org each time.
+organization: networknt
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
   branch: develop

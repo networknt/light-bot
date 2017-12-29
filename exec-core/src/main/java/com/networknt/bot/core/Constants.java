@@ -28,5 +28,6 @@ public class Constants {
     public static final String VERSION = "version";
 
     // release
+    public static final String ORGANIZATION = "organization";
     public static final String RELEASE = "release";
 }

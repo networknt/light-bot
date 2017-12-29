@@ -8,7 +8,11 @@ import com.networknt.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +26,8 @@ public class ReleaseCommand implements Command {
     private static final String CONFIG_NAME = "release";
     private Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     private String workspace = (String)config.get(Constants.WORKSPACE);
+    private String version = (String)config.get(Constants.VERSION);
+    private String organization = (String)config.get(Constants.ORGANIZATION);
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
@@ -75,12 +81,51 @@ public class ReleaseCommand implements Command {
         int result = 0;
         for(String release: releases) {
             Path rPath = Paths.get(userHome, workspace, release);
+            // merge develop branch to master and check in
             MergeMasterCmd mergeMasterCmd = new MergeMasterCmd(rPath);
             result = mergeMasterCmd.execute();
             if(result != 0) break;
 
+            // generate changelog.md, check in
+            GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, rPath);
+            result = genChangeLogCmd.execute();
+            if(result != 0) break;
+
+            // run maven release plugin to release to maven central
             MavenReleaseCmd mavenReleaseCmd = new MavenReleaseCmd(rPath);
             result = mavenReleaseCmd.execute();
+            if(result != 0) break;
+
+            // merge the changelog.md to develop and push
+            MergeDevelopCmd mergeDevelopCmd = new MergeDevelopCmd(rPath);
+            result = mergeDevelopCmd.execute();
+            if(result != 0) break;
+
+            // read CHANGELOG.md for the current release body.
+            Charset charset = Charset.forName("UTF-8");
+            Path file = Paths.get(userHome, workspace, release, "CHANGELOG.md");
+            StringBuffer stringBuffer = new StringBuffer();
+            try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
+                String line;
+                boolean tokenFound = false;
+                while ((line = reader.readLine()) != null) {
+                    if (line.equals("## [" + version)) {
+                        tokenFound = true;
+                    } else if (line.equals("## [")) {
+                        tokenFound = false;
+                    }
+                    if(tokenFound) {
+                        stringBuffer.append(line);
+                        stringBuffer.append("\n");
+                    }
+                }
+            } catch (IOException e) {
+                logger.error("IOException:", e);
+            }
+
+            // call github api to create a new release.
+            GithubReleaseCmd githubReleaseCmd = new GithubReleaseCmd(organization, release, version, stringBuffer.toString(), rPath);
+            result = githubReleaseCmd.execute();
             if(result != 0) break;
         }
         return result;

@@ -11,24 +11,24 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MergeMasterCmd implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(MergeMasterCmd.class);
+public class MergeDevelopCmd implements Command {
+    private static final Logger logger = LoggerFactory.getLogger(MergeDevelopCmd.class);
     private Executor executor = SingletonServiceFactory.getBean(Executor.class);
     private Path rPath;
 
-    public MergeMasterCmd(Path rPath) {
+    public MergeDevelopCmd(Path rPath) {
         this.rPath = rPath;
     }
 
     @Override
     public int execute() throws IOException, InterruptedException {
         int result;
-        // merge from develop to master
+        // merge from master to develop
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
-        commands.add("git checkout master; git merge develop ; git push origin master");
-        logger.info("git checkout master; git merge develop ; git push origin master");
+        commands.add("git checkout develop; git merge master ; git push origin develop");
+        logger.info("git checkout develop; git merge master ; git push origin develop");
         result = executor.execute(commands, rPath.toFile());
         StringBuilder stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
@@ -39,6 +39,6 @@ public class MergeMasterCmd implements Command {
 
     @Override
     public String getName() {
-        return "MergeMaster";
+        return "MergeDevelop";
     }
 }
