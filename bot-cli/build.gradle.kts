@@ -10,6 +10,7 @@ dependencies {
     compile(project(":exec-core"))
     compile(project(":exec-develop"))
     compile(project(":exec-version"))
+    compile(project(":exec-release"))
     compile("com.networknt:email:1.5.5")
     compile("com.beust:jcommander:1.72")
     compile("ch.qos.logback:logback-classic:1.2.3")
