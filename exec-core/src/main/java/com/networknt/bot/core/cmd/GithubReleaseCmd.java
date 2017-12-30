@@ -54,12 +54,18 @@ public class GithubReleaseCmd implements Command {
         bodyMap.put("draft", false);
         bodyMap.put("prerelease", false);
 
-        String path = String.format("repos/%s/%s/releases", organization, repository);
-        ClientResponse cr = GitUtil.requestWithBody(GitUtil.HOST, path, Methods.POST, headerMap, Config.getInstance().getMapper().writeValueAsString(bodyMap));
-        result = cr.getResponseCode();
-        String responseBody = cr.getAttachment(Http2Client.RESPONSE_BODY);
-        logger.info("statusCode = " + result);
-        logger.info("responseBody = " + responseBody);
+        String body = Config.getInstance().getMapper().writeValueAsString(bodyMap);
+        String cmd = String.format("curl -X POST https://api.github.com/repos/%s/%s/releases -H 'authorization: token %s' -H 'content-type: application/json' -d '%s'", organization, repository, token, body);
+        List<String> commands = new ArrayList<>();
+        commands.add("bash");
+        commands.add("-c");
+        commands.add(cmd);
+        logger.info(cmd);
+        result = executor.execute(commands, rPath.toFile());
+        StringBuilder stdout = executor.getStdout();
+        if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
+        StringBuilder stderr = executor.getStderr();
+        if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
         return result;
     }
 

@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class ReleaseCommandTest {
-    //@Test
+    @Test
     public void testRelease() throws IOException, InterruptedException {
         ReleaseCommand cmd = new ReleaseCommand();
         int result = cmd.execute();

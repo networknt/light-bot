@@ -109,10 +109,10 @@ public class ReleaseCommand implements Command {
                 String line;
                 boolean tokenFound = false;
                 while ((line = reader.readLine()) != null) {
-                    if (line.equals("## [" + version)) {
+                    if (line.startsWith("## [" + version)) {
                         tokenFound = true;
-                    } else if (line.equals("## [")) {
-                        tokenFound = false;
+                    } else if (line.startsWith("## [")) {
+                        break;
                     }
                     if(tokenFound) {
                         stringBuffer.append(line);
