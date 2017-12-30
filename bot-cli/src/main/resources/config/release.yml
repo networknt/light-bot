@@ -27,12 +27,12 @@ checkout:
 release:
 #  - light-4j
 #  - openapi-parser
-  - light-rest-4j
-  - light-graphql-4j
-  - light-hybrid-4j
+#  - light-rest-4j
+#  - light-graphql-4j
+#  - light-hybrid-4j
 #  - light-codegen
-  - light-eventuate-4j
-  - light-tram-4j
+#  - light-eventuate-4j
+#  - light-tram-4j
   - light-saga-4j
   - light-session-4j
 #  - light-proxy

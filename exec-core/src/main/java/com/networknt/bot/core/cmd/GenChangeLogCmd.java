@@ -32,7 +32,7 @@ public class GenChangeLogCmd implements Command {
     @Override
     public int execute() throws IOException, InterruptedException {
         int result;
-        String cmd = String.format("docker run --rm -v %s:/usr/local/src/your-app networknt/github-changelog-generator %s/%s --token %s --future-release %s", rPath, organization, repository, token, version);
+        String cmd = String.format("docker run --rm -v %s:/usr/local/src/your-app networknt/github-changelog-generator %s/%s --token %s --future-release %s ; git add . ; git commit -m \"bot checkin\" ; git push origin master", rPath, organization, repository, token, version);
         // generate changelog with github-changelog-generator docker
         List<String> commands = new ArrayList<>();
         commands.add("bash");
