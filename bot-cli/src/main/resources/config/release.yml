@@ -33,7 +33,7 @@ release:
 #  - light-codegen
 #  - light-eventuate-4j
 #  - light-tram-4j
-  - light-saga-4j
+#  - light-saga-4j
   - light-session-4j
 #  - light-proxy
 #  - light-oauth2
