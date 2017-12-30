@@ -25,8 +25,8 @@ checkout:
   - git@github.com:networknt/light-docker.git
 # merge develop to master, check in master and release master
 release:
-  - light-4j
-#  - openapi-parser
+#  - light-4j
+  - openapi-parser
 #  - light-rest-4j
 #  - light-graphql-4j
 #  - light-hybrid-4j
