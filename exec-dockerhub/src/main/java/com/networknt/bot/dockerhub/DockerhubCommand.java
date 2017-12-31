@@ -35,7 +35,7 @@ public class DockerhubCommand implements Command {
     @SuppressWarnings("unchecked")
     private List<String> mavens = (List<String>)config.get(Constants.MAVEN);
     @SuppressWarnings("unchecked")
-    //private Map<String, Object> docker = (Map<String, Object>)config.get(Constants.DOCKER);
+    private List<String> dockers = (List<String>)config.get(Constants.DOCKER);
     private String userHome = System.getProperty("user.home");
 
     @Override
@@ -51,7 +51,7 @@ public class DockerhubCommand implements Command {
         if(result != 0) return result;
         result = maven();
         if(result != 0) return result;
-        //result = docker();
+        result = docker();
         return result;
     }
 
@@ -103,30 +103,15 @@ public class DockerhubCommand implements Command {
         return result;
     }
 
-    /*
-    private int version() throws IOException {
+    private int docker() throws IOException, InterruptedException {
         int result = 0;
-        for(Map.Entry<String, Object> entry : version.entrySet()) {
-            String repoName = entry.getKey();
-            logger.info("repoName = " + repoName);
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> files = (List<Map<String, Object>>)entry.getValue();
-            for(Map<String, Object> file: files) {
-                String path = (String)file.get(Constants.PATH);
-                String match = (String)file.get(Constants.MATCH);
-                logger.info("upgrade path {} on match {}", path, match);
-                RegexReplacement rr = new RegexReplacement(match, oldVersion, newVersion);
-                Path upgradePath = Paths.get(userHome, workspace, repoName, path);
-                // replace old version with new version here.
-                try (Stream<String> lines = Files.lines(upgradePath)) {
-                    List<String> replaced = lines
-                            .map(rr::replace)
-                            .collect(Collectors.toList());
-                    Files.write(upgradePath, replaced);
-                }
-            }
+        for(String docker: dockers) {
+            Path rPath = Paths.get(userHome, workspace, docker);
+            DockerBuildCmd dockerBuildCmd = new DockerBuildCmd(version, rPath);
+            result = dockerBuildCmd.execute();
+            if(result != 0) break;
         }
         return result;
     }
-    */
+
 }

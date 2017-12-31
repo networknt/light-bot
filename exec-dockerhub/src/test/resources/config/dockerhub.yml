@@ -19,8 +19,8 @@ merge:
 # maven build
 maven:
   - light-proxy
-  - light-oauth2
-  - light-codegen
+#  - light-oauth2
+#  - light-codegen
 # build docker image and push to docker hub
 docker:
-  -
+  - light-proxy

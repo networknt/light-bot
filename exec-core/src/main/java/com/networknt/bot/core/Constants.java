@@ -33,4 +33,5 @@ public class Constants {
 
     // dockerhub
     public static final String MERGE = "merge";
+    public static final String DOCKER = "docker";
 }
