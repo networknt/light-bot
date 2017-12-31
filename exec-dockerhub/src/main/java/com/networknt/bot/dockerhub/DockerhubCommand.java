@@ -8,7 +8,9 @@ import com.networknt.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,6 +25,7 @@ public class DockerhubCommand implements Command {
     private Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     private String workspace = (String)config.get(Constants.WORKSPACE);
     private String version = (String)config.get(Constants.VERSION);
+    private String organization = (String)config.get(Constants.ORGANIZATION);
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
@@ -34,6 +37,8 @@ public class DockerhubCommand implements Command {
     private List<String> merges = (List<String>)config.get(Constants.MERGE);
     @SuppressWarnings("unchecked")
     private List<String> mavens = (List<String>)config.get(Constants.MAVEN);
+    @SuppressWarnings("unchecked")
+    private List<String> releases = (List<String>)config.get(Constants.RELEASE);
     @SuppressWarnings("unchecked")
     private List<String> dockers = (List<String>)config.get(Constants.DOCKER);
     private String userHome = System.getProperty("user.home");
@@ -50,6 +55,8 @@ public class DockerhubCommand implements Command {
         result = merge();
         if(result != 0) return result;
         result = maven();
+        if(result != 0) return result;
+        result = release();
         if(result != 0) return result;
         result = docker();
         return result;
@@ -98,6 +105,50 @@ public class DockerhubCommand implements Command {
             Path rPath = Paths.get(userHome, workspace, maven);
             MavenBuildCmd mavenBuildCmd = new MavenBuildCmd(rPath);
             result = mavenBuildCmd.execute();
+            if(result != 0) break;
+        }
+        return result;
+    }
+
+    private int release() throws IOException, InterruptedException {
+        int result = 0;
+        for(String release: releases) {
+            Path rPath = Paths.get(userHome, workspace, release);
+            // generate changelog.md, check in
+            GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, rPath);
+            result = genChangeLogCmd.execute();
+            if(result != 0) break;
+
+            // merge the changelog.md to develop and push
+            MergeDevelopCmd mergeDevelopCmd = new MergeDevelopCmd(rPath);
+            result = mergeDevelopCmd.execute();
+            if(result != 0) break;
+
+            // read CHANGELOG.md for the current release body.
+            Charset charset = Charset.forName("UTF-8");
+            Path file = Paths.get(userHome, workspace, release, "CHANGELOG.md");
+            StringBuffer stringBuffer = new StringBuffer();
+            try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
+                String line;
+                boolean tokenFound = false;
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("## [" + version)) {
+                        tokenFound = true;
+                    } else if (line.startsWith("## [")) {
+                        break;
+                    }
+                    if(tokenFound) {
+                        stringBuffer.append(line);
+                        stringBuffer.append("\n");
+                    }
+                }
+            } catch (IOException e) {
+                logger.error("IOException:", e);
+            }
+
+            // call github api to create a new release.
+            GithubReleaseCmd githubReleaseCmd = new GithubReleaseCmd(organization, release, version, stringBuffer.toString(), rPath);
+            result = githubReleaseCmd.execute();
             if(result != 0) break;
         }
         return result;
