@@ -1,1 +1,1 @@
-include("exec-core", "exec-develop", "exec-version", "exec-release", "bot-cli")
+include("exec-core", "exec-develop", "exec-version", "exec-release", "exec-dockerhub", "bot-cli")

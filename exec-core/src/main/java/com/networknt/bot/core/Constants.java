@@ -30,4 +30,7 @@ public class Constants {
     // release
     public static final String ORGANIZATION = "organization";
     public static final String RELEASE = "release";
+
+    // dockerhub
+    public static final String MERGE = "merge";
 }
