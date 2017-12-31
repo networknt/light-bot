@@ -7,3 +7,4 @@ singletons:
   - com.networknt.bot.develop.DevelopCommand
   - com.networknt.bot.version.VersionCommand
   - com.networknt.bot.release.ReleaseCommand
+  - com.networknt.bot.dockerhub.DockerhubCommand

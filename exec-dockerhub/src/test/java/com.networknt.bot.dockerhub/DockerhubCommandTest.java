@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class DockerhubCommandTest {
-    @Test
+    //@Test
     public void testDockerhub() throws IOException, InterruptedException {
         DockerhubCommand cmd = new DockerhubCommand();
         int result = cmd.execute();
