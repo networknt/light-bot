@@ -73,6 +73,7 @@ public class DevelopCommand implements Command {
                 // clone and switch to branch.
                 CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
                 result = cloneBranchCmd.execute();
+                if(!changed) changed = true;
                 if(result != 0) break;
             } else {
                 // switch to branch and pull, if there is no change in the branch, return 1 to skip
@@ -96,7 +97,7 @@ public class DevelopCommand implements Command {
             }
         }
         // there is no change for all of the repositories
-        if(result == 0 && !changed) result = 1;
+        if(result == 0 && !changed) result = 11;
         return result;
     }
 

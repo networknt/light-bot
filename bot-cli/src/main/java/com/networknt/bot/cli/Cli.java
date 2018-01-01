@@ -36,7 +36,7 @@ public class Cli {
             Command command = registry.getCommand(task);
             try {
                 int result = command.execute();
-                if(result == 1) {
+                if(result == 11) {
                     logger.info("none of the repo has been changed, skip build!");
                 } else if(result == 0) {
                     logger.info("build successfully!");
