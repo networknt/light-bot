@@ -1,9 +1,9 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: version
 # old existing version that need to be upgraded
-old_version: 1.5.5
+old_version: 1.5.6
 # new upgraded version. These two versions need to be updated every time to run this command
-new_version: 1.5.6
+new_version: 1.5.7
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
   branch: develop
@@ -92,6 +92,3 @@ version:
   - path: pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
 
-# upgrade other files between the two versions. like config files etc.
-# this command will only work on the repo like light-example-4j for built services.
-upgrade:
