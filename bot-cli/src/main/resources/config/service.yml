@@ -8,3 +8,4 @@ singletons:
   - com.networknt.bot.version.VersionCommand
   - com.networknt.bot.release.ReleaseCommand
   - com.networknt.bot.dockerhub.DockerhubCommand
+  - com.networknt.bot.upgrade.UpgradeCommand
