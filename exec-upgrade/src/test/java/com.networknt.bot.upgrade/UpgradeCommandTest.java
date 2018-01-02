@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class UpgradeCommandTest {
-    @Test
+    //@Test
     public void testUpgrade() throws IOException, InterruptedException {
         UpgradeCommand cmd = new UpgradeCommand();
         int result = cmd.execute();
