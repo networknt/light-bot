@@ -38,6 +38,9 @@ build:
 - light-example-4j/rest/swagger/ms_chain/api_b/httpschain
 - light-example-4j/rest/swagger/ms_chain/api_c/httpschain
 - light-example-4j/rest/swagger/ms_chain/api_d/httpschain
+- light-example-4j/client/standalone
+- light-example-4j/client/tomcat
+
 test:
   rest-swagger-petstore:
     server:
