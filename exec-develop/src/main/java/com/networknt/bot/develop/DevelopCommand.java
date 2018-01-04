@@ -33,11 +33,17 @@ public class DevelopCommand implements Command {
     Executor executor = SingletonServiceFactory.getBean(Executor.class);
     Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     String workspace = (String)config.get(Constants.WORKSPACE);
+
     Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
-    List<String> builds = (List<String>)config.get(Constants.BUILD);
     Map<String, Object> test = (Map<String, Object>)config.get(Constants.TEST);
     String branch = (String)checkout.get(Constants.BRANCH);
     List<String> repositories = (List<String>)checkout.get(Constants.REPOSITORY);
+
+    Map<String, Object> build = (Map<String, Object>)config.get(Constants.BUILD);
+    List<String> builds = (List<String>)build.get(Constants.PROJECT);
+    boolean skipTest = (Boolean)build.get(Constants.SKIP_TEST);
+
+
     String userHome = System.getProperty("user.home");
 
     @Override
@@ -114,7 +120,12 @@ public class DevelopCommand implements Command {
                 List<String> commands = new ArrayList<>();
                 commands.add("bash");
                 commands.add("-c");
-                commands.add("mvn clean install");
+                if (skipTest) {
+                    commands.add("mvn clean install -Dmaven.test.skip=true");
+                } else {
+                    commands.add("mvn clean install");
+                }
+
                 logger.info("mvn clean install for " + build);
                 result = executor.execute(commands, path.toFile());
                 StringBuilder stdout = executor.getStdout();
