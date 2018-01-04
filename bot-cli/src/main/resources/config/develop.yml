@@ -224,6 +224,7 @@ test:
     - path: light-example-4j/graphql/mutation
       cmd: target/starwars-1.0.1.jar
     request:
+    # query
     - host: http://localhost:8080
       path: "/graphql"
       method: post
@@ -236,3 +237,29 @@ test:
           content-type: application/json
         body:
           "$.data.numberHolder.theNumber": 6
+    # mutation
+    - host: http://localhost:8080
+      path: "/graphql"
+      method: post
+      header:
+        "content-type": application/json
+      body: "{\"query\":\"mutation { changeTheNumber(newNumber: 4) { theNumber }}\"}"
+      response:
+        status: 200
+        header:
+          content-type: application/json
+        body:
+          "$.data.numberHolder.theNumber": 4
+    # query again
+    - host: http://localhost:8080
+      path: "/graphql"
+      method: post
+      header:
+        "content-type": application/json
+      body: "{\"query\":\"{ numberHolder { theNumber }}\"}"
+      response:
+        status: 200
+        header:
+          content-type: application/json
+        body:
+          "$.data.numberHolder.theNumber": 4
