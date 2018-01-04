@@ -40,6 +40,11 @@ build:
 - light-example-4j/rest/swagger/ms_chain/api_d/httpschain
 - light-example-4j/client/standalone
 - light-example-4j/client/tomcat
+- light-example-4j/graphql/helloworld
+- light-example-4j/graphql/starwars
+- light-example-4j/graphql/mutation
+- light-example-4j/graphql/mutation-idl
+- light-example-4j/graphql/relaytodo
 
 test:
   rest-swagger-petstore:
@@ -197,3 +202,37 @@ test:
         status: 200
         body:
           "$.length()": 8
+  graphql-helloworld:
+    server:
+    - path: light-example-4j/graphql/helloworld
+      cmd: target/starwars-1.0.1.jar
+    request:
+    - host: http://localhost:8080
+      path: "/graphql"
+      method: post
+      header:
+        "content-type": application/json
+      body: "{\"query\":\"{ hello }\"}"
+      response:
+        status: 200
+        header:
+          content-type: application/json
+        body:
+          "$.hello": world
+  graphql-mutation:
+    server:
+    - path: light-example-4j/graphql/mutation
+      cmd: target/starwars-1.0.1.jar
+    request:
+    - host: http://localhost:8080
+      path: "/graphql"
+      method: post
+      header:
+        "content-type": application/json
+      body: "{\"query\":\"{ numberHolder { theNumber }}\"}"
+      response:
+        status: 200
+        header:
+          content-type: application/json
+        body:
+          "$.data.numberHolder.theNumber": 6
