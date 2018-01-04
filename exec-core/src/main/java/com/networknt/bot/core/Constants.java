@@ -7,6 +7,8 @@ public class Constants {
     public static final String BRANCH = "branch";
     public static final String REPOSITORY = "repository";
     public static final String BUILD = "build";
+    public static final String PROJECT = "project";
+    public static final String SKIP_TEST = "skipTest";
     public static final String TEST = "test";
     public static final String SERVER = "server";
     public static final String REQUEST = "request";
