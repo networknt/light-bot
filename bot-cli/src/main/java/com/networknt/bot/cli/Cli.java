@@ -3,6 +3,7 @@ package com.networknt.bot.cli;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.networknt.bot.core.Command;
+import com.networknt.bot.core.Constants;
 import com.networknt.bot.core.TaskRegistry;
 import com.networknt.config.Config;
 import com.networknt.email.EmailSender;
@@ -42,7 +43,7 @@ public class Cli {
             Command command = registry.getCommand(task);
             try {
                 int result = command.execute();
-                if(result == 11) {
+                if(result == Constants.NO_REPO_CHANGE) {
                     logger.info("none of the repo has been changed, skip build!");
                 } else if(result == 0) {
                     logger.info("build successfully!");

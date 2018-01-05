@@ -104,7 +104,7 @@ public class DevelopCommand implements Command {
             }
         }
         // there is no change for all of the repositories
-        if(result == 0 && !changed) result = 11;
+        if(result == 0 && !changed) result = Constants.NO_REPO_CHANGE;
         return result;
     }
 

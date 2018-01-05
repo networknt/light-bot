@@ -37,4 +37,8 @@ public class Constants {
     // dockerhub
     public static final String MERGE = "merge";
     public static final String DOCKER = "docker";
+
+    // this result code indicate not repository has been change
+    // when pulling from remote. need to skip the build and test
+    public static final int NO_REPO_CHANGE = 100;
 }
