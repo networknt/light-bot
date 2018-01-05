@@ -33,6 +33,7 @@ public class DevelopCommand implements Command {
     Executor executor = SingletonServiceFactory.getBean(Executor.class);
     Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     String workspace = (String)config.get(Constants.WORKSPACE);
+    boolean skipE2ETest = (Boolean)config.get(Constants.SKIP_E2ETEST);
 
     Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
     Map<String, Object> test = (Map<String, Object>)config.get(Constants.TEST);
@@ -57,7 +58,7 @@ public class DevelopCommand implements Command {
         if(result != 0) return result;
         result = build();
         if(result != 0) return result;
-        result = test();
+        if(!skipE2ETest) result = test();
         return result;
     }
 

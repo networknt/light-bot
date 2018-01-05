@@ -1,4 +1,9 @@
 workspace: workspace
+# If this value is set to true, then only checkout and build will be called. It is
+# very useful if you just want to install the develop branch modules into your .m2
+# local repo. Also, some of our customers have constraint test environment to run
+# unit and integration test only and another environment to run all of tests.
+skipE2ETest: true
 checkout:
   branch: develop
   repository:
@@ -47,7 +52,8 @@ build:
   - light-example-4j/graphql/mutation
   - light-example-4j/graphql/mutation-idl
   - light-example-4j/graphql/relaytodo
-
+# This section defines end-to-end tests with real live servers, if you want to skip
+# these tests, please change the same level skipE2ETest to true.
 test:
   rest-swagger-petstore:
     server:

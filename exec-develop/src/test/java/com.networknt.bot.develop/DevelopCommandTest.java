@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class DevelopCommandTest {
-    //@Test
+    @Test
     public void testDevelop() throws IOException, InterruptedException {
         DevelopCommand cmd = new DevelopCommand();
         int result = cmd.execute();
