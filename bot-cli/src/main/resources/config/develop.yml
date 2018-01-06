@@ -3,7 +3,7 @@ workspace: workspace
 # very useful if you just want to install the develop branch modules into your .m2
 # local repo. Also, some of our customers have constraint test environment to run
 # unit and integration test only and another environment to run all of tests.
-skipE2ETest: true
+skipE2ETest: false
 checkout:
   branch: develop
   repository:
@@ -226,7 +226,7 @@ test:
         header:
           content-type: application/json
         body:
-          "$.hello": world
+          "$.data.hello": world
   graphql-mutation:
     server:
     - path: light-example-4j/graphql/mutation

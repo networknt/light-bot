@@ -226,7 +226,7 @@ test:
         header:
           content-type: application/json
         body:
-          "$.hello": world
+          "$.data.hello": world
   graphql-mutation:
     server:
     - path: light-example-4j/graphql/mutation
