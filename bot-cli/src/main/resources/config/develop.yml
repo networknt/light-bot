@@ -257,7 +257,7 @@ test:
         header:
           content-type: application/json
         body:
-          "$.data.numberHolder.theNumber": 4
+          "$.data.changeTheNumber.theNumber": 4
     # query again
     - host: http://localhost:8080
       path: "/graphql"
