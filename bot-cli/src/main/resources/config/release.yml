@@ -1,7 +1,7 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: release
 # release version that is used to generate changelog. This need to be changed every time
-version: 1.5.6
+version: 1.5.7
 # github organization as the token is bound to the org in changelog generator. This
 # means that you can only release multiple repositories within the same org each time.
 organization: networknt
@@ -29,11 +29,11 @@ release:
 #  - openapi-parser
 #  - light-rest-4j
 #  - light-graphql-4j
-#  - light-hybrid-4j
+  - light-hybrid-4j
 #  - light-codegen
-#  - light-eventuate-4j
-#  - light-tram-4j
+  - light-eventuate-4j
+  - light-tram-4j
   - light-saga-4j
-#  - light-session-4j
+  - light-session-4j
 #  - light-proxy
 #  - light-oauth2
