@@ -1,9 +1,9 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: version
 # old existing version that need to be upgraded
-old_version: 1.5.6
+old_version: 1.5.7
 # new upgraded version. These two versions need to be updated every time to run this command
-new_version: 1.5.7
+new_version: 1.5.8
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
   branch: develop
