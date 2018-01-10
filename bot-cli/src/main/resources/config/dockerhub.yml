@@ -1,7 +1,7 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: dockerhub
 # new upgraded version. This needs to be changed for every release.
-version: 1.5.6
+version: 1.5.7
 # github organization as the token is bound to the org in changelog generator. This
 # means that you can only release multiple repositories within the same org each time.
 organization: networknt
