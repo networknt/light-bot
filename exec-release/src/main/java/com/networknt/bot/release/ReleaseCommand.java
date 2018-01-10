@@ -115,6 +115,7 @@ public class ReleaseCommand implements Command {
                         break;
                     }
                     if(tokenFound) {
+                        line = line.replace("'", "\\'");
                         stringBuffer.append(line);
                         stringBuffer.append("\n");
                     }
