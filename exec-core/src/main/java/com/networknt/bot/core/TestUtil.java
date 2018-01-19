@@ -116,6 +116,7 @@ public class TestUtil {
         try {
             connection = client.connect(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
         } catch (Exception e) {
+            logger.error("request Exception: " + " host = " + host + " path = " + path + " method = " + method + " header = " + requestHeader);
             throw new RuntimeException(e);
         }
         final AtomicReference<ClientResponse> reference = new AtomicReference<>();
@@ -144,6 +145,7 @@ public class TestUtil {
         try {
             connection = client.connect(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
         } catch (Exception e) {
+            logger.error("requestWithBody Exception: " + " host = " + host + " path = " + path + " method = " + method + " header = " + requestHeader + " requestBody = " + requestBody);
             throw new RuntimeException(e);
         }
         final AtomicReference<ClientResponse> reference = new AtomicReference<>();
