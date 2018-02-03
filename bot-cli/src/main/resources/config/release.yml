@@ -1,7 +1,7 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: release
 # release version that is used to generate changelog. This need to be changed every time
-version: 1.5.7
+version: 1.5.8
 # github organization as the token is bound to the org in changelog generator. This
 # means that you can only release multiple repositories within the same org each time.
 organization: networknt
@@ -25,10 +25,10 @@ checkout:
   - git@github.com:networknt/light-docker.git
 # merge develop to master, check in master and release master
 release:
-#  - light-4j
-#  - openapi-parser
-#  - light-rest-4j
-#  - light-graphql-4j
+  - light-4j
+  - openapi-parser
+  - light-rest-4j
+  - light-graphql-4j
   - light-hybrid-4j
 #  - light-codegen
   - light-eventuate-4j
