@@ -90,9 +90,24 @@ version:
   - path: pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   light-example-4j:
+
+  # eventuate framework examples
   # eventuate account management
   - path: eventuate/account-management/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # eventuate todolist
+  - path: eventuate/todo-list/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: eventuate/todo-list/rest-command/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: eventuate/todo-list/hybrid-command/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: eventuate/todo-list/rest-query/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: eventuate/todo-list/hybrid-query/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+
+  # discovery
   # discovery api_a
   - path: discovery/api_a/consul/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
@@ -161,6 +176,8 @@ version:
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: discovery/api_d/token/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+
+  # graphql framework
   # graphql subscription
   - path: graphql/subscription/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
@@ -186,6 +203,7 @@ version:
   - path: client/tomcat/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
 
+  # light-tram-4j framework
   # tram todolist
   - path: tram/light-tram-todolist/multi-module/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
@@ -201,7 +219,13 @@ version:
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: tram/light-tram-todolist/multi-module/tram-todo-view/pom.xml
     match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  # tram todolist single module
+  - path: tram/light-tram-todolist/single-module/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: tram/light-tram-todolist/single-module/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
 
+  # light-saga-4j framework
   # saga customers orders
   - path: saga/light-saga-cutomers-and-orders/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
@@ -216,4 +240,73 @@ version:
   - path: saga/light-saga-cutomers-and-orders/customer-service/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: saga/light-saga-cutomers-and-orders/customer-service/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+
+  # light-rest-4j framework
+  # swagger
+  # proxy-backend
+  - path: rest/swagger/proxy-backend/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # petstore
+  - path: rest/swagger/petstore/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # ms-chain
+  - path: rest/swagger/ms_chain/api_a/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_a/metrics/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_a/httpschain/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_a/security/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_a/httpchain/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+
+  - path: rest/swagger/ms_chain/api_b/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_b/metrics/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_b/httpschain/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_b/security/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_b/httpchain/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+
+  - path: rest/swagger/ms_chain/api_c/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_c/metrics/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_c/httpschain/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_c/security/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_c/httpchain/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+
+  - path: rest/swagger/ms_chain/api_d/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_d/metrics/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_d/httpschain/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_d/security/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/swagger/ms_chain/api_d/httpchain/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+
+  # openapi
+  - path: rest/openapi/proxy-backend/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/proxy-backend/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+
+  - path: rest/openapi/cors/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/cors/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+
+  - path: rest/openapi/petstore/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/petstore/pom.xml
     match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
