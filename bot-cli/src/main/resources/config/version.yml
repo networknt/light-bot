@@ -1,9 +1,9 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: version
 # old existing version that need to be upgraded
-old_version: 1.5.7
+old_version: 1.5.8
 # new upgraded version. These two versions need to be updated every time to run this command
-new_version: 1.5.8
+new_version: 1.5.9
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
   branch: develop
@@ -89,4 +89,131 @@ version:
   light-oauth2:
   - path: pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  light-example-4j:
+  # eventuate account management
+  - path: eventuate/account-management/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # discovery api_a
+  - path: discovery/api_a/consul/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_a/consuldocker/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_a/dynamic/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_a/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_a/multiple/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_a/static/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_a/tag/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_a/token/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # discovery api_b
+  - path: discovery/api_b/consul/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_b/consuldocker/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_b/dynamic/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_b/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_b/multiple/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_b/static/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_b/tag/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_b/token/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # discovery api_c
+  - path: discovery/api_c/consul/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_c/consuldocker/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_c/dynamic/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_c/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_c/multiple/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_c/static/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_c/tag/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_c/token/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # discovery api_d
+  - path: discovery/api_d/consul/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_d/consuldocker/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_d/dynamic/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_d/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_d/multiple/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_d/static/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_d/tag/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_d/token/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # graphql subscription
+  - path: graphql/subscription/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # graphql helloworld
+  - path: graphql/helloworld/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # graphql mutation-idl
+  - path: graphql/mutation-idl/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # graphql relaytodo
+  - path: graphql/relaytodo/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # graphql mutation
+  - path: graphql/mutation/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # graphql starwars
+  - path: graphql/starwars/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # client standalone
+  - path: client/standalone/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  # client tomcat
+  - path: client/tomcat/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
 
+  # tram todolist
+  - path: tram/light-tram-todolist/multi-module/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: tram/light-tram-todolist/multi-module/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  # tram todolist command
+  - path: tram/light-tram-todolist/multi-module/tram-todo-command/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: tram/light-tram-todolist/multi-module/tram-todo-command/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  # tram todolist view
+  - path: tram/light-tram-todolist/multi-module/tram-todo-view/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: tram/light-tram-todolist/multi-module/tram-todo-view/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+
+  # saga customers orders
+  - path: saga/light-saga-cutomers-and-orders/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: saga/light-saga-cutomers-and-orders/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  # saga customers orders order service
+  - path: saga/light-saga-cutomers-and-orders/order-service/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: saga/light-saga-cutomers-and-orders/order-service/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  # saga customers orders customer service
+  - path: saga/light-saga-cutomers-and-orders/customer-service/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: saga/light-saga-cutomers-and-orders/customer-service/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
