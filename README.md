@@ -1,5 +1,6 @@
 # light-bot
-A microservice based devops agent that handles multiple repositories and dependencies
+A microservice based devops server and agent that handle multiple repositories and dependencies
+from multiple organizations or git servers.
 
 ### Why this tool
 
@@ -12,8 +13,15 @@ time if one upstream repository is changed.
 ##### Fully Automatic Pipeline
 
 Most of existing tools are trying to simplify the UI but it is very hard to build a pipeline
-from one git merge to production. The cycle git pull-->build-->local unit tests-->scanning-->
-image creation should/will be repeated at every commit, automatically.
+from one git merge to production. The cycle git pull-->build-->unit tests-->integration tests-->
+scanning-->image creation should/will be repeated at every commit, automatically. 
+
+##### Focus on Code
+
+Most devops tools focus on the interface with configurations and plugins to allow users to
+design their pipelines. It is very easy to start with but for complicated workflow, it is
+very hard to with just configuration and a stack of plugins. We are trying to do DevOps as
+code. 
 
 ##### Cache Local Repositories
 
