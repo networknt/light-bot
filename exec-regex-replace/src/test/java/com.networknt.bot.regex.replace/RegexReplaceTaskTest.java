@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class RegexReplaceTaskTest {
-    @Test
+    //@Test
     public void testRegexReplace() throws IOException, InterruptedException {
         RegexReplaceTask cmd = new RegexReplaceTask();
         int result = cmd.execute();
