@@ -13,6 +13,10 @@ public class RegexReplacement {
         this.replacement = replacement;
     }
 
+    public boolean match(String in) {
+        return regex.matcher(in).find();
+    }
+
     public String replace(String in) {
         boolean matches = regex.matcher(in).find();
         if(matches) {

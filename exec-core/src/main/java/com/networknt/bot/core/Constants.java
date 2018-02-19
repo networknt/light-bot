@@ -38,6 +38,15 @@ public class Constants {
     public static final String MERGE = "merge";
     public static final String DOCKER = "docker";
 
+    // regex-replace
+    public static final String REPLACE = "replace";
+    public static final String OLD_VALUE = "old_value";
+    public static final String NEW_VALUE = "new_value";
+    public static final String SKIP_CHECKOUT = "skip_checkout";
+    public static final String SKIP_REPLACE = "skip_replace";
+    public static final String SKIP_CHECKIN = "skip_checkin";
+    public static final String GLOB = "glob";
+
     // this result code indicate not repository has been change
     // when pulling from remote. need to skip the build and test
     public static final int NO_REPO_CHANGE = 100;
