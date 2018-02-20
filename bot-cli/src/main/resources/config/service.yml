@@ -4,8 +4,9 @@ singletons:
 - com.networknt.bot.core.Executor:
   - com.networknt.bot.core.CommandExecutor
 - com.networknt.bot.core.Command:
-  - com.networknt.bot.develop.DevelopCommand
+  - com.networknt.bot.develop.DevelopBuildTask
   - com.networknt.bot.version.VersionCommand
   - com.networknt.bot.release.ReleaseCommand
   - com.networknt.bot.dockerhub.DockerhubCommand
   - com.networknt.bot.upgrade.UpgradeCommand
+  - com.networknt.bot.regex.replace.RegexReplaceTask

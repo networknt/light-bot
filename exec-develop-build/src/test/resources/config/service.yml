@@ -4,4 +4,4 @@ singletons:
 - com.networknt.bot.core.Executor:
   - com.networknt.bot.core.CommandExecutor
 - com.networknt.bot.core.Command:
-  - com.networknt.bot.develop.DevelopCommand
+  - com.networknt.bot.develop.DevelopBuildTask

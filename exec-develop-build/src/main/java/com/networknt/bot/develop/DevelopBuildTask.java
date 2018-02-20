@@ -5,35 +5,28 @@ import com.networknt.bot.core.cmd.CloneBranchCmd;
 import com.networknt.client.Http2Client;
 import com.networknt.config.Config;
 import com.networknt.service.SingletonServiceFactory;
-import io.undertow.UndertowOptions;
-import io.undertow.client.ClientConnection;
-import io.undertow.client.ClientRequest;
 import io.undertow.client.ClientResponse;
 import io.undertow.util.HeaderMap;
-import io.undertow.util.Methods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xnio.IoUtils;
-import org.xnio.OptionMap;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class DevelopCommand implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(DevelopCommand.class);
-    public static final String CONFIG_NAME = "develop";
+public class DevelopBuildTask implements Command {
+    private static final Logger logger = LoggerFactory.getLogger(DevelopBuildTask.class);
+    public static final String CONFIG_NAME = "develop-build";
     Executor executor = SingletonServiceFactory.getBean(Executor.class);
     Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     String workspace = (String)config.get(Constants.WORKSPACE);
-    boolean skipE2ETest = (Boolean)config.get(Constants.SKIP_E2ETEST);
+    boolean skipTest = (Boolean)config.get(Constants.SKIP_TEST);
+    boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
+    boolean skipBuild = (Boolean)config.get(Constants.SKIP_BUILD);
 
     Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
     Map<String, Object> test = (Map<String, Object>)config.get(Constants.TEST);
@@ -42,14 +35,13 @@ public class DevelopCommand implements Command {
 
     Map<String, Object> build = (Map<String, Object>)config.get(Constants.BUILD);
     List<String> builds = (List<String>)build.get(Constants.PROJECT);
-    boolean skipTest = (Boolean)build.get(Constants.SKIP_TEST);
 
 
     String userHome = System.getProperty("user.home");
 
     @Override
     public String getName() {
-        return "develop";
+        return "develop-build";
     }
 
     @Override
@@ -58,7 +50,7 @@ public class DevelopCommand implements Command {
         if(result != 0) return result;
         result = build();
         if(result != 0) return result;
-        if(!skipE2ETest) result = test();
+        result = test();
         return result;
     }
 
@@ -66,6 +58,8 @@ public class DevelopCommand implements Command {
 
     int checkout() throws IOException, InterruptedException {
         int result = 0;
+        if(skipCheckout) return result;
+
         boolean changed = false;
 
         // check if there is a directory workspace in home directory.
@@ -110,6 +104,8 @@ public class DevelopCommand implements Command {
 
     int build() throws IOException, InterruptedException {
         int result = 0;
+        if(skipBuild) return result;
+
         for(String build: builds) {
             Path path = Paths.get(userHome, workspace, build);
             if(Files.notExists(path)) {
@@ -143,6 +139,7 @@ public class DevelopCommand implements Command {
 
     int test() throws IOException, InterruptedException {
         int result = 0;
+        if(skipTest) return result;
 
         for(Map.Entry<String, Object> entry : test.entrySet()) {
             String testName = entry.getKey();

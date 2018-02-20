@@ -5,10 +5,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class DevelopCommandTest {
+public class DevelopBuildTaskTest {
     //@Test
     public void testDevelop() throws IOException, InterruptedException {
-        DevelopCommand cmd = new DevelopCommand();
+        DevelopBuildTask cmd = new DevelopBuildTask();
         int result = cmd.execute();
         if(result == 1) {
             System.out.println("none of the repo has been changed");
@@ -19,7 +19,7 @@ public class DevelopCommandTest {
 
     //@Test
     public void testCheckout() throws IOException, InterruptedException {
-        DevelopCommand cmd = new DevelopCommand();
+        DevelopBuildTask cmd = new DevelopBuildTask();
         int result = cmd.checkout();
         if(result == 1) {
             System.out.println("none of the repo has been changed");
@@ -30,7 +30,7 @@ public class DevelopCommandTest {
 
     //@Test
     public void testTest() throws IOException, InterruptedException {
-        DevelopCommand cmd = new DevelopCommand();
+        DevelopBuildTask cmd = new DevelopBuildTask();
         int result = cmd.test();
         Assert.assertEquals(0, result);
     }

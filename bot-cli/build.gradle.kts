@@ -8,7 +8,7 @@ application {
 
 dependencies {
     compile(project(":exec-core"))
-    compile(project(":exec-develop"))
+    compile(project(":exec-develop-build"))
     compile(project(":exec-version"))
     compile(project(":exec-release"))
     compile(project(":exec-dockerhub"))

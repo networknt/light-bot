@@ -1,15 +1,15 @@
 package com.networknt.bot.core;
 
 public class Constants {
-    // develop
+    // develop build
     public static final String WORKSPACE = "workspace";
     public static final String CHECKOUT = "checkout";
     public static final String BRANCH = "branch";
     public static final String REPOSITORY = "repository";
     public static final String BUILD = "build";
     public static final String PROJECT = "project";
-    public static final String SKIP_TEST = "skipTest";
-    public static final String SKIP_E2ETEST = "skipE2ETest";
+    public static final String SKIP_TEST = "skip_test";
+    public static final String SKIP_BUILD = "skip_build";
     public static final String TEST = "test";
     public static final String SERVER = "server";
     public static final String REQUEST = "request";
@@ -25,7 +25,6 @@ public class Constants {
     // version
     public static final String OLD_VERSION = "old_version";
     public static final String NEW_VERSION = "new_version";
-    public static final String UPGRADE = "upgrade";
     public static final String MATCH = "match";
     public static final String MAVEN = "maven";
     public static final String VERSION = "version";
