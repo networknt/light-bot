@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class VersionUpgradeTaskTest {
-    @Test
+    //@Test
     public void testVersionUpgrade() throws IOException, InterruptedException {
         VersionUpgradeTask cmd = new VersionUpgradeTask();
         int result = cmd.execute();
