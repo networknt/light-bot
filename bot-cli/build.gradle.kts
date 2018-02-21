@@ -11,7 +11,7 @@ dependencies {
     compile(project(":exec-develop-build"))
     compile(project(":exec-version"))
     compile(project(":exec-release-maven"))
-    compile(project(":exec-dockerhub"))
+    compile(project(":exec-release-docker"))
     compile(project(":exec-upgrade"))
     compile(project(":exec-regex-replace"))
     compile("com.networknt:email:1.5.6")

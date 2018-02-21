@@ -1,4 +1,4 @@
-package com.networknt.bot.dockerhub;
+package com.networknt.bot.docker;
 
 import com.networknt.bot.core.Command;
 import com.networknt.bot.core.Constants;
@@ -19,13 +19,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DockerhubCommand implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(DockerhubCommand.class);
-    private static final String CONFIG_NAME = "dockerhub";
+public class ReleaseDockerTask implements Command {
+    private static final Logger logger = LoggerFactory.getLogger(ReleaseDockerTask.class);
+    private static final String CONFIG_NAME = "release-docker";
     private Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     private String workspace = (String)config.get(Constants.WORKSPACE);
     private String version = (String)config.get(Constants.VERSION);
     private String organization = (String)config.get(Constants.ORGANIZATION);
+    private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
+    private boolean skipMerge = (Boolean)config.get(Constants.SKIP_MERGE);
+    private boolean skipMaven = (Boolean)config.get(Constants.SKIP_MAVEN);
+    private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
+    private boolean skipDocker = (Boolean)config.get(Constants.SKIP_DOCKER);
+
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
@@ -45,7 +51,7 @@ public class DockerhubCommand implements Command {
 
     @Override
     public String getName() {
-        return "dockerhub";
+        return "release-docker";
     }
 
     @Override
@@ -64,6 +70,7 @@ public class DockerhubCommand implements Command {
 
     private int checkout() throws IOException, InterruptedException {
         int result = 0;
+        if(skipCheckout) return result;
 
         // check if there is a directory workspace in home directory.
         Path wPath = Paths.get(userHome, workspace);
@@ -90,6 +97,8 @@ public class DockerhubCommand implements Command {
 
     private int merge() throws IOException, InterruptedException {
         int result = 0;
+        if(skipMerge) return result;
+
         for(String merge: merges) {
             Path rPath = Paths.get(userHome, workspace, merge);
             MergeMasterCmd mergeMasterCmd = new MergeMasterCmd(rPath);
@@ -101,6 +110,8 @@ public class DockerhubCommand implements Command {
 
     private int maven() throws IOException, InterruptedException {
         int result = 0;
+        if(skipMaven) return result;
+
         for(String maven: mavens) {
             Path rPath = Paths.get(userHome, workspace, maven);
             MavenBuildCmd mavenBuildCmd = new MavenBuildCmd(rPath);
@@ -112,6 +123,8 @@ public class DockerhubCommand implements Command {
 
     private int release() throws IOException, InterruptedException {
         int result = 0;
+        if(skipRelease) return result;
+
         for(String release: releases) {
             Path rPath = Paths.get(userHome, workspace, release);
             // generate changelog.md, check in
@@ -156,6 +169,8 @@ public class DockerhubCommand implements Command {
 
     private int docker() throws IOException, InterruptedException {
         int result = 0;
+        if(skipDocker) return result;
+
         for(String docker: dockers) {
             Path rPath = Paths.get(userHome, workspace, docker);
             DockerBuildCmd dockerBuildCmd = new DockerBuildCmd(version, rPath);

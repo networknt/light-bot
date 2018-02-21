@@ -35,9 +35,11 @@ public class Constants {
     public static final String SKIP_RELEASE = "skip_release";
     public static final String SKIP_MERGE = "skip_merge";
 
-    // dockerhub
+    // release-docker
     public static final String MERGE = "merge";
     public static final String DOCKER = "docker";
+    public static final String SKIP_MAVEN = "skip_maven";
+    public static final String SKIP_DOCKER = "skip_docker";
 
     // regex-replace
     public static final String REPLACE = "replace";

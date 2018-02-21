@@ -1,10 +1,20 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
-workspace: dockerhub
+workspace: releasedocker
 # new upgraded version. This needs to be changed for every release.
-version: 1.5.8
+version: 1.5.9
 # github organization as the token is bound to the org in changelog generator. This
 # means that you can only release multiple repositories within the same org each time.
 organization: networknt
+# skip checkout if you know all latest code has been checkout in the previous build
+skip_checkout: false
+# skip merge if develop branch has been merged to master
+skip_merge: false
+# skip maven build if you know the build has been done already
+skip_maven: false
+# skip release if it is already done.
+skip_release: false
+# skip docker publish if it is done already.
+skip_docker: false
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
   branch: develop
@@ -34,7 +44,7 @@ release:
 # build docker image and push to docker hub
 docker:
   - light-proxy
-  - light-docker/light-codegen
+#  - light-docker/light-codegen
   - light-oauth2/authorize
   - light-oauth2/client
   - light-oauth2/code
