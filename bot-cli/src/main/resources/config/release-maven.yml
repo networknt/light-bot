@@ -8,8 +8,10 @@ organization: networknt
 # You can skip checkout if you are sure that the code in workspace are the latest and
 # you just want to repeat the release process due to some environmental issue before.
 skip_checkout: false
+# You can skip the merge step is this has been done in the previous execution.
+skip_merge: false
 # You can skip the last release step so that you can double check the merged result.
-skip_release: false
+skip_release: true
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
   branch: develop
@@ -29,7 +31,35 @@ checkout:
   - git@github.com:networknt/light-oauth2.git
   - git@github.com:networknt/light-example-4j.git
   - git@github.com:networknt/light-docker.git
-# merge develop to master, check in master and release master
+  - git@github.com:networknt/light-doc.git
+  - git@github.com:networknt/light-bot-config.git
+  - git@github.com:networknt/light-config-test.git
+  - git@github.com:networknt/light-bot.git
+  - git@github.com:networknt/light-config-server.git
+  - git@github.com:networknt/microservices-framework-benchmark.git
+  - git@github.com:networknt/model-config.git
+  - git@github.com:networknt/light-portal.git
+  - git@github.com:networknt/react-schema-form.git
+  - git@github.com:networknt/light-workflow-4j.git
+  - git@github.com:networknt/light.git
+  - git@github.com:networknt/swagger-bundler.git
+  - git@github.com:networknt/http2client-benchmark.git
+  - git@github.com:networknt/json-schema-validator-perftest.git
+  - git@github.com:networknt/microbenchmark.git
+  - git@github.com:networknt/react-schema-form-rc-select.git
+  - git@github.com:networknt/light-config-prod.git
+  - git@github.com:networknt/react-file-manager.git
+  - git@github.com:networknt/light-commerce.git
+  - git@github.com:networknt/light-cms.git
+# merge develop to master and check in master for above repositories.
+# It assumes that you always merge into master branch to release.
+# Some of the repositories above are not going to be release but simple merge from
+# develop to master in order to sync with other repo's release.
+merge:
+# generate changelog.md from github issues and check in
+# release to maven central
+# merge the changelog.md to develop branch
+# publish the release to github repository
 release:
   - light-4j
   - openapi-parser

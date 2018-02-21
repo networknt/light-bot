@@ -24,6 +24,7 @@ public class ReleaseMavenTask implements Command {
     private String version = (String)config.get(Constants.VERSION);
     private String organization = (String)config.get(Constants.ORGANIZATION);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
+    private boolean skipMerge = (Boolean)config.get(Constants.SKIP_MERGE);
     private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
 
     @SuppressWarnings("unchecked")
@@ -43,6 +44,8 @@ public class ReleaseMavenTask implements Command {
     @Override
     public int execute() throws IOException, InterruptedException {
         int result = checkout();
+        if(result != 0) return result;
+        result = merge();
         if(result != 0) return result;
         result = release();
         return result;
@@ -75,9 +78,10 @@ public class ReleaseMavenTask implements Command {
         return result;
     }
 
-    private int release() throws IOException, InterruptedException {
+
+    private int merge() throws IOException, InterruptedException {
         int result = 0;
-        if(skipRelease) return result;
+        if(skipMerge) return result;
 
         for(String release: releases) {
             Path rPath = Paths.get(userHome, workspace, release);
@@ -85,6 +89,17 @@ public class ReleaseMavenTask implements Command {
             MergeMasterCmd mergeMasterCmd = new MergeMasterCmd(rPath);
             result = mergeMasterCmd.execute();
             if(result != 0) break;
+
+        }
+        return result;
+    }
+
+    private int release() throws IOException, InterruptedException {
+        int result = 0;
+        if(skipRelease) return result;
+
+        for(String release: releases) {
+            Path rPath = Paths.get(userHome, workspace, release);
 
             // generate changelog.md, check in
             GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, rPath);

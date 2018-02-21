@@ -33,6 +33,7 @@ public class Constants {
     public static final String ORGANIZATION = "organization";
     public static final String RELEASE = "release";
     public static final String SKIP_RELEASE = "skip_release";
+    public static final String SKIP_MERGE = "skip_merge";
 
     // dockerhub
     public static final String MERGE = "merge";
