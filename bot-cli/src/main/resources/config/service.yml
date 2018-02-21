@@ -8,5 +8,4 @@ singletons:
   - com.networknt.bot.version.VersionUpgradeTask
   - com.networknt.bot.release.ReleaseMavenTask
   - com.networknt.bot.docker.ReleaseDockerTask
-  - com.networknt.bot.upgrade.UpgradeCommand
   - com.networknt.bot.regex.replace.RegexReplaceTask

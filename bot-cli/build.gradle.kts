@@ -12,7 +12,6 @@ dependencies {
     compile(project(":exec-version-upgrade"))
     compile(project(":exec-release-maven"))
     compile(project(":exec-release-docker"))
-    compile(project(":exec-upgrade"))
     compile(project(":exec-regex-replace"))
     compile("com.networknt:email:1.5.6")
     compile("com.beust:jcommander:1.72")
