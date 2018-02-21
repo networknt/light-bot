@@ -20,30 +20,35 @@ checkout:
   branch: develop
   repository:
   - git@github.com:networknt/light-proxy.git
+  - git@github.com:networknt/light-router.git
   - git@github.com:networknt/light-oauth2.git
   - git@github.com:networknt/light-codegen.git
   - git@github.com:networknt/light-docker.git
 # merge develop to master for above repos
 merge:
   - light-proxy
+  - light-router
   - light-oauth2
   - light-codegen
   - light-docker
 # maven build
 maven:
   - light-proxy
+  - light-router
   - light-oauth2
   - light-codegen
 
 # update changelog in master, merge it to develop and publish to github.com
 release:
   - light-proxy
+  - light-router
   - light-oauth2
   - light-codegen
 
 # build docker image and push to docker hub
 docker:
   - light-proxy
+  - light-router
 #  - light-docker/light-codegen
   - light-oauth2/authorize
   - light-oauth2/client
