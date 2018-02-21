@@ -1,9 +1,19 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
-workspace: version
+workspace: versionupgrade
 # old existing version that need to be upgraded
-old_version: 1.5.8
+old_version: 1.5.9
 # new upgraded version. These two versions need to be updated every time to run this command
-new_version: 1.5.9
+new_version: 1.5.10
+# only skip the checkout if you are sure that the latest code is in the workspace. It is
+# OK to execute it several times.
+skip_checkout: false
+# skip maven version upgrade. It should not be skip if you haven't run it yet. It is OK
+# to execute it several times.
+skip_maven: false
+# skip the regular expression match and replace. It is safe to run it multiple times.
+skip_version: false
+# skip checkin if you want to review the changes before checking in to github.
+skip_checkin: false
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
   branch: develop
@@ -19,6 +29,7 @@ checkout:
   - git@github.com:networknt/light-saga-4j.git
   - git@github.com:networknt/light-session-4j.git
   - git@github.com:networknt/light-proxy.git
+  - git@github.com:networknt/light-router.git
   - git@github.com:networknt/light-oauth2.git
   - git@github.com:networknt/light-example-4j.git
   - git@github.com:networknt/light-docker.git
@@ -35,6 +46,7 @@ maven:
   - light-saga-4j
   - light-session-4j
   - light-proxy
+  - light-router
   - light-oauth2
 # regex replacement for dependencies
 version:
@@ -86,6 +98,11 @@ version:
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: pom.xml
     match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  light-router:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
   light-oauth2:
   - path: pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
@@ -125,6 +142,8 @@ version:
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: discovery/api_a/token/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_a/kubernetes/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   # discovery api_b
   - path: discovery/api_b/consul/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
@@ -141,6 +160,8 @@ version:
   - path: discovery/api_b/tag/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: discovery/api_b/token/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_b/kubernetes/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   # discovery api_c
   - path: discovery/api_c/consul/pom.xml
@@ -159,6 +180,8 @@ version:
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: discovery/api_c/token/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_c/kubernetes/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   # discovery api_d
   - path: discovery/api_d/consul/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
@@ -175,6 +198,8 @@ version:
   - path: discovery/api_d/tag/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: discovery/api_d/token/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: discovery/api_d/kubernetes/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
 
   # graphql framework
