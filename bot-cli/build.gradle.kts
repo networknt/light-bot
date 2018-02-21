@@ -10,7 +10,7 @@ dependencies {
     compile(project(":exec-core"))
     compile(project(":exec-develop-build"))
     compile(project(":exec-version"))
-    compile(project(":exec-release"))
+    compile(project(":exec-release-maven"))
     compile(project(":exec-dockerhub"))
     compile(project(":exec-upgrade"))
     compile(project(":exec-regex-replace"))

@@ -1,1 +1,1 @@
-include("exec-core", "exec-develop-build", "exec-version", "exec-release", "exec-dockerhub", "exec-upgrade", "exec-regex-replace", "bot-cli")
+include("exec-core", "exec-develop-build", "exec-version", "exec-release-maven", "exec-dockerhub", "exec-upgrade", "exec-regex-replace", "bot-cli")

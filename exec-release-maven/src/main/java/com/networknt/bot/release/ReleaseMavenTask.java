@@ -2,15 +2,12 @@ package com.networknt.bot.release;
 
 import com.networknt.bot.core.Command;
 import com.networknt.bot.core.Constants;
-import com.networknt.bot.core.RegexReplacement;
 import com.networknt.bot.core.cmd.*;
 import com.networknt.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -18,16 +15,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class ReleaseCommand implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(ReleaseCommand.class);
-    private static final String CONFIG_NAME = "release";
+public class ReleaseMavenTask implements Command {
+    private static final Logger logger = LoggerFactory.getLogger(ReleaseMavenTask.class);
+    private static final String CONFIG_NAME = "release-maven";
     private Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     private String workspace = (String)config.get(Constants.WORKSPACE);
     private String version = (String)config.get(Constants.VERSION);
     private String organization = (String)config.get(Constants.ORGANIZATION);
+    private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
+    private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
@@ -40,7 +37,7 @@ public class ReleaseCommand implements Command {
 
     @Override
     public String getName() {
-        return "release";
+        return "release-maven";
     }
 
     @Override
@@ -53,6 +50,7 @@ public class ReleaseCommand implements Command {
 
     private int checkout() throws IOException, InterruptedException {
         int result = 0;
+        if(skipCheckout) return result;
 
         // check if there is a directory workspace in home directory.
         Path wPath = Paths.get(userHome, workspace);
@@ -79,6 +77,8 @@ public class ReleaseCommand implements Command {
 
     private int release() throws IOException, InterruptedException {
         int result = 0;
+        if(skipRelease) return result;
+
         for(String release: releases) {
             Path rPath = Paths.get(userHome, workspace, release);
             // merge develop branch to master and check in

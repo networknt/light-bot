@@ -1,7 +1,7 @@
 package com.networknt.bot.core;
 
 public class Constants {
-    // develop build
+    // develop-build
     public static final String WORKSPACE = "workspace";
     public static final String CHECKOUT = "checkout";
     public static final String BRANCH = "branch";
@@ -29,9 +29,10 @@ public class Constants {
     public static final String MAVEN = "maven";
     public static final String VERSION = "version";
 
-    // release
+    // release-maven
     public static final String ORGANIZATION = "organization";
     public static final String RELEASE = "release";
+    public static final String SKIP_RELEASE = "skip_release";
 
     // dockerhub
     public static final String MERGE = "merge";

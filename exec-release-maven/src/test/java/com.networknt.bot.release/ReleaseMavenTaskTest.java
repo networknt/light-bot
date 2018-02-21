@@ -1,14 +1,13 @@
 package com.networknt.bot.release;
 
 import org.junit.Assert;
-import org.junit.Test;
 
 import java.io.IOException;
 
-public class ReleaseCommandTest {
+public class ReleaseMavenTaskTest {
     //@Test
-    public void testRelease() throws IOException, InterruptedException {
-        ReleaseCommand cmd = new ReleaseCommand();
+    public void testReleaseMaven() throws IOException, InterruptedException {
+        ReleaseMavenTask cmd = new ReleaseMavenTask();
         int result = cmd.execute();
         Assert.assertEquals(0, result);
     }
