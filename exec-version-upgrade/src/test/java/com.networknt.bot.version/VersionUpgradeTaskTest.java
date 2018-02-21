@@ -5,10 +5,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class VersionCommandTest {
-    //@Test
-    public void testVersion() throws IOException, InterruptedException {
-        VersionCommand cmd = new VersionCommand();
+public class VersionUpgradeTaskTest {
+    @Test
+    public void testVersionUpgrade() throws IOException, InterruptedException {
+        VersionUpgradeTask cmd = new VersionUpgradeTask();
         int result = cmd.execute();
         Assert.assertEquals(0, result);
     }

@@ -22,12 +22,13 @@ public class Constants {
     public static final String HEADER = "header";
     public static final String BODY = "body";
 
-    // version
+    // version-upgrade
     public static final String OLD_VERSION = "old_version";
     public static final String NEW_VERSION = "new_version";
     public static final String MATCH = "match";
     public static final String MAVEN = "maven";
     public static final String VERSION = "version";
+    public static final String SKIP_VERSION = "skip_version";
 
     // release-maven
     public static final String ORGANIZATION = "organization";

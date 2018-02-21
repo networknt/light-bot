@@ -5,7 +5,7 @@ singletons:
   - com.networknt.bot.core.CommandExecutor
 - com.networknt.bot.core.Command:
   - com.networknt.bot.develop.DevelopBuildTask
-  - com.networknt.bot.version.VersionCommand
+  - com.networknt.bot.version.VersionUpgradeTask
   - com.networknt.bot.release.ReleaseMavenTask
   - com.networknt.bot.docker.ReleaseDockerTask
   - com.networknt.bot.upgrade.UpgradeCommand

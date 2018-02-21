@@ -9,7 +9,7 @@ application {
 dependencies {
     compile(project(":exec-core"))
     compile(project(":exec-develop-build"))
-    compile(project(":exec-version"))
+    compile(project(":exec-version-upgrade"))
     compile(project(":exec-release-maven"))
     compile(project(":exec-release-docker"))
     compile(project(":exec-upgrade"))
