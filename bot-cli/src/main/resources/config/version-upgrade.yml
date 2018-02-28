@@ -352,3 +352,13 @@ version:
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: rest/openapi/petstore/pom.xml
     match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  # client
+  - path: client/standalone/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+
+  - path: client/tomcat/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+
+  # webserver
+  - path: webserver/api-simple-web/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
