@@ -50,6 +50,14 @@ build:
   - light-example-4j/rest/swagger/ms_chain/api_b/httpschain
   - light-example-4j/rest/swagger/ms_chain/api_c/httpschain
   - light-example-4j/rest/swagger/ms_chain/api_d/httpschain
+  - light-example-4j/rest/swagger/database/generated
+  - light-example-4j/rest/swagger/database/connection
+  - light-example-4j/rest/swagger/database/oracle
+  - light-example-4j/rest/swagger/database/postgres
+  - light-example-4j/rest/swagger/database/queries
+  - light-example-4j/rest/swagger/database/query
+  - light-example-4j/rest/swagger/database/test
+  - light-example-4j/rest/swagger/database/updates
   - light-example-4j/client/standalone
   - light-example-4j/client/tomcat
   - light-example-4j/graphql/helloworld
