@@ -21,6 +21,8 @@ public class Constants {
     public static final String STATUS = "status";
     public static final String HEADER = "header";
     public static final String BODY = "body";
+    public static final String SKIP_COPYFILE = "skip_copyFile";
+    public static final String COPYFILE = "copyFile";
 
     // version-upgrade
     public static final String OLD_VERSION = "old_version";

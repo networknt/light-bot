@@ -2,6 +2,7 @@ package com.networknt.bot.develop;
 
 import com.networknt.bot.core.*;
 import com.networknt.bot.core.cmd.CloneBranchCmd;
+import com.networknt.bot.core.cmd.CopyFileCmd;
 import com.networknt.client.Http2Client;
 import com.networknt.config.Config;
 import com.networknt.service.SingletonServiceFactory;
@@ -27,6 +28,7 @@ public class DevelopBuildTask implements Command {
     boolean skipTest = (Boolean)config.get(Constants.SKIP_TEST);
     boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     boolean skipBuild = (Boolean)config.get(Constants.SKIP_BUILD);
+    boolean skipCopyFile = (Boolean)config.get(Constants.SKIP_COPYFILE);
 
     Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
     Map<String, Object> test = (Map<String, Object>)config.get(Constants.TEST);
@@ -36,6 +38,7 @@ public class DevelopBuildTask implements Command {
     Map<String, Object> build = (Map<String, Object>)config.get(Constants.BUILD);
     List<String> builds = (List<String>)build.get(Constants.PROJECT);
 
+    List<Map<String, String>> copyFiles = (List<Map<String, String>>)config.get(Constants.COPYFILE);
 
     String userHome = System.getProperty("user.home");
 
@@ -51,6 +54,8 @@ public class DevelopBuildTask implements Command {
         result = build();
         if(result != 0) return result;
         result = test();
+        if(result != 0) return result;
+        result = copyFile();
         return result;
     }
 
@@ -246,5 +251,16 @@ public class DevelopBuildTask implements Command {
         return result;
     }
 
-
+    int copyFile() throws IOException, InterruptedException {
+        int result = 0;
+        if(skipCopyFile) return result;
+        for(Map<String, String> copyFile: copyFiles) {
+            String src = copyFile.get("src");
+            String dst = copyFile.get("dst");
+            logger.info("Copying from " + src + " to " + dst);
+            CopyFileCmd copyFileCmd = new CopyFileCmd(userHome, workspace, src, dst);
+            copyFileCmd.execute();
+        }
+        return result;
+    }
 }
