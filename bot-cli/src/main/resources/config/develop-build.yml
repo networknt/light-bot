@@ -9,6 +9,8 @@ skip_build: false
 # local repo. Also, some of our customers have constraint test environment to run
 # unit and integration test only and another environment to run all of tests.
 skip_test: false
+# skip copyFile
+skip_copyFile: true
 
 checkout:
   branch: develop
@@ -284,3 +286,5 @@ test:
           content-type: application/json
         body:
           "$.data.numberHolder.theNumber": 4
+# copy individual files
+copyFile:
