@@ -83,8 +83,8 @@ public class ReleaseMavenTask implements Command {
         int result = 0;
         if(skipMerge) return result;
 
-        for(String release: releases) {
-            Path rPath = Paths.get(userHome, workspace, release);
+        for(String repository: repositories) {
+            Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
             // merge develop branch to master and check in
             MergeMasterCmd mergeMasterCmd = new MergeMasterCmd(rPath);
             result = mergeMasterCmd.execute();
