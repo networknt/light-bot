@@ -1,9 +1,9 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: versionupgrade
 # old existing version that need to be upgraded
-old_version: 1.5.9
+old_version: 1.5.11
 # new upgraded version. These two versions need to be updated every time to run this command
-new_version: 1.5.10
+new_version: 1.5.12
 # only skip the checkout if you are sure that the latest code is in the workspace. It is
 # OK to execute it several times.
 skip_checkout: false
@@ -31,6 +31,7 @@ checkout:
   - git@github.com:networknt/light-proxy.git
   - git@github.com:networknt/light-router.git
   - git@github.com:networknt/light-oauth2.git
+  - git@github.com:networknt/light-portal.git
   - git@github.com:networknt/light-example-4j.git
   - git@github.com:networknt/light-docker.git
 # run mvn versions:set command in the following folders.
@@ -48,6 +49,8 @@ maven:
   - light-proxy
   - light-router
   - light-oauth2
+  - light-portal/hybrid-command
+  - light-portal/hybrid-query
 # regex replacement for dependencies
 version:
   openapi-parser:
@@ -106,8 +109,41 @@ version:
   light-oauth2:
   - path: pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
-  light-example-4j:
+  light-portal:
+  - path: pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: api-certification/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: host-menu/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: host-menu/hybrid-command/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: host-menu/hybrid-query/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: oauth-playground/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: schema-form/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: schema-form/hybrid-command/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: schema-form/hybrid-query/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: user-management/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: user-management/hybrid-service/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: user-management/rest-command/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: user-management/rest-query/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: user-management/usermanagement-service/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: hybrid-command/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: hybrid-query/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
 
+  light-example-4j:
   # eventuate framework examples
   # eventuate account management
   - path: eventuate/account-management/pom.xml
@@ -202,6 +238,16 @@ version:
   - path: discovery/api_d/kubernetes/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
 
+  # multidb
+  - path: common/multidb/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: common/multidb/generated/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: common/multidb/dbconfig/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: common/multidb/dbconfig/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+    
   # graphql framework
   # graphql subscription
   - path: graphql/subscription/pom.xml
@@ -352,6 +398,41 @@ version:
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: rest/openapi/petstore/pom.xml
     match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+
+  - path: rest/openapi/ms-aggregate/aa/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/ms-aggregate/aa/generated/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: rest/openapi/ms-aggregate/ab/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/ms-aggregate/ab/generated/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: rest/openapi/ms-aggregate/ac/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/ms-aggregate/ac/generated/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: rest/openapi/ms-aggregate/ad/generated/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/ms-aggregate/ad/generated/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+
+  - path: rest/openapi/ms-aggregate/aa/https/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/ms-aggregate/aa/https/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: rest/openapi/ms-aggregate/ab/https/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/ms-aggregate/ab/https/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: rest/openapi/ms-aggregate/ac/https/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/ms-aggregate/ac/https/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+  - path: rest/openapi/ms-aggregate/ad/https/pom.xml
+    match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  - path: rest/openapi/ms-aggregate/ad/https/pom.xml
+    match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
+
   # client
   - path: client/standalone/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
@@ -362,3 +443,4 @@ version:
   # webserver
   - path: webserver/api-simple-web/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
+  
