@@ -30,10 +30,8 @@ public class DevelopBuildTask implements Command {
     boolean skipBuild = (Boolean)config.get(Constants.SKIP_BUILD);
     boolean skipCopyFile = (Boolean)config.get(Constants.SKIP_COPYFILE);
 
-    Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
+    List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
     Map<String, Object> test = (Map<String, Object>)config.get(Constants.TEST);
-    String branch = (String)checkout.get(Constants.BRANCH);
-    List<String> repositories = (List<String>)checkout.get(Constants.REPOSITORY);
 
     Map<String, Object> build = (Map<String, Object>)config.get(Constants.BUILD);
     List<String> builds = (List<String>)build.get(Constants.PROJECT);
@@ -73,34 +71,42 @@ public class DevelopBuildTask implements Command {
             Files.createDirectory(wPath);
         }
 
-        for(String repository: repositories) {
-            Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
-            if(Files.notExists(rPath)) {
-                // clone and switch to branch.
-                CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
-                result = cloneBranchCmd.execute();
-                if(!changed) changed = true;
-                if(result != 0) break;
-            } else {
-                // switch to branch and pull, if there is no change in the branch, return 1 to skip
-                // the next build step. check how many errors against how many repositories.
-                List<String> commands = new ArrayList<>();
-                commands.add("bash");
-                commands.add("-c");
-                commands.add("git checkout " + branch + " ; git pull origin " + branch);
-                logger.info("git checkout " + branch + " ; git pull origin " + branch);
-                result = executor.execute(commands, rPath.toFile());
-                StringBuilder stdout = executor.getStdout();
-                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
-                StringBuilder stderr = executor.getStderr();
-                if(stderr != null && stderr.length() > 0) {
-                    logger.error(stderr.toString());
-                    if(!changed) changed = GitUtil.branchChanged(branch, stderr.toString());
-                }
-                if(result != 0) {
-                    break;
-                }
-            }
+        // iterate over each group of repositories using the same branch name
+        for(Map<String, Object> repoGroup : checkout) {
+        	// get the branch and the list of repositories
+        	String branch = (String)repoGroup.get(Constants.BRANCH);
+        	List<String> repositories = (List<String>)repoGroup.get(Constants.REPOSITORY);
+        	
+        	// iterate through the list of repositories 
+        	for(String repository: repositories) {
+	            Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+	            if(Files.notExists(rPath)) {
+	                // clone and switch to branch.
+	                CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
+	                result = cloneBranchCmd.execute();
+	                if(!changed) changed = true;
+	                if(result != 0) break;
+	            } else {
+	                // switch to branch and pull, if there is no change in the branch, return 1 to skip
+	                // the next build step. check how many errors against how many repositories.
+	                List<String> commands = new ArrayList<>();
+	                commands.add("bash");
+	                commands.add("-c");
+	                commands.add("git checkout " + branch + " ; git pull origin " + branch);
+	                logger.info("git checkout " + branch + " ; git pull origin " + branch);
+	                result = executor.execute(commands, rPath.toFile());
+	                StringBuilder stdout = executor.getStdout();
+	                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
+	                StringBuilder stderr = executor.getStderr();
+	                if(stderr != null && stderr.length() > 0) {
+	                    logger.error(stderr.toString());
+	                    if(!changed) changed = GitUtil.branchChanged(branch, stderr.toString());
+	                }
+	                if(result != 0) {
+	                    break;
+	                }
+	            }
+        	}
         }
         // there is no change for all of the repositories
         if(result == 0 && !changed) result = Constants.NO_REPO_CHANGE;
