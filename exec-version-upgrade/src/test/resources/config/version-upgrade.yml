@@ -16,23 +16,23 @@ skip_version: false
 skip_checkin: false
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
-  branch: develop
-  repository:
-  - git@github.com:networknt/light-4j.git
-  - git@github.com:networknt/openapi-parser.git
-  - git@github.com:networknt/light-rest-4j.git
-  - git@github.com:networknt/light-graphql-4j.git
-  - git@github.com:networknt/light-hybrid-4j.git
-  - git@github.com:networknt/light-codegen.git
-  - git@github.com:networknt/light-eventuate-4j.git
-  - git@github.com:networknt/light-tram-4j.git
-  - git@github.com:networknt/light-saga-4j.git
-  - git@github.com:networknt/light-session-4j.git
-  - git@github.com:networknt/light-proxy.git
-  - git@github.com:networknt/light-router.git
-  - git@github.com:networknt/light-oauth2.git
-  - git@github.com:networknt/light-example-4j.git
-  - git@github.com:networknt/light-docker.git
+  - branch: develop
+    repository:
+    - git@github.com:networknt/light-4j.git
+    - git@github.com:networknt/openapi-parser.git
+    - git@github.com:networknt/light-rest-4j.git
+    - git@github.com:networknt/light-graphql-4j.git
+    - git@github.com:networknt/light-hybrid-4j.git
+    - git@github.com:networknt/light-codegen.git
+    - git@github.com:networknt/light-eventuate-4j.git
+    - git@github.com:networknt/light-tram-4j.git
+    - git@github.com:networknt/light-saga-4j.git
+    - git@github.com:networknt/light-session-4j.git
+    - git@github.com:networknt/light-proxy.git
+    - git@github.com:networknt/light-router.git
+    - git@github.com:networknt/light-oauth2.git
+    - git@github.com:networknt/light-example-4j.git
+    - git@github.com:networknt/light-docker.git
 # run mvn versions:set command in the following folders.
 maven:
   - light-4j

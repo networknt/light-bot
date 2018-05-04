@@ -17,13 +17,13 @@ skip_release: false
 skip_docker: false
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
-  branch: develop
-  repository:
-  - git@github.com:networknt/light-proxy.git
-  - git@github.com:networknt/light-router.git
-  - git@github.com:networknt/light-oauth2.git
-  - git@github.com:networknt/light-codegen.git
-  - git@github.com:networknt/light-docker.git
+  - branch: develop
+    repository:
+    - git@github.com:networknt/light-proxy.git
+    - git@github.com:networknt/light-router.git
+    - git@github.com:networknt/light-oauth2.git
+    - git@github.com:networknt/light-codegen.git
+    - git@github.com:networknt/light-docker.git
 # merge develop to master for above repos
 merge:
   - light-proxy

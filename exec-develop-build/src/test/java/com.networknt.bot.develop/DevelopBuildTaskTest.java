@@ -17,7 +17,7 @@ public class DevelopBuildTaskTest {
         }
     }
 
-    //@Test
+    @Test
     public void testCheckout() throws IOException, InterruptedException {
         DevelopBuildTask cmd = new DevelopBuildTask();
         int result = cmd.checkout();

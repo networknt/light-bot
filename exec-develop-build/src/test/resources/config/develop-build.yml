@@ -8,27 +8,27 @@ skip_build: false
 # very useful if you just want to install the develop branch modules into your .m2
 # local repo. Also, some of our customers have constraint test environment to run
 # unit and integration test only and another environment to run all of tests.
-skip_test: false
+skip_test: true
 # skip copyFile
 skip_copyFile: true
 
 checkout:
-  branch: develop
-  repository:
-  - git@github.com:networknt/light-4j.git
-  - git@github.com:networknt/openapi-parser.git
-  - git@github.com:networknt/light-rest-4j.git
-  - git@github.com:networknt/light-graphql-4j.git
-  - git@github.com:networknt/light-hybrid-4j.git
-  - git@github.com:networknt/light-codegen.git
-  - git@github.com:networknt/light-eventuate-4j.git
-  - git@github.com:networknt/light-tram-4j.git
-  - git@github.com:networknt/light-saga-4j.git
-  - git@github.com:networknt/light-session-4j.git
-  - git@github.com:networknt/light-proxy.git
-  - git@github.com:networknt/light-oauth2.git
-  - git@github.com:networknt/light-example-4j.git
-  - git@github.com:networknt/light-docker.git
+  - branch: develop
+    repository:
+    - git@github.com:networknt/light-4j.git
+    - git@github.com:networknt/openapi-parser.git
+    - git@github.com:networknt/light-rest-4j.git
+    - git@github.com:networknt/light-graphql-4j.git
+    - git@github.com:networknt/light-hybrid-4j.git
+    - git@github.com:networknt/light-codegen.git
+    - git@github.com:networknt/light-eventuate-4j.git
+    - git@github.com:networknt/light-tram-4j.git
+    - git@github.com:networknt/light-saga-4j.git
+    - git@github.com:networknt/light-session-4j.git
+    - git@github.com:networknt/light-proxy.git
+    - git@github.com:networknt/light-oauth2.git
+    - git@github.com:networknt/light-example-4j.git
+    - git@github.com:networknt/light-docker.git
 build:
   project:
   - light-4j

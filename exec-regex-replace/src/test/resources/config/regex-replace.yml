@@ -10,43 +10,43 @@ skip_checkin: false
 # clone and switch to develop branch or checkout and pull from develop branch. This is to ensure that develop branch for
 # each repository is up-to-date for manipulations. Please update skip_checkout to true if you want to bypass this step.
 checkout:
-  branch: develop
-  repository:
-  - git@github.com:networknt/light-4j.git
-  - git@github.com:networknt/openapi-parser.git
-  - git@github.com:networknt/light-rest-4j.git
-  - git@github.com:networknt/light-graphql-4j.git
-  - git@github.com:networknt/light-hybrid-4j.git
-  - git@github.com:networknt/light-codegen.git
-  - git@github.com:networknt/light-eventuate-4j.git
-  - git@github.com:networknt/light-tram-4j.git
-  - git@github.com:networknt/light-saga-4j.git
-  - git@github.com:networknt/light-session-4j.git
-  - git@github.com:networknt/light-proxy.git
-  - git@github.com:networknt/light-router.git
-  - git@github.com:networknt/light-oauth2.git
-  - git@github.com:networknt/light-example-4j.git
-  - git@github.com:networknt/light-docker.git
-  - git@github.com:networknt/light-doc.git
-  - git@github.com:networknt/light-bot-config.git
-  - git@github.com:networknt/light-config-test.git
-  - git@github.com:networknt/light-bot.git
-  - git@github.com:networknt/light-config-server.git
-  - git@github.com:networknt/microservices-framework-benchmark.git
-  - git@github.com:networknt/model-config.git
-  - git@github.com:networknt/light-portal.git
-  - git@github.com:networknt/react-schema-form.git
-  - git@github.com:networknt/light-workflow-4j.git
-  - git@github.com:networknt/light.git
-  - git@github.com:networknt/swagger-bundler.git
-  - git@github.com:networknt/http2client-benchmark.git
-  - git@github.com:networknt/json-schema-validator-perftest.git
-  - git@github.com:networknt/microbenchmark.git
-  - git@github.com:networknt/react-schema-form-rc-select.git
-  - git@github.com:networknt/light-config-prod.git
-  - git@github.com:networknt/react-file-manager.git
-  - git@github.com:networknt/light-commerce.git
-  - git@github.com:networknt/light-cms.git
+  - branch: develop
+    repository:
+    - git@github.com:networknt/light-4j.git
+    - git@github.com:networknt/openapi-parser.git
+    - git@github.com:networknt/light-rest-4j.git
+    - git@github.com:networknt/light-graphql-4j.git
+    - git@github.com:networknt/light-hybrid-4j.git
+    - git@github.com:networknt/light-codegen.git
+    - git@github.com:networknt/light-eventuate-4j.git
+    - git@github.com:networknt/light-tram-4j.git
+    - git@github.com:networknt/light-saga-4j.git
+    - git@github.com:networknt/light-session-4j.git
+    - git@github.com:networknt/light-proxy.git
+    - git@github.com:networknt/light-router.git
+    - git@github.com:networknt/light-oauth2.git
+    - git@github.com:networknt/light-example-4j.git
+    - git@github.com:networknt/light-docker.git
+    - git@github.com:networknt/light-doc.git
+    - git@github.com:networknt/light-bot-config.git
+    - git@github.com:networknt/light-config-test.git
+    - git@github.com:networknt/light-bot.git
+    - git@github.com:networknt/light-config-server.git
+    - git@github.com:networknt/microservices-framework-benchmark.git
+    - git@github.com:networknt/model-config.git
+    - git@github.com:networknt/light-portal.git
+    - git@github.com:networknt/react-schema-form.git
+    - git@github.com:networknt/light-workflow-4j.git
+    - git@github.com:networknt/light.git
+    - git@github.com:networknt/swagger-bundler.git
+    - git@github.com:networknt/http2client-benchmark.git
+    - git@github.com:networknt/json-schema-validator-perftest.git
+    - git@github.com:networknt/microbenchmark.git
+    - git@github.com:networknt/react-schema-form-rc-select.git
+    - git@github.com:networknt/light-config-prod.git
+    - git@github.com:networknt/react-file-manager.git
+    - git@github.com:networknt/light-commerce.git
+    - git@github.com:networknt/light-cms.git
 
 # regex replacement from old value to new value during a full text search on certain patterns
 # of file names.
