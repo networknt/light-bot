@@ -34,11 +34,7 @@ public class ReleaseDockerTask implements Command {
 
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
-    private String branch = (String)checkout.get(Constants.BRANCH);
-    @SuppressWarnings("unchecked")
-    private List<String> repositories = (List<String>)checkout.get(Constants.REPOSITORY);
-
+    private List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
     @SuppressWarnings("unchecked")
     private List<String> merges = (List<String>)config.get(Constants.MERGE);
     @SuppressWarnings("unchecked")
@@ -78,20 +74,28 @@ public class ReleaseDockerTask implements Command {
             Files.createDirectory(wPath);
         }
 
-        for(String repository: repositories) {
-            Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
-            if(Files.notExists(rPath)) {
-                // clone and switch to branch.
-                CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
-                result = cloneBranchCmd.execute();
-                if(result != 0) break;
-            } else {
-                // switch to branch and pull
-                CheckoutPullCmd checkoutPullCmd = new CheckoutPullCmd(branch, rPath);
-                result = checkoutPullCmd.execute();
-                if(result != 0) break;
+        // iterate over each group of repositories using the same branch name
+        for(Map<String, Object> repoGroup : checkout) {
+            // get the branch and the list of repositories
+            String branch = (String) repoGroup.get(Constants.BRANCH);
+            List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
+
+            for(String repository: repositories) {
+                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                if(Files.notExists(rPath)) {
+                    // clone and switch to branch.
+                    CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
+                    result = cloneBranchCmd.execute();
+                    if(result != 0) break;
+                } else {
+                    // switch to branch and pull
+                    CheckoutPullCmd checkoutPullCmd = new CheckoutPullCmd(branch, rPath);
+                    result = checkoutPullCmd.execute();
+                    if(result != 0) break;
+                }
             }
         }
+
         return result;
     }
 

@@ -6,7 +6,6 @@ import com.networknt.bot.core.RegexReplacement;
 import com.networknt.bot.core.cmd.CheckinBranchCmd;
 import com.networknt.bot.core.cmd.CheckoutPullCmd;
 import com.networknt.bot.core.cmd.CloneBranchCmd;
-import com.networknt.bot.core.cmd.MavenVersionCmd;
 import com.networknt.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +16,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -46,11 +44,7 @@ public class RegexReplaceTask implements Command {
     private boolean skipCheckin = (Boolean)config.get(Constants.SKIP_CHECKIN);
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
-    private String branch = (String)checkout.get(Constants.BRANCH);
-    @SuppressWarnings("unchecked")
-    private List<String> repositories = (List<String>)checkout.get(Constants.REPOSITORY);
-
+    private List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> replaces = (List<Map<String, Object>>)config.get(Constants.REPLACE);
 
@@ -83,21 +77,28 @@ public class RegexReplaceTask implements Command {
             Files.createDirectory(wPath);
         }
 
-        for(String repository: repositories) {
-            logger.info("Checkout or pull for " + repository);
-            Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
-            if(Files.notExists(rPath)) {
-                logger.info("Clone repository to: " + rPath);
-                // clone and switch to branch.
-                CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
-                result = cloneBranchCmd.execute();
-                if(result != 0) break;
-            } else {
-                logger.info("Switch to {} and pull from git", branch);
-                // switch to branch and pull
-                CheckoutPullCmd checkoutPullCmd = new CheckoutPullCmd(branch, rPath);
-                result = checkoutPullCmd.execute();
-                if(result != 0) break;
+        // iterate over each group of repositories using the same branch name
+        for(Map<String, Object> repoGroup : checkout) {
+            // get the branch and the list of repositories
+            String branch = (String) repoGroup.get(Constants.BRANCH);
+            List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
+
+            for(String repository: repositories) {
+                logger.info("Checkout or pull for " + repository);
+                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                if(Files.notExists(rPath)) {
+                    logger.info("Clone repository to: " + rPath);
+                    // clone and switch to branch.
+                    CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
+                    result = cloneBranchCmd.execute();
+                    if(result != 0) break;
+                } else {
+                    logger.info("Switch to {} and pull from git", branch);
+                    // switch to branch and pull
+                    CheckoutPullCmd checkoutPullCmd = new CheckoutPullCmd(branch, rPath);
+                    result = checkoutPullCmd.execute();
+                    if(result != 0) break;
+                }
             }
         }
         return result;
@@ -126,12 +127,19 @@ public class RegexReplaceTask implements Command {
         int result = 0;
         if(skipCheckin) return result;
 
-        for(String repository: repositories) {
-            Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
-            // switch to branch and check in
-            CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath);
-            result = checkinBranchCmd.execute();
-            if(result != 0) break;
+        // iterate over each group of repositories using the same branch name
+        for(Map<String, Object> repoGroup : checkout) {
+            // get the branch and the list of repositories
+            String branch = (String) repoGroup.get(Constants.BRANCH);
+            List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
+
+            for(String repository: repositories) {
+                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                // switch to branch and check in
+                CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath);
+                result = checkinBranchCmd.execute();
+                if(result != 0) break;
+            }
         }
         return result;
     }

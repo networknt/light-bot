@@ -28,10 +28,7 @@ public class ReleaseMavenTask implements Command {
     private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
-    private String branch = (String)checkout.get(Constants.BRANCH);
-    @SuppressWarnings("unchecked")
-    private List<String> repositories = (List<String>)checkout.get(Constants.REPOSITORY);
+    private List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
     @SuppressWarnings("unchecked")
     private List<String> releases = (List<String>)config.get(Constants.RELEASE);
     private String userHome = System.getProperty("user.home");
@@ -61,18 +58,24 @@ public class ReleaseMavenTask implements Command {
             Files.createDirectory(wPath);
         }
 
-        for(String repository: repositories) {
-            Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
-            if(Files.notExists(rPath)) {
-                // clone and switch to branch.
-                CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
-                result = cloneBranchCmd.execute();
-                if(result != 0) break;
-            } else {
-                // switch to branch and pull
-                CheckoutPullCmd checkoutPullCmd = new CheckoutPullCmd(branch, rPath);
-                result = checkoutPullCmd.execute();
-                if(result != 0) break;
+        // iterate over each group of repositories using the same branch name
+        for(Map<String, Object> repoGroup : checkout) {
+            // get the branch and the list of repositories
+            String branch = (String) repoGroup.get(Constants.BRANCH);
+            List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
+            for(String repository: repositories) {
+                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                if(Files.notExists(rPath)) {
+                    // clone and switch to branch.
+                    CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
+                    result = cloneBranchCmd.execute();
+                    if(result != 0) break;
+                } else {
+                    // switch to branch and pull
+                    CheckoutPullCmd checkoutPullCmd = new CheckoutPullCmd(branch, rPath);
+                    result = checkoutPullCmd.execute();
+                    if(result != 0) break;
+                }
             }
         }
         return result;
@@ -83,13 +86,18 @@ public class ReleaseMavenTask implements Command {
         int result = 0;
         if(skipMerge) return result;
 
-        for(String repository: repositories) {
-            Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
-            // merge develop branch to master and check in
-            MergeMasterCmd mergeMasterCmd = new MergeMasterCmd(rPath);
-            result = mergeMasterCmd.execute();
-            if(result != 0) break;
+        // iterate over each group of repositories using the same branch name
+        for(Map<String, Object> repoGroup : checkout) {
+            // get the branch and the list of repositories
+            List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
 
+            for(String repository: repositories) {
+                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                // merge current branch to master and check in
+                MergeMasterCmd mergeMasterCmd = new MergeMasterCmd(rPath);
+                result = mergeMasterCmd.execute();
+                if(result != 0) break;
+            }
         }
         return result;
     }
