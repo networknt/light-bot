@@ -150,7 +150,12 @@ public class DevelopBuildTask implements Command {
 
     int test() throws IOException, InterruptedException {
         int result = 0;
+
+        // check if test case execution is enabled
         if(skipTest) return result;
+
+        // check if any test cases have been provided
+        if(test == null) return result;
 
         for(Map.Entry<String, Object> entry : test.entrySet()) {
             String testName = entry.getKey();
