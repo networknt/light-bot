@@ -108,8 +108,7 @@ public class DevelopBuildTask implements Command {
 	            }
         	}
         }
-        // there is no change for all of the repositories
-        if(result == 0 && !changed) result = Constants.NO_REPO_CHANGE;
+
         return result;
     }
 
