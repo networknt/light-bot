@@ -199,17 +199,14 @@ public class DevelopBuildTask implements Command {
                     String host = (String)request.get(Constants.HOST);
                     String path = (String)request.get(Constants.PATH);
                     String method = (String)request.get(Constants.METHOD);
-                    logger.info("host = {}, path={}, method={}", host, path, method);
                     Map<String, Object> requestHeader = (Map<String, Object>)request.get(Constants.HEADER);
                     String requestBody = (String)request.get(Constants.BODY);
-                    logger.info("request header = " + requestHeader);
-                    logger.info("request body = " + requestBody);
+                    logger.info("host = {}, path={}, method={}, request header={}, request body={}", host, path, method, requestHeader, requestBody);
                     Map<String, Object> response = (Map<String, Object>)request.get(Constants.RESPONSE);
                     int status = (Integer)response.get(Constants.STATUS);
                     Map<String, Object> responseHeader = (Map<String, Object>)response.get(Constants.HEADER);
                     Map<String, Object> responseBodyMap = (Map<String, Object>)response.get(Constants.BODY);
-                    logger.info("response header = " + responseHeader);
-                    logger.info("response body = " + responseBodyMap);
+                    logger.info("expected status = " + status + " response header = " + responseHeader + " response body = " + responseBodyMap);
                     ClientResponse cr = null;
                     switch (method) {
                         case "get":
@@ -227,9 +224,7 @@ public class DevelopBuildTask implements Command {
                     int statusCode = cr.getResponseCode();
                     HeaderMap responseHeaderMap = cr.getResponseHeaders();
                     String responseBody = cr.getAttachment(Http2Client.RESPONSE_BODY);
-                    logger.info("statusCode = " + statusCode);
-                    logger.info("headerMap = " + responseHeaderMap);
-                    logger.info("responseBody = " + responseBody);
+                    logger.info("returned statusCode = " + statusCode + " headerMap = " + responseHeaderMap + " responseBody = " + responseBody);
                     // check response with the config.
                     if(status != statusCode) {
                         result = -1;
@@ -251,6 +246,7 @@ public class DevelopBuildTask implements Command {
                 }
             } finally {
                 // shutdown servers, this needs to be called even if there are exceptions during tests.
+                logger.info("shutdown servers");
                 executor.stopServers();
             }
 
