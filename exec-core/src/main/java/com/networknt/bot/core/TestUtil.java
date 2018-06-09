@@ -116,7 +116,7 @@ public class TestUtil {
         try {
             connection = client.connect(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
         } catch (Exception e) {
-            logger.error("request Exception: " + " host = " + host + " path = " + path + " method = " + method + " header = " + requestHeader);
+            logger.error("request Exception: " + " host = " + host + " path = " + path + " method = " + method + " header = " + requestHeader, e);
             throw new RuntimeException(e);
         }
         final AtomicReference<ClientResponse> reference = new AtomicReference<>();
@@ -128,6 +128,7 @@ public class TestUtil {
                     cr.getRequestHeaders().put(new HttpString(entry.getKey()), (String)entry.getValue());
                 }
             }
+            cr.getRequestHeaders().put(Headers.HOST, "localhost");
             connection.sendRequest(cr, client.createClientCallback(reference, latch));
             latch.await();
         } catch (Exception e) {
@@ -145,7 +146,7 @@ public class TestUtil {
         try {
             connection = client.connect(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
         } catch (Exception e) {
-            logger.error("requestWithBody Exception: " + " host = " + host + " path = " + path + " method = " + method + " header = " + requestHeader + " requestBody = " + requestBody);
+            logger.error("requestWithBody Exception: " + " host = " + host + " path = " + path + " method = " + method + " header = " + requestHeader + " requestBody = " + requestBody, e);
             throw new RuntimeException(e);
         }
         final AtomicReference<ClientResponse> reference = new AtomicReference<>();
@@ -157,6 +158,7 @@ public class TestUtil {
                     cr.getRequestHeaders().put(new HttpString(entry.getKey()), (String)entry.getValue());
                 }
             }
+            cr.getRequestHeaders().put(Headers.HOST, "localhost");
             cr.getRequestHeaders().put(Headers.TRANSFER_ENCODING, "chunked");
             connection.sendRequest(cr, client.createClientCallback(reference, latch, requestBody));
             latch.await();
