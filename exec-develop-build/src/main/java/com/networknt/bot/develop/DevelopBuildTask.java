@@ -12,32 +12,46 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class DevelopBuildTask implements Command {
     private static final Logger logger = LoggerFactory.getLogger(DevelopBuildTask.class);
+    
     public static final String CONFIG_NAME = "develop-build";
     Executor executor = SingletonServiceFactory.getBean(Executor.class);
+    
+    // bot config file
     Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
+    
+    // destination of the cloned/built/tested artifacts
     String workspace = (String)config.get(Constants.WORKSPACE);
-    boolean skipTest = (Boolean)config.get(Constants.SKIP_TEST);
+    
+    // global control flags
     boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     boolean skipBuild = (Boolean)config.get(Constants.SKIP_BUILD);
+    boolean skipTest = (Boolean)config.get(Constants.SKIP_TEST);
     boolean skipCopyFile = (Boolean)config.get(Constants.SKIP_COPYFILE);
+    boolean skipStart = (Boolean)config.get(Constants.SKIP_START);
 
-    List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
-    Map<String, Object> test = (Map<String, Object>)config.get(Constants.TEST);
-
+    // tasks to be executed
+    Map<String, String> tasks = (Map<String, String>)config.get(Constants.TASKS);    		
+    Map<String, Object> checkout = (Map<String, Object>)config.get(Constants.CHECKOUT);
     Map<String, Object> build = (Map<String, Object>)config.get(Constants.BUILD);
-    List<String> builds = (List<String>)build.get(Constants.PROJECT);
 
+    Map<String, Object> test = (Map<String, Object>)config.get(Constants.TEST);
     List<Map<String, String>> copyFiles = (List<Map<String, String>>)config.get(Constants.COPYFILE);
 
+    Map<String, Object> start = (Map<String, Object>)config.get(Constants.START);
+    
     String userHome = System.getProperty("user.home");
 
     @Override
@@ -47,21 +61,45 @@ public class DevelopBuildTask implements Command {
 
     @Override
     public int execute() throws IOException, InterruptedException {
-        int result = checkout();
-        if(result != 0) return result;
-        result = build();
-        if(result != 0) return result;
-        result = test();
-        if(result != 0) return result;
-        result = copyFile();
+    	int result = 0;
+    	
+    	// navigate through the tasks list and execute them in the specified order
+    	try {
+    		// set data up, to start; tearDown is called automatically
+    		// do not forget to implement the tear down operation
+    		setup();
+    		
+    		for(Entry<String,String> task : tasks.entrySet()) {
+    			// find the operation
+    			Method anyMethod = DevelopBuildTask.class.getDeclaredMethod(task.getValue(), String.class );
+    			// invoke the task
+    			if( (result = (Integer)anyMethod.invoke(this, task.getKey())) != 0)
+    				return result;
+    		}
+    	} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			logger.error("Task could not be executed and failed with: " + e.getMessage());
+    	} finally {
+    		// teardown data, even in case some of the tasks finished abnormally
+    		tearDown();
+        	// stop any started servers, even in case some of the tasks finished abnormally
+        	stop();
+        }
         return result;
     }
 
+    private void setup() {
+		// TODO 
+		
+	}
 
+	private void tearDown() {
+		// TODO 
+		
+	}
 
-    int checkout() throws IOException, InterruptedException {
+	int checkout(String namedTask) throws IOException, InterruptedException {
         int result = 0;
-        if(skipCheckout) return result;
+        if(skipCheckout || checkout == null) return result;
 
         boolean changed = false;
 
@@ -71,13 +109,20 @@ public class DevelopBuildTask implements Command {
             Files.createDirectory(wPath);
         }
 
+        // get the checkout tasks for the named task
+        List<Map<String, Object>> namedCheckout = (List<Map<String, Object>>)checkout.get(namedTask);
+        
         // iterate over each group of repositories using the same branch name
-        for(Map<String, Object> repoGroup : checkout) {
+        for(Map<String, Object> repoGroup : namedCheckout) {
         	// get the branch and the list of repositories
         	String branch = (String)repoGroup.get(Constants.BRANCH);
-        	List<String> repositories = (List<String>)repoGroup.get(Constants.REPOSITORY);
+        	
+        	// check whether this task must be skipped
+        	if((Boolean)repoGroup.get(Constants.SKIP))
+        		break;
         	
         	// iterate through the list of repositories 
+        	List<String> repositories = (List<String>)repoGroup.get(Constants.REPOSITORY);
         	for(String repository: repositories) {
 	            Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
 	            if(Files.notExists(rPath)) {
@@ -112,10 +157,19 @@ public class DevelopBuildTask implements Command {
         return result;
     }
 
-    int build() throws IOException, InterruptedException {
+    int build(String namedTask) throws IOException, InterruptedException {
         int result = 0;
-        if(skipBuild) return result;
+        if(skipBuild || build == null) return result;
 
+        // get the build tasks for the named task
+        Map<String, Object> namedBuild = (Map<String, Object>)build.get(namedTask);
+        
+        // check whether this task must be skipped
+    	if((Boolean)namedBuild.get(Constants.SKIP))
+    		return result;
+    	
+    	// iterate through the list of projects to build
+        List<String> builds = (List<String>)namedBuild.get(Constants.PROJECT);
         for(String build: builds) {
             Path path = Paths.get(userHome, workspace, build);
             if(Files.notExists(path)) {
@@ -146,8 +200,8 @@ public class DevelopBuildTask implements Command {
         }
         return result;
     }
-
-    int test() throws IOException, InterruptedException {
+    
+    int test(String namedTask) throws IOException, InterruptedException {
         int result = 0;
 
         // check if test case execution is enabled
@@ -257,7 +311,7 @@ public class DevelopBuildTask implements Command {
         return result;
     }
 
-    int copyFile() throws IOException, InterruptedException {
+    int copyFile(String namedTask) throws IOException, InterruptedException {
         int result = 0;
         if(skipCopyFile) return result;
         for(Map<String, String> copyFile: copyFiles) {
@@ -269,4 +323,64 @@ public class DevelopBuildTask implements Command {
         }
         return result;
     }
+    
+    int start(String namedTask) throws IOException, InterruptedException {
+        int result = 0;
+
+        // check if start service execution is enabled
+        if(skipStart || start == null) return result;
+
+        // get the start tasks for the named task
+        Map<String, Object> namedStart = (Map<String, Object>)start.get(namedTask);
+        
+        // check whether this task must be skipped
+    	if((Boolean)namedStart.get(Constants.SKIP))
+    		return result;
+        
+        for(Map.Entry<String, Object> entry : ((Map<String, Object>)namedStart.get(Constants.SERVICES)).entrySet()) {
+            String startName = entry.getKey();
+            logger.info("ServiceName = " + startName);
+            Map<String, Object> startInfo = (Map<String, Object>)entry.getValue();
+            // get server entry and start servers one by one.
+            List<Map<String, Object>> servers = (List<Map<String, Object>>)startInfo.get(Constants.SERVER);
+            for(Map<String, Object> server: servers) {
+                String path = (String)server.get(Constants.PATH);
+                String cmd = (String)server.get(Constants.CMD);
+                logger.info("start server at " + path + " with " + cmd);
+                Path cmdPath = Paths.get(userHome, workspace, path);
+
+                List<String> commands = new ArrayList<>();
+                commands.add("nohup");
+                commands.add("bash");
+                commands.add("-c");
+                String c = cmdPath.toString() + "/" + cmd;
+                commands.add("java -jar " + c);
+                result = executor.startServer(commands, cmdPath.toFile());
+                StringBuilder stdout = executor.getStdout();
+                if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
+                StringBuilder stderr = executor.getStderr();
+                if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+                if(result != 0) {
+                    logger.info("Start server failed for " + c);
+                    break;
+                }
+                Thread.sleep(1000);
+            }
+
+
+            // execute test cases
+            logger.info("start testing...");
+            // put a sleep 1 second in case the server is not ready.
+            Thread.sleep(1000);
+        }
+    	
+    	return result;
+    }
+    
+    void stop() throws IOException, InterruptedException {
+        // shutdown servers, this needs to be called even if there are exceptions during tests.
+        logger.info("shutdown servers");
+        executor.stopServers();
+    }
+    
 }

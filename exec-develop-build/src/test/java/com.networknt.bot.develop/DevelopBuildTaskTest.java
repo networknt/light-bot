@@ -20,7 +20,7 @@ public class DevelopBuildTaskTest {
     //@Test
     public void testCheckout() throws IOException, InterruptedException {
         DevelopBuildTask cmd = new DevelopBuildTask();
-        int result = cmd.checkout();
+        int result = cmd.checkout("checkoutSetOne");
         if(result == 1) {
             System.out.println("none of the repo has been changed");
         } else {
@@ -31,7 +31,7 @@ public class DevelopBuildTaskTest {
     //@Test
     public void testTest() throws IOException, InterruptedException {
         DevelopBuildTask cmd = new DevelopBuildTask();
-        int result = cmd.test();
+        int result = cmd.test("testSetOne");
         Assert.assertEquals(0, result);
     }
 }

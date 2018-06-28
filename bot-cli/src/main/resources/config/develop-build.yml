@@ -1,4 +1,11 @@
 workspace: develop-build
+
+#----------------------------------------------------------------------------------------------
+# Global flags
+# - set the general flag for operations such as checkout, build, test, copy, start
+# - act as a global switch
+# - can be overwritten in the named tasks if required, and if the skip_* is not enabled
+#----------------------------------------------------------------------------------------------
 # indicate if you want to skip checkout. yes if you know that all repositories are just checkout
 # or the last time the build was failed and you just want to retry without changing anything.
 skip_checkout: false
@@ -8,65 +15,88 @@ skip_build: false
 # very useful if you just want to install the develop branch modules into your .m2
 # local repo. Also, some of our customers have constraint test environment to run
 # unit and integration test only and another environment to run all of tests.
-skip_test: false
+skip_test: true
 # skip copyFile
 skip_copyFile: true
+#skip starting any service
+skip_start: true
 
+# Execute this set of tasks in order
+# setup is called before any of the tasks
+# teardown and stop are called regardless of a succesful/failed light-bot run
+tasks:
+  checkoutMainProjects: checkout
+  buildMainProjects:    build
+  testProjects:         test     
+  copyProjectFiles:     copyFile 
+
+# This section defines groups of projects to be checked out, by declared task names
+# you would declare a task checkout with the name checkOutTask1
+# and declare the operations within the task by name:
+# checkout:
+#   checkOutTask1:...
 checkout:
-  - branch: develop
-    repository:
-    - git@github.com:networknt/light-4j.git
-    - git@github.com:networknt/openapi-parser.git
-    - git@github.com:networknt/light-rest-4j.git
-    - git@github.com:networknt/light-graphql-4j.git
-    - git@github.com:networknt/light-hybrid-4j.git
-    - git@github.com:networknt/light-codegen.git
-    - git@github.com:networknt/light-eventuate-4j.git
-    - git@github.com:networknt/light-tram-4j.git
-    - git@github.com:networknt/light-saga-4j.git
-    - git@github.com:networknt/light-session-4j.git
-    - git@github.com:networknt/light-proxy.git
-    - git@github.com:networknt/light-oauth2.git
-    - git@github.com:networknt/light-example-4j.git
-    - git@github.com:networknt/light-docker.git
+  checkoutMainProjects:
+    - branch: develop
+      skip: false
+      repository:
+      - git@github.com:networknt/light-4j.git
+      - git@github.com:networknt/openapi-parser.git
+      - git@github.com:networknt/light-rest-4j.git
+      - git@github.com:networknt/light-graphql-4j.git
+      - git@github.com:networknt/light-hybrid-4j.git
+      - git@github.com:networknt/light-codegen.git
+      - git@github.com:networknt/light-eventuate-4j.git
+      - git@github.com:networknt/light-tram-4j.git
+      - git@github.com:networknt/light-saga-4j.git
+      - git@github.com:networknt/light-session-4j.git
+      - git@github.com:networknt/light-proxy.git
+      - git@github.com:networknt/light-oauth2.git
+      - git@github.com:networknt/light-example-4j.git
+      - git@github.com:networknt/light-docker.git
+
+# This section defines groups of projects to be built, by declared names
 build:
-  project:
-  - light-4j
-  - openapi-parser
-  - light-rest-4j
-  - light-graphql-4j
-  - light-hybrid-4j
-  - light-codegen
-  - light-eventuate-4j
-  - light-tram-4j
-  - light-saga-4j
-  - light-session-4j
-  - light-proxy
-  - light-oauth2
-  - light-example-4j/rest/swagger/petstore
-  - light-example-4j/rest/openapi/petstore
-  - light-example-4j/rest/swagger/proxy-backend
-  - light-example-4j/rest/openapi/proxy-backend
-  - light-example-4j/rest/openapi/cors
-  - light-example-4j/rest/swagger/ms_chain/api_a/httpschain
-  - light-example-4j/rest/swagger/ms_chain/api_b/httpschain
-  - light-example-4j/rest/swagger/ms_chain/api_c/httpschain
-  - light-example-4j/rest/swagger/ms_chain/api_d/httpschain
-  - light-example-4j/rest/swagger/database/generated
-  - light-example-4j/rest/swagger/database/connection
-  - light-example-4j/rest/swagger/database/oracle
-  - light-example-4j/rest/swagger/database/postgres
-  - light-example-4j/rest/swagger/database/queries
-  - light-example-4j/rest/swagger/database/query
-  - light-example-4j/rest/swagger/database/test
-  - light-example-4j/rest/swagger/database/updates
-  - light-example-4j/client/standalone
-  - light-example-4j/client/tomcat
-  - light-example-4j/graphql/helloworld
-  - light-example-4j/graphql/starwars
-  - light-example-4j/graphql/mutation
-  - light-example-4j/graphql/mutation-idl
-  - light-example-4j/graphql/relaytodo
+  buildMainProjects:
+    skip: false
+    project:
+      - light-4j
+      - openapi-parser
+      - light-rest-4j
+      - light-graphql-4j
+      - light-hybrid-4j
+      - light-codegen
+      - light-eventuate-4j
+      - light-tram-4j
+      - light-saga-4j
+      - light-session-4j
+      - light-proxy
+      - light-oauth2
+      - light-example-4j/rest/swagger/petstore
+      - light-example-4j/rest/openapi/petstore
+      - light-example-4j/rest/swagger/proxy-backend
+      - light-example-4j/rest/openapi/proxy-backend
+      - light-example-4j/rest/openapi/cors
+      - light-example-4j/rest/swagger/ms_chain/api_a/httpschain
+      - light-example-4j/rest/swagger/ms_chain/api_b/httpschain
+      - light-example-4j/rest/swagger/ms_chain/api_c/httpschain
+      - light-example-4j/rest/swagger/ms_chain/api_d/httpschain
+      - light-example-4j/rest/swagger/database/generated
+      - light-example-4j/rest/swagger/database/connection
+      - light-example-4j/rest/swagger/database/oracle
+      - light-example-4j/rest/swagger/database/postgres
+      - light-example-4j/rest/swagger/database/queries
+      - light-example-4j/rest/swagger/database/query
+      - light-example-4j/rest/swagger/database/test
+      - light-example-4j/rest/swagger/database/updates
+      - light-example-4j/client/standalone
+      - light-example-4j/client/tomcat
+      - light-example-4j/graphql/helloworld
+      - light-example-4j/graphql/starwars
+      - light-example-4j/graphql/mutation
+      - light-example-4j/graphql/mutation-idl
+      - light-example-4j/graphql/relaytodo
+
 # This section defines end-to-end tests with real live servers, if you want to skip
 # these tests, please change the same level skipE2ETest to true.
 test:
@@ -288,3 +318,17 @@ test:
           "$.data.numberHolder.theNumber": 4
 # copy individual files
 copyFile:
+
+# start one or more services within a given named start task
+# ex.: startOne is a set of services to be started
+# 
+start:
+
+# These tasks should be automatically invoked in every test
+setup:
+
+teardown:
+
+stop:
+
+

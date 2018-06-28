@@ -10,6 +10,7 @@ public class Constants {
     public static final String PROJECT = "project";
     public static final String SKIP_TEST = "skip_test";
     public static final String SKIP_BUILD = "skip_build";
+    public static final String SKIP = "skip";
     public static final String TEST = "test";
     public static final String SERVER = "server";
     public static final String REQUEST = "request";
@@ -23,6 +24,10 @@ public class Constants {
     public static final String BODY = "body";
     public static final String SKIP_COPYFILE = "skip_copyFile";
     public static final String COPYFILE = "copyFile";
+    public static final String SKIP_START = "skip_start";
+    public static final String START = "start";
+    public static final String TASKS = "tasks";
+    public static final String SERVICES = "services";
 
     // version-upgrade
     public static final String OLD_VERSION = "old_version";
