@@ -1,9 +1,9 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: versionupgrade
 # old existing version that need to be upgraded
-old_version: 1.5.9
+old_version: 1.5.15
 # new upgraded version. These two versions need to be updated every time to run this command
-new_version: 1.5.10
+new_version: 1.5.16
 # only skip the checkout if you are sure that the latest code is in the workspace. It is
 # OK to execute it several times.
 skip_checkout: false
@@ -13,7 +13,7 @@ skip_maven: false
 # skip the regular expression match and replace. It is safe to run it multiple times.
 skip_version: false
 # skip checkin if you want to review the changes before checking in to github.
-skip_checkin: false
+skip_checkin: true
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
   - branch: develop
