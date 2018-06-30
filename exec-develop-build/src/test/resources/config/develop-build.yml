@@ -8,9 +8,11 @@ skip_build: false
 # very useful if you just want to install the develop branch modules into your .m2
 # local repo. Also, some of our customers have constraint test environment to run
 # unit and integration test only and another environment to run all of tests.
-skip_test: true
+skip_test: false
 # skip copyFile
 skip_copyFile: true
+# skip start
+skip_start: true
 
 # Execute this set of tasks in order
 # setup is called before any of the tasks
@@ -25,7 +27,7 @@ tasks:
 checkout:
   checkoutSetOne:
     - branch: develop
-      skip: true
+      skip: false
       repository:
       - git@github.com:networknt/light-4j.git
       - git@github.com:networknt/openapi-parser.git
@@ -87,7 +89,7 @@ test:
   rest-swagger-petstore:
     server:
     - path: light-example-4j/rest/swagger/petstore
-      cmd: target/petstore-1.0.1.jar
+      cmd: target/petstore-2.0.0.jar
     request:
     - host: https://localhost:8443
       path: "/v2/pet/111"
@@ -102,7 +104,7 @@ test:
   rest-openapi-petstore:
     server:
     - path: light-example-4j/rest/openapi/petstore
-      cmd: target/petstore-1.0.1.jar
+      cmd: target/petstore-3.0.1.jar
     request:
     - host: https://localhost:8443
       path: "/v1/pets/111"
@@ -262,7 +264,7 @@ test:
       cmd: target/starwars-1.0.1.jar
     request:
     # query
-    - host: http://localhost:8080
+    - host: http://localhost:8081
       path: "/graphql"
       method: post
       header:
@@ -275,7 +277,7 @@ test:
         body:
           "$.data.numberHolder.theNumber": 6
     # mutation
-    - host: http://localhost:8080
+    - host: http://localhost:8081
       path: "/graphql"
       method: post
       header:
@@ -288,7 +290,7 @@ test:
         body:
           "$.data.changeTheNumber.theNumber": 4
     # query again
-    - host: http://localhost:8080
+    - host: http://localhost:8081
       path: "/graphql"
       method: post
       header:
