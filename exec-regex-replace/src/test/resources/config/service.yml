@@ -3,5 +3,3 @@ singletons:
 # Executor to CommandExecutor binding
 - com.networknt.bot.core.Executor:
   - com.networknt.bot.core.CommandExecutor
-- com.networknt.bot.core.Command:
-  - com.networknt.bot.version.VersionCommand
