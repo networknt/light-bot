@@ -16,7 +16,9 @@ public class Constants {
     public static final String REQUEST = "request";
     public static final String PATH = "path";
     public static final String CMD = "cmd";
+    public static final String TIMEOUT = "timeout";
     public static final String HOST = "host";
+    public static final String PORT = "port";
     public static final String METHOD = "method";
     public static final String RESPONSE = "response";
     public static final String STATUS = "status";

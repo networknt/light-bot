@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -346,6 +348,10 @@ public class DevelopBuildTask implements Command {
             for(Map<String, Object> server: servers) {
                 String path = (String)server.get(Constants.PATH);
                 String cmd = (String)server.get(Constants.CMD);
+                String host = (String)server.get(Constants.HOST);
+                int port = (Integer)server.get(Constants.PORT);
+                int timeout = (Integer)server.get(Constants.TIMEOUT);
+                
                 logger.info("start server at " + path + " with " + cmd);
                 Path cmdPath = Paths.get(userHome, workspace, path);
 
@@ -364,14 +370,14 @@ public class DevelopBuildTask implements Command {
                     logger.info("Start server failed for " + c);
                     break;
                 }
-                Thread.sleep(1000);
+                
+                // put a sleep in case the server is not ready.
+                Thread.sleep(timeout);
             }
 
 
             // execute test cases
             logger.info("start testing...");
-            // put a sleep 1 second in case the server is not ready.
-            Thread.sleep(1000);
         }
     	
     	return result;
@@ -382,5 +388,4 @@ public class DevelopBuildTask implements Command {
         logger.info("shutdown servers");
         executor.stopServers();
     }
-    
 }
