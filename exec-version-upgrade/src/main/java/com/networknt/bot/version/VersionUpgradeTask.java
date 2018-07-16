@@ -25,6 +25,7 @@ public class VersionUpgradeTask implements Command {
     private static final String CONFIG_NAME = "version-upgrade";
     private Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     private String workspace = (String)config.get(Constants.WORKSPACE);
+    private String comment = (String)config.get(Constants.COMMENT);
     private String oldVersion = (String)config.get(Constants.OLD_VERSION);
     private String newVersion = (String)config.get(Constants.NEW_VERSION);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
@@ -142,7 +143,7 @@ public class VersionUpgradeTask implements Command {
             for(String repository: repositories) {
                 Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
                 // switch to branch and check in
-                CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath);
+                CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, comment);
                 result = checkinBranchCmd.execute();
                 if(result != 0) break;
             }

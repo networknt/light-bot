@@ -1,5 +1,7 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: versionupgrade
+# Comment for for the git commit
+comment: 'upgrade version to 1.5.16'
 # old existing version that need to be upgraded
 old_version: 1.5.15
 # new upgraded version. These two versions need to be updated every time to run this command

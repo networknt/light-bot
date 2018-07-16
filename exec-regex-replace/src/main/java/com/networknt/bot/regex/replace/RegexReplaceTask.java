@@ -39,10 +39,10 @@ public class RegexReplaceTask implements Command {
     private static final String CONFIG_NAME = "regex-replace";
     private Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     private String workspace = (String)config.get(Constants.WORKSPACE);
+    private String comment = (String)config.get(Constants.COMMENT);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     private boolean skipReplace = (Boolean)config.get(Constants.SKIP_REPLACE);
     private boolean skipCheckin = (Boolean)config.get(Constants.SKIP_CHECKIN);
-
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
     @SuppressWarnings("unchecked")
@@ -136,7 +136,7 @@ public class RegexReplaceTask implements Command {
             for(String repository: repositories) {
                 Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
                 // switch to branch and check in
-                CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath);
+                CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, comment);
                 result = checkinBranchCmd.execute();
                 if(result != 0) break;
             }

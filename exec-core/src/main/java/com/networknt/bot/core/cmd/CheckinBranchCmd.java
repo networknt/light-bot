@@ -17,10 +17,12 @@ public class CheckinBranchCmd implements Command {
     private Executor executor = SingletonServiceFactory.getBean(Executor.class);
     private String branch;
     private Path rPath;
+    private String comment;
 
-    public CheckinBranchCmd(String branch, Path rPath) {
+    public CheckinBranchCmd(String branch, Path rPath, String comment) {
         this.branch = branch;
         this.rPath = rPath;
+        this.comment = comment;
     }
 
     @Override
@@ -30,8 +32,9 @@ public class CheckinBranchCmd implements Command {
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
-        commands.add("git checkout " + branch + " ; git add . ; git commit -m \"bot checkin\" ; git push origin " + branch);
-        logger.info("git checkout " + branch + " ; git add . ; git commit -m \"bot checkin\" ; git push origin " + branch);
+        String command = String.format("git checkout %s ; git add . ; git commit -m \"%s\" ; git push origin %s", branch, comment, branch);
+        commands.add(command);
+        logger.info(command);
         result = executor.execute(commands, rPath.toFile());
         StringBuilder stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
