@@ -3,6 +3,7 @@ package com.networknt.bot.develop;
 import com.networknt.bot.core.*;
 import com.networknt.bot.core.cmd.CloneBranchCmd;
 import com.networknt.bot.core.cmd.CopyFileCmd;
+import com.networknt.bot.core.cmd.CopyWildcardFileCmd;
 import com.networknt.client.Http2Client;
 import com.networknt.config.Config;
 import com.networknt.service.SingletonServiceFactory;
@@ -42,6 +43,8 @@ public class DevelopBuildTask implements Command {
     boolean skipBuild = (Boolean)config.get(Constants.SKIP_BUILD);
     boolean skipTest = (Boolean)config.get(Constants.SKIP_TEST);
     boolean skipCopyFile = (Boolean)config.get(Constants.SKIP_COPYFILE);
+    boolean skipCopyWildcardFile = (Boolean)config.get(Constants.SKIP_COPYWILDCARDFILE);
+
     boolean skipStart = (Boolean)config.get(Constants.SKIP_START);
 
     // tasks to be executed
@@ -51,7 +54,7 @@ public class DevelopBuildTask implements Command {
 
     Map<String, Object> test = (Map<String, Object>)config.get(Constants.TEST);
     List<Map<String, String>> copyFiles = (List<Map<String, String>>)config.get(Constants.COPYFILE);
-
+    List<Map<String, String>> copyWildcardFiles = (List<Map<String, String>>)config.get(Constants.COPYWILDCARDFILE);
     Map<String, Object> start = (Map<String, Object>)config.get(Constants.START);
     
     String userHome = System.getProperty("user.home");
@@ -325,7 +328,21 @@ public class DevelopBuildTask implements Command {
         }
         return result;
     }
-    
+
+    int copyWildcardFile(String namedTask) throws IOException, InterruptedException {
+        int result = 0;
+        if(skipCopyWildcardFile) return result;
+        for(Map<String, String> copyFile: copyWildcardFiles) {
+            String src = copyFile.get("src");
+            String dst = copyFile.get("dst");
+            String pattern = copyFile.get("pattern");
+            logger.info("Copying from " + src + " to " + dst + " for pattern " + pattern);
+            CopyWildcardFileCmd copyWildcardFileCmd = new CopyWildcardFileCmd(userHome, workspace, src, dst, pattern);
+            copyWildcardFileCmd.execute();
+        }
+        return result;
+    }
+
     int start(String namedTask) throws IOException, InterruptedException {
         int result = 0;
 

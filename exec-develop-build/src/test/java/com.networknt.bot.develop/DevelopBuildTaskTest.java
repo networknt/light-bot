@@ -34,4 +34,12 @@ public class DevelopBuildTaskTest {
         int result = cmd.test("testSetOne");
         Assert.assertEquals(0, result);
     }
+
+    @Test
+    public void testCopyWildcardFile() throws IOException, InterruptedException {
+        DevelopBuildTask cmd = new DevelopBuildTask();
+        int result = cmd.copyWildcardFile("copyWildcardFile");
+        Assert.assertEquals(0, result);
+    }
+
 }

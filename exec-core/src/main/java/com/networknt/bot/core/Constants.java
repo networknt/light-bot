@@ -26,7 +26,9 @@ public class Constants {
     public static final String HEADER = "header";
     public static final String BODY = "body";
     public static final String SKIP_COPYFILE = "skip_copyFile";
+    public static final String SKIP_COPYWILDCARDFILE = "skip_copyWildcardFile";
     public static final String COPYFILE = "copyFile";
+    public static final String COPYWILDCARDFILE = "copyWildcardFile";
     public static final String SKIP_START = "skip_start";
     public static final String START = "start";
     public static final String TASKS = "tasks";

@@ -11,6 +11,8 @@ skip_build: false
 skip_test: false
 # skip copyFile
 skip_copyFile: true
+# skip copyWildcardFile
+skip_copyWildcardFile: false
 # skip start
 skip_start: true
 
@@ -22,7 +24,8 @@ tasks:
   checkoutSetOne:   checkout
   buildProjectsOne: build
   testProjects:     test     
-  copyProjectFiles: copyFile 
+  copyProjectFiles: copyFile
+  copyWildCardFiles: copyWildcardFile
 
 checkout:
   checkoutSetOne:
@@ -304,3 +307,11 @@ test:
           "$.data.numberHolder.theNumber": 4
 # copy individual files
 copyFile:
+
+copyWildcardFile:
+  - src: light-codegen//codegen-core/target
+    dst: light-config-test/light-portal/hybrid-query/service
+    pattern: codegen-core-*[!javadoc][!sources].jar
+  - src: light-codegen//codegen-fwk/target
+    dst: light-config-test/light-portal/hybrid-query/service
+    pattern: codegen-fwk-*[!javadoc][!sources].jar
