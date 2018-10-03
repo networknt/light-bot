@@ -54,5 +54,5 @@ replace:
 # matched path based on Glob (https://javapapers.com/java/glob-with-java-nio/)
 - glob: "{**/pom.xml,**/pom.xml.rocker.raw}"
   match: <version.json-schema-validator>\d*\.\d*\.\d*</version.json-schema-validator>
-  old_value: 0.1.10
-  new_value: 0.1.15
+  old_value: 0.1.22
+  new_value: 0.1.23
