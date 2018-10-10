@@ -13,7 +13,7 @@ dependencies {
     compile(project(":exec-release-maven"))
     compile(project(":exec-release-docker"))
     compile(project(":exec-regex-replace"))
-    compile("com.networknt:email-sender:1.5.19")
+    compile("com.networknt:email-sender:1.5.20")
     compile("com.beust:jcommander:1.72")
     compile("ch.qos.logback:logback-classic:1.2.3")
 }
