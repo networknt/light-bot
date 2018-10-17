@@ -34,6 +34,16 @@ public class Constants {
     public static final String TASKS = "tasks";
     public static final String SERVICES = "services";
 
+    // config merge
+    public static final String SKIP_MERGECONFIG = "skip_mergeConfig";
+    public static final String MERGE_CONFIG = "mergeConfig";
+    public static final String FILE = "file";
+    public static final String OUTPUT = "output";
+    public static final String OUTPUT_FORMAT = "outputFormat";
+
+    // Eclipse project
+    public static final String SKIP_GENERATE_ECLIPSE_PROJECT = "skip_generateEclipseProject";
+    
     // version-upgrade
     public static final String OLD_VERSION = "old_version";
     public static final String NEW_VERSION = "new_version";
