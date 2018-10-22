@@ -21,6 +21,7 @@ public class Cli {
     private static Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
 
     private boolean skipEmail = false;
+    private String email = "steve.hu@gmail.com";
 
     @Parameter(names={"--task", "-t"})
     String task;
@@ -51,13 +52,16 @@ public class Cli {
                     logger.error("build or test failed!");
                     // send email here with the attachment bot.log
                     // send email to stevehu@gmail.com
-                    if(config != null) skipEmail = config.get("skipEmail") == null?  false : ((Boolean)config.get("skipEmail")).booleanValue();
+                    if(config != null) {
+                    	skipEmail = config.get("skipEmail") == null ? false : ((Boolean)config.get("skipEmail")).booleanValue();
+                    	email = config.get("email") == null ? email = "steve.hu@gmail.com" : (String)config.get("email");
+                    }
                     if(!skipEmail) {
                         EmailSender emailSender = new EmailSender();
                         try {
                             File file = new File("bot.log");
                             String absolutePath = file.getAbsolutePath();
-                            emailSender.sendMailWithAttachment("stevehu@gmail.com", "Build Error", "Please check the build log", absolutePath);
+                            emailSender.sendMailWithAttachment(email, "Build Error", "Please check the build log", absolutePath);
                         } catch (MessagingException e) {
                             logger.error("Failed to send email ", e);
                         }
