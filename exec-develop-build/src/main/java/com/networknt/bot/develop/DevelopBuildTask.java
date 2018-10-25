@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class DevelopBuildTask implements Command {
 	private static final Logger logger = LoggerFactory.getLogger(DevelopBuildTask.class);
@@ -211,7 +213,7 @@ public class DevelopBuildTask implements Command {
 			}
 			
 			// final merged map
-			Map<String, Object> mergedMap = new HashMap<String, Object>();
+			SortedMap<String, Object> mergedMap = new TreeMap<String, Object>();
 			Set<String> mergedSet = null;
 			// iterate through all repos and load the respective file
 			// it is assumed that configs are maps and merging them is predicated on map
