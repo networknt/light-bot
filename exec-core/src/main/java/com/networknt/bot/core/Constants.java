@@ -73,6 +73,12 @@ public class Constants {
     public static final String SKIP_CHECKIN = "skip_checkin";
     public static final String GLOB = "glob";
 
+    // create-branch
+    public static final String FROM_TAG = "from_tag";
+    public static final String TAG = "tag";
+    public static final String SKIP_BRANCH = "skip_branch";
+    public static final String SKIP_PUSH = "skip_push";
+
     // this result code indicate not repository has been change
     // when pulling from remote. need to skip the build and test
     public static final int NO_REPO_CHANGE = 100;
