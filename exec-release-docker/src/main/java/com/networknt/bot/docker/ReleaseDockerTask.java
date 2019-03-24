@@ -30,7 +30,7 @@ public class ReleaseDockerTask implements Command {
     private boolean skipMaven = (Boolean)config.get(Constants.SKIP_MAVEN);
     private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
     private boolean skipDocker = (Boolean)config.get(Constants.SKIP_DOCKER);
-
+    private String branch = null; // this value is populated in the checkout step.
 
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
@@ -72,7 +72,7 @@ public class ReleaseDockerTask implements Command {
         // iterate over each group of repositories using the same branch name
         for(Map<String, Object> repoGroup : checkout) {
             // get the branch and the list of repositories
-            String branch = (String) repoGroup.get(Constants.BRANCH);
+            branch = (String) repoGroup.get(Constants.BRANCH);
             List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
 
             for(String repository: repositories) {
@@ -114,7 +114,7 @@ public class ReleaseDockerTask implements Command {
         for(String release: releases) {
             Path rPath = Paths.get(userHome, workspace, release);
             // generate changelog.md, check in
-            GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, rPath);
+            GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, branch, rPath);
             result = genChangeLogCmd.execute();
             if(result != 0) break;
 

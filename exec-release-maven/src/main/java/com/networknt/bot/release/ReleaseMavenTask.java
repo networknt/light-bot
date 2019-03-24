@@ -25,6 +25,7 @@ public class ReleaseMavenTask implements Command {
     private String organization = (String)config.get(Constants.ORGANIZATION);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
+    private String branch = null;  // this variable is populated in the checkout method
 
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
@@ -58,7 +59,7 @@ public class ReleaseMavenTask implements Command {
         // iterate over each group of repositories using the same branch name
         for(Map<String, Object> repoGroup : checkout) {
             // get the branch and the list of repositories
-            String branch = (String) repoGroup.get(Constants.BRANCH);
+            branch = (String) repoGroup.get(Constants.BRANCH);
             List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
             for(String repository: repositories) {
                 Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
@@ -86,8 +87,8 @@ public class ReleaseMavenTask implements Command {
         for(String release: releases) {
             Path rPath = Paths.get(userHome, workspace, release);
 
-            // generate changelog.md, check in
-            GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, rPath);
+            // generate changelog.md, check in the current branch
+            GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, branch, rPath);
             result = genChangeLogCmd.execute();
             if(result != 0) break;
 

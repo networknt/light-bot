@@ -17,13 +17,15 @@ public class GenChangeLogCmd implements Command {
     private String organization;
     private String repository;
     private String version;
+    private String branch;
     private Path rPath;
     private String token;
 
-    public GenChangeLogCmd(String organization, String repository, String version, Path rPath) {
+    public GenChangeLogCmd(String organization, String repository, String version, String branch, Path rPath) {
         this.organization = organization;
         this.repository = repository;
         this.version = version;
+        this.branch = branch;
         this.rPath = rPath;
         // get github token from environment variable
         this.token = System.getenv("CHANGELOG_GITHUB_TOKEN");
@@ -32,13 +34,13 @@ public class GenChangeLogCmd implements Command {
     @Override
     public int execute() throws IOException, InterruptedException {
         int result;
-        String cmd = String.format("docker run --rm -v %s:/usr/local/src/your-app networknt/github-changelog-generator %s/%s --token %s --future-release %s ; git add . ; git commit -m \"bot checkin\" ; git push origin master", rPath, organization, repository, token, version);
+        String cmd = String.format("docker run --rm -v %s:/usr/local/src/your-app networknt/github-changelog-generator %s/%s --token %s --future-release %s ; git add . ; git commit -m \"bot checkin\" ; git push origin %s", rPath, organization, repository, token, version, branch);
         // generate changelog with github-changelog-generator docker
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
         commands.add(cmd);
-        logger.info(cmd);
+        logger.info(cmd + " for " + rPath);
         result = executor.execute(commands, rPath.toFile());
         StringBuilder stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
