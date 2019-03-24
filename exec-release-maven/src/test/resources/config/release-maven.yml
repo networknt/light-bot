@@ -8,8 +8,6 @@ organization: networknt
 # You can skip checkout if you are sure that the code in workspace are the latest and
 # you just want to repeat the release process due to some environmental issue before.
 skip_checkout: false
-# You can skip the merge step is this has been done in the previous execution.
-skip_merge: false
 # You can skip the last release step so that you can double check the merged result.
 skip_release: true
 # clone and switch to develop branch / checkout and pull from develop branch
@@ -51,11 +49,6 @@ checkout:
     - git@github.com:networknt/react-file-manager.git
     - git@github.com:networknt/light-commerce.git
     - git@github.com:networknt/light-cms.git
-# merge develop to master and check in master for above repositories.
-# It assumes that you always merge into master branch to release.
-# Some of the repositories above are not going to be release but simple merge from
-# develop to master in order to sync with other repo's release.
-merge:
 # generate changelog.md from github issues and check in
 # release to maven central
 # merge the changelog.md to develop branch
@@ -66,11 +59,11 @@ release:
   - light-rest-4j
   - light-graphql-4j
   - light-hybrid-4j
-#  - light-codegen
+  - light-codegen
   - light-eventuate-4j
   - light-tram-4j
   - light-saga-4j
   - light-session-4j
-#  - light-proxy
-#  - light-router
+  - light-proxy
+  - light-router
 #  - light-oauth2

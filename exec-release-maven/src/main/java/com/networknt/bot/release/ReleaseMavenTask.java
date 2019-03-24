@@ -24,7 +24,6 @@ public class ReleaseMavenTask implements Command {
     private String version = (String)config.get(Constants.VERSION);
     private String organization = (String)config.get(Constants.ORGANIZATION);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
-    private boolean skipMerge = (Boolean)config.get(Constants.SKIP_MERGE);
     private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
 
     @SuppressWarnings("unchecked")
@@ -41,8 +40,6 @@ public class ReleaseMavenTask implements Command {
     @Override
     public int execute() throws IOException, InterruptedException {
         int result = checkout();
-        if(result != 0) return result;
-        result = merge();
         if(result != 0) return result;
         result = release();
         return result;
@@ -82,26 +79,6 @@ public class ReleaseMavenTask implements Command {
     }
 
 
-    private int merge() throws IOException, InterruptedException {
-        int result = 0;
-        if(skipMerge) return result;
-
-        // iterate over each group of repositories using the same branch name
-        for(Map<String, Object> repoGroup : checkout) {
-            // get the branch and the list of repositories
-            List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
-
-            for(String repository: repositories) {
-                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
-                // merge current branch to master and check in
-                MergeMasterCmd mergeMasterCmd = new MergeMasterCmd(rPath);
-                result = mergeMasterCmd.execute();
-                if(result != 0) break;
-            }
-        }
-        return result;
-    }
-
     private int release() throws IOException, InterruptedException {
         int result = 0;
         if(skipRelease) return result;
@@ -117,11 +94,6 @@ public class ReleaseMavenTask implements Command {
             // run maven release plugin to release to maven central
             MavenReleaseCmd mavenReleaseCmd = new MavenReleaseCmd(rPath);
             result = mavenReleaseCmd.execute();
-            if(result != 0) break;
-
-            // merge the changelog.md to develop and push
-            MergeDevelopCmd mergeDevelopCmd = new MergeDevelopCmd(rPath);
-            result = mergeDevelopCmd.execute();
             if(result != 0) break;
 
             // read CHANGELOG.md for the current release body.
