@@ -7,8 +7,6 @@ version: 1.5.19
 organization: networknt
 # skip checkout if you know all latest code has been checkout in the previous build
 skip_checkout: false
-# skip merge if develop branch has been merged to master
-skip_merge: false
 # skip maven build if you know the build has been done already
 skip_maven: false
 # skip release if it is already done.
@@ -24,13 +22,6 @@ checkout:
     - git@github.com:networknt/light-oauth2.git
     - git@github.com:networknt/light-codegen.git
     - git@github.com:networknt/light-docker.git
-# merge develop to master for above repos
-merge:
-  - light-proxy
-  - light-router
-  - light-oauth2
-  - light-codegen
-  - light-docker
 # maven build
 maven:
   - light-proxy

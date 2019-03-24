@@ -27,7 +27,6 @@ public class ReleaseDockerTask implements Command {
     private String version = (String)config.get(Constants.VERSION);
     private String organization = (String)config.get(Constants.ORGANIZATION);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
-    private boolean skipMerge = (Boolean)config.get(Constants.SKIP_MERGE);
     private boolean skipMaven = (Boolean)config.get(Constants.SKIP_MAVEN);
     private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
     private boolean skipDocker = (Boolean)config.get(Constants.SKIP_DOCKER);
@@ -35,8 +34,6 @@ public class ReleaseDockerTask implements Command {
 
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
-    @SuppressWarnings("unchecked")
-    private List<String> merges = (List<String>)config.get(Constants.MERGE);
     @SuppressWarnings("unchecked")
     private List<String> mavens = (List<String>)config.get(Constants.MAVEN);
     @SuppressWarnings("unchecked")
@@ -53,8 +50,6 @@ public class ReleaseDockerTask implements Command {
     @Override
     public int execute() throws IOException, InterruptedException {
         int result = checkout();
-        if(result != 0) return result;
-        result = merge();
         if(result != 0) return result;
         result = maven();
         if(result != 0) return result;
@@ -99,19 +94,6 @@ public class ReleaseDockerTask implements Command {
         return result;
     }
 
-    private int merge() throws IOException, InterruptedException {
-        int result = 0;
-        if(skipMerge) return result;
-
-        for(String merge: merges) {
-            Path rPath = Paths.get(userHome, workspace, merge);
-            MergeMasterCmd mergeMasterCmd = new MergeMasterCmd(rPath);
-            result = mergeMasterCmd.execute();
-            if(result != 0) break;
-        }
-        return result;
-    }
-
     private int maven() throws IOException, InterruptedException {
         int result = 0;
         if(skipMaven) return result;
@@ -134,11 +116,6 @@ public class ReleaseDockerTask implements Command {
             // generate changelog.md, check in
             GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, rPath);
             result = genChangeLogCmd.execute();
-            if(result != 0) break;
-
-            // merge the changelog.md to develop and push
-            MergeDevelopCmd mergeDevelopCmd = new MergeDevelopCmd(rPath);
-            result = mergeDevelopCmd.execute();
             if(result != 0) break;
 
             // read CHANGELOG.md for the current release body.

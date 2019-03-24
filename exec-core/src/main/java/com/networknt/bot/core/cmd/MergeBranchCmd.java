@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MergeBranchCmd implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(MergeMasterCmd.class);
+    private static final Logger logger = LoggerFactory.getLogger(MergeBranchCmd.class);
     private Executor executor = SingletonServiceFactory.getBean(Executor.class);
     private Path rPath;
     private String fromBranch;
