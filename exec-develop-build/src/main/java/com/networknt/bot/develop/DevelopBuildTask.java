@@ -167,7 +167,7 @@ public class DevelopBuildTask implements Command {
 					commands.add("bash");
 					commands.add("-c");
 					commands.add("git checkout " + branch + " ; git pull origin " + branch);
-					logger.info("git checkout " + branch + " ; git pull origin " + branch);
+					logger.info("git checkout " + branch + " ; git pull origin " + branch + " for " + rPath);
 					result = executor.execute(commands, rPath.toFile());
 					StringBuilder stdout = executor.getStdout();
 					if (stdout != null && stdout.length() > 0)

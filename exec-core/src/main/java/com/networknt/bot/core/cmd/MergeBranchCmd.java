@@ -11,25 +11,29 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-@Deprecated
-public class MergeMasterCmd implements Command {
+public class MergeBranchCmd implements Command {
     private static final Logger logger = LoggerFactory.getLogger(MergeMasterCmd.class);
     private Executor executor = SingletonServiceFactory.getBean(Executor.class);
     private Path rPath;
+    private String fromBranch;
+    private String toBranch;
 
-    public MergeMasterCmd(Path rPath) {
+    public MergeBranchCmd(Path rPath, String fromBranch, String toBranch) {
         this.rPath = rPath;
+        this.fromBranch = fromBranch;
+        this.toBranch = toBranch;
     }
 
     @Override
     public int execute() throws IOException, InterruptedException {
         int result;
-        // merge from develop to master
+        // merge from fromBranch to toBranch
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
-        commands.add("git checkout master; git merge develop ; git push origin master");
-        logger.info("git checkout master; git merge develop ; git push origin master");
+        String command = String.format("git checkout %s; git checkout %s; git merge %s", fromBranch, toBranch, fromBranch);
+        commands.add(command);
+        logger.info(command + " for " + rPath);
         result = executor.execute(commands, rPath.toFile());
         StringBuilder stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
@@ -40,6 +44,7 @@ public class MergeMasterCmd implements Command {
 
     @Override
     public String getName() {
-        return "MergeMaster";
+        return "MergeBranch";
     }
+
 }

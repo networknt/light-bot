@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class MergeDevelopCmd implements Command {
     private static final Logger logger = LoggerFactory.getLogger(MergeDevelopCmd.class);
     private Executor executor = SingletonServiceFactory.getBean(Executor.class);

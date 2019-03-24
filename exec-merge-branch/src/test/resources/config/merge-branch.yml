@@ -1,0 +1,20 @@
+# This task is used to merge from one branch to another branch.
+# Workspace that is used for this operation. Most of time, this is done on local.
+workspace: mergebranch
+# The from branch name that is going to be merged to
+from_branch: develop
+# The to branch name that is going to be merged to
+to_branch: master
+# You can skip checkout if you are sure that the code in workspace are the latest and
+# you just want to repeat the merge branch process due to some environmental issue before.
+skip_checkout: false
+# You can skip the merge branch step is this has been done in the previous execution.
+skip_merge: false
+# You can skip the git push after the branch is created. The default is push to the git server.
+skip_push: true
+# clone and switch to the branch specified in checkout step.
+checkout:
+  - branch: master
+    repository:
+    - git@github.com:networknt/json-overlay.git
+    - git@github.com:networknt/openapi-parser.git

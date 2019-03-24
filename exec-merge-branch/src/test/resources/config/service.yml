@@ -1,0 +1,7 @@
+# Singleton service factory configuration/IoC injection
+singletons:
+# Executor to CommandExecutor binding
+- com.networknt.bot.core.Executor:
+  - com.networknt.bot.core.CommandExecutor
+- com.networknt.bot.core.Command:
+  - com.networknt.bot.branch.MergeBranchTask

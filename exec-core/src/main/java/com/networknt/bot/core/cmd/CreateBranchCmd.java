@@ -33,10 +33,10 @@ public class CreateBranchCmd implements Command {
         commands.add("-c");
         if(fromTag == null) {
             commands.add("git checkout -b " + branch);
-            logger.info("git checkout -b " + branch);
+            logger.info("git checkout -b " + branch + " for " + rPath);
         } else {
             commands.add("git checkout -b " + branch + " " + fromTag);
-            logger.info("git checkout -b " + branch + " " + fromTag);
+            logger.info("git checkout -b " + branch + " " + fromTag + " for " + rPath);
         }
         result = executor.execute(commands, rPath.toFile());
         StringBuilder stdout = executor.getStdout();

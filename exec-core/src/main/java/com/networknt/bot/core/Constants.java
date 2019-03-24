@@ -79,6 +79,10 @@ public class Constants {
     public static final String SKIP_BRANCH = "skip_branch";
     public static final String SKIP_PUSH = "skip_push";
 
+    // merge-branch
+    public static final String FROM_BRANCH = "from_branch";
+    public static final String TO_BRANCH = "to_branch";
+
     // this result code indicate not repository has been change
     // when pulling from remote. need to skip the build and test
     public static final int NO_REPO_CHANGE = 100;
