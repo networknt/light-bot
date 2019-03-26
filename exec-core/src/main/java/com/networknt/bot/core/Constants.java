@@ -56,6 +56,8 @@ public class Constants {
     public static final String ORGANIZATION = "organization";
     public static final String RELEASE = "release";
     public static final String SKIP_RELEASE = "skip_release";
+    public static final String SKIP_RELEASE_NOTE = "skip_release_note";
+    public static final String SKIP_CHANGE_LOG = "skip_change_log";
     public static final String SKIP_MERGE = "skip_merge";
 
     // release-docker

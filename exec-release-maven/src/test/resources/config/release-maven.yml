@@ -8,8 +8,12 @@ organization: networknt
 # You can skip checkout if you are sure that the code in workspace are the latest and
 # you just want to repeat the release process due to some environmental issue before.
 skip_checkout: false
+# skip change log generation
+skip_change_log: false
 # You can skip the last release step so that you can double check the merged result.
 skip_release: true
+# skip upload release note to the github
+skip_release_note: false
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
   - branch: develop

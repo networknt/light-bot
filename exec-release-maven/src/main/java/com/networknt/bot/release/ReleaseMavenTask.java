@@ -24,7 +24,9 @@ public class ReleaseMavenTask implements Command {
     private String version = (String)config.get(Constants.VERSION);
     private String organization = (String)config.get(Constants.ORGANIZATION);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
+    private boolean skipChangeLog = (Boolean)config.get(Constants.SKIP_CHANGE_LOG);
     private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
+    private boolean skipReleaseNote = (Boolean)config.get(Constants.SKIP_RELEASE_NOTE);
     private String branch = null;  // this variable is populated in the checkout method
 
     @SuppressWarnings("unchecked")
@@ -42,7 +44,11 @@ public class ReleaseMavenTask implements Command {
     public int execute() throws IOException, InterruptedException {
         int result = checkout();
         if(result != 0) return result;
+        result = changeLog();
+        if(result != 0) return result;
         result = release();
+        if(result != 0) return result;
+        result = releaseNote();
         return result;
     }
 
@@ -79,6 +85,20 @@ public class ReleaseMavenTask implements Command {
         return result;
     }
 
+    private int changeLog() throws IOException, InterruptedException {
+        int result = 0;
+        if(skipChangeLog) return result;
+
+        for(String release: releases) {
+            Path rPath = Paths.get(userHome, workspace, release);
+
+            // generate changelog.md, check in the current branch
+            GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, branch, rPath);
+            result = genChangeLogCmd.execute();
+            if (result != 0) break;
+        }
+        return result;
+    }
 
     private int release() throws IOException, InterruptedException {
         int result = 0;
@@ -87,16 +107,20 @@ public class ReleaseMavenTask implements Command {
         for(String release: releases) {
             Path rPath = Paths.get(userHome, workspace, release);
 
-            // generate changelog.md, check in the current branch
-            GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, branch, rPath);
-            result = genChangeLogCmd.execute();
-            if(result != 0) break;
-
             // run maven release plugin to release to maven central
             MavenReleaseCmd mavenReleaseCmd = new MavenReleaseCmd(rPath);
             result = mavenReleaseCmd.execute();
             if(result != 0) break;
+        }
+        return result;
+    }
 
+    private int releaseNote() throws IOException, InterruptedException {
+        int result = 0;
+        if(skipReleaseNote) return result;
+
+        for(String release: releases) {
+            Path rPath = Paths.get(userHome, workspace, release);
             // read CHANGELOG.md for the current release body.
             Charset charset = Charset.forName("UTF-8");
             Path file = Paths.get(userHome, workspace, release, "CHANGELOG.md");

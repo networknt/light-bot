@@ -9,8 +9,10 @@ organization: networknt
 skip_checkout: false
 # skip maven build if you know the build has been done already
 skip_maven: false
-# skip release if it is already done.
-skip_release: false
+# skip generate change log
+skip_change_log: false
+# skip upload release_note if it is already done.
+skip_release_note: false
 # skip docker publish if it is done already.
 skip_docker: false
 # clone and switch to develop branch / checkout and pull from develop branch

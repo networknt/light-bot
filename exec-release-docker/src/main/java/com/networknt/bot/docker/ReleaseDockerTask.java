@@ -28,7 +28,8 @@ public class ReleaseDockerTask implements Command {
     private String organization = (String)config.get(Constants.ORGANIZATION);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     private boolean skipMaven = (Boolean)config.get(Constants.SKIP_MAVEN);
-    private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
+    private boolean skipChangeLog = (Boolean)config.get(Constants.SKIP_CHANGE_LOG);
+    private boolean skipReleaseNote = (Boolean)config.get(Constants.SKIP_RELEASE_NOTE);
     private boolean skipDocker = (Boolean)config.get(Constants.SKIP_DOCKER);
     private String branch = null; // this value is populated in the checkout step.
 
@@ -53,7 +54,9 @@ public class ReleaseDockerTask implements Command {
         if(result != 0) return result;
         result = maven();
         if(result != 0) return result;
-        result = release();
+        result = changeLog();
+        if(result != 0) return result;
+        result = releaseNote();
         if(result != 0) return result;
         result = docker();
         return result;
@@ -107,9 +110,9 @@ public class ReleaseDockerTask implements Command {
         return result;
     }
 
-    private int release() throws IOException, InterruptedException {
+    private int changeLog() throws IOException, InterruptedException {
         int result = 0;
-        if(skipRelease) return result;
+        if(skipChangeLog) return result;
 
         for(String release: releases) {
             Path rPath = Paths.get(userHome, workspace, release);
@@ -117,6 +120,16 @@ public class ReleaseDockerTask implements Command {
             GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, branch, rPath);
             result = genChangeLogCmd.execute();
             if(result != 0) break;
+        }
+        return result;
+    }
+
+    private int releaseNote() throws IOException, InterruptedException {
+        int result = 0;
+        if(skipReleaseNote) return result;
+
+        for(String release: releases) {
+            Path rPath = Paths.get(userHome, workspace, release);
 
             // read CHANGELOG.md for the current release body.
             Charset charset = Charset.forName("UTF-8");
