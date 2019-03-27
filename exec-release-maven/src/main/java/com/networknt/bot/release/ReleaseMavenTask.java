@@ -23,6 +23,8 @@ public class ReleaseMavenTask implements Command {
     private String workspace = (String)config.get(Constants.WORKSPACE);
     private String version = (String)config.get(Constants.VERSION);
     private String organization = (String)config.get(Constants.ORGANIZATION);
+    private String prevTag = (String)config.get(Constants.PREV_TAG);
+    private int last = (Integer)config.get(Constants.LAST);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     private boolean skipChangeLog = (Boolean)config.get(Constants.SKIP_CHANGE_LOG);
     private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
@@ -93,8 +95,8 @@ public class ReleaseMavenTask implements Command {
             Path rPath = Paths.get(userHome, workspace, release);
 
             // generate changelog.md, check in the current branch
-            GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, branch, rPath);
-            result = genChangeLogCmd.execute();
+            ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, release, version, branch, prevTag, last, rPath);
+            result = changeLogCmd.execute();
             if (result != 0) break;
         }
         return result;

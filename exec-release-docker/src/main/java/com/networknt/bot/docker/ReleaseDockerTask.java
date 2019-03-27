@@ -26,6 +26,8 @@ public class ReleaseDockerTask implements Command {
     private String workspace = (String)config.get(Constants.WORKSPACE);
     private String version = (String)config.get(Constants.VERSION);
     private String organization = (String)config.get(Constants.ORGANIZATION);
+    private String prevTag = (String)config.get(Constants.PREV_TAG);
+    private int last = (Integer)config.get(Constants.LAST);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     private boolean skipMaven = (Boolean)config.get(Constants.SKIP_MAVEN);
     private boolean skipChangeLog = (Boolean)config.get(Constants.SKIP_CHANGE_LOG);
@@ -117,8 +119,8 @@ public class ReleaseDockerTask implements Command {
         for(String release: releases) {
             Path rPath = Paths.get(userHome, workspace, release);
             // generate changelog.md, check in
-            GenChangeLogCmd genChangeLogCmd = new GenChangeLogCmd(organization, release, version, branch, rPath);
-            result = genChangeLogCmd.execute();
+            ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, release, version, branch, prevTag, last, rPath);
+            result = changeLogCmd.execute();
             if(result != 0) break;
         }
         return result;
