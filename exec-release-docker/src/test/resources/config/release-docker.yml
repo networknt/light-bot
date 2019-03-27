@@ -15,6 +15,8 @@ skip_checkout: false
 skip_maven: false
 # skip generate change log
 skip_change_log: false
+# skip check in the generated changelog
+skip_checkin: false
 # skip upload release_note if it is already done.
 skip_release_note: false
 # skip docker publish if it is done already.

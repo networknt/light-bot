@@ -27,6 +27,7 @@ public class ReleaseMavenTask implements Command {
     private int last = (Integer)config.get(Constants.LAST);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     private boolean skipChangeLog = (Boolean)config.get(Constants.SKIP_CHANGE_LOG);
+    private boolean skipCheckin = (Boolean)config.get(Constants.SKIP_CHECKIN);
     private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
     private boolean skipReleaseNote = (Boolean)config.get(Constants.SKIP_RELEASE_NOTE);
     private String branch = null;  // this variable is populated in the checkout method
@@ -47,6 +48,8 @@ public class ReleaseMavenTask implements Command {
         int result = checkout();
         if(result != 0) return result;
         result = changeLog();
+        if(result != 0) return result;
+        result = checkin();
         if(result != 0) return result;
         result = release();
         if(result != 0) return result;
@@ -97,6 +100,21 @@ public class ReleaseMavenTask implements Command {
             // generate changelog.md, check in the current branch
             ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, release, version, branch, prevTag, last, rPath);
             result = changeLogCmd.execute();
+            if (result != 0) break;
+        }
+        return result;
+    }
+
+    private int checkin() throws IOException, InterruptedException {
+        int result = 0;
+        if(skipCheckin) return result;
+
+        for(String release: releases) {
+            Path rPath = Paths.get(userHome, workspace, release);
+
+            // checkin the generated changelog.md to the branch.
+            CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, "light-bot checkin CHANGELOG.md");
+            result = checkinBranchCmd.execute();
             if (result != 0) break;
         }
         return result;

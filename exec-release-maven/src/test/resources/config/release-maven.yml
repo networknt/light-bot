@@ -14,6 +14,8 @@ last: 100
 skip_checkout: false
 # skip change log generation
 skip_change_log: false
+# skip check in the generated changelog
+skip_checkin: false
 # You can skip the last release step so that you can double check the merged result.
 skip_release: true
 # skip upload release note to the github
