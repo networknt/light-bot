@@ -5,6 +5,10 @@ version: 1.5.19
 # github organization as the token is bound to the org in changelog generator. This
 # means that you can only release multiple repositories within the same org each time.
 organization: networknt
+# previous tag used to calculate how many commits in between in the git log
+prev_tag: 1.5.18
+# last number of pull requests retrieved from the GitHub. 100 minimum.
+last: 100
 # You can skip checkout if you are sure that the code in workspace are the latest and
 # you just want to repeat the release process due to some environmental issue before.
 skip_checkout: false

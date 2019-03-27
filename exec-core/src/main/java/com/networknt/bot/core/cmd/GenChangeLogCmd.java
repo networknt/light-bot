@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class GenChangeLogCmd implements Command {
     private static final Logger logger = LoggerFactory.getLogger(GenChangeLogCmd.class);
     private Executor executor = SingletonServiceFactory.getBean(Executor.class);
