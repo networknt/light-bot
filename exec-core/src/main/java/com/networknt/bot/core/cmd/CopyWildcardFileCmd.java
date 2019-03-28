@@ -35,10 +35,10 @@ public class CopyWildcardFileCmd implements Command {
     public int execute() throws IOException, InterruptedException {
         files = new ArrayList<>();
         Finder finder = new Finder(glob);
-        Files.walkFileTree(Paths.get(userHome, workspace, src), finder);
+        Files.walkFileTree(getRepositoryPath(userHome, workspace, src), finder);
         for(Path file : files) {
-            Path s = Paths.get(userHome, workspace, src, file.toString());
-            Path d = Paths.get(userHome, workspace, dst, file.toString());
+            Path s = getRepositoryPath(userHome, workspace, src, file.toString());
+            Path d = getRepositoryPath(userHome, workspace, dst, file.toString());
             Files.copy(s, d, StandardCopyOption.REPLACE_EXISTING);
             logger.info("Copy file from " + s + " to " + d);
         }

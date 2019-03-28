@@ -20,7 +20,7 @@ public class AgentStartupHookProvider implements StartupHookProvider {
         // create the workspace if it doesn't exist
         String workspace = config.getWorkspace();
         String userHome = System.getProperty("user.home");
-        Path path = Paths.get(userHome, workspace);
+        Path path = workspace.startsWith("/") ? Paths.get(workspace) : Paths.get(userHome, workspace);
         if(!Files.exists(path)) {
             logger.debug("workspace doesn't exist. create one");
             try {

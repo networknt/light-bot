@@ -72,7 +72,7 @@ public class RegexReplaceTask implements Command {
         if(skipCheckout) return result;
 
         // check if there is a directory workspace in home directory.
-        Path wPath = Paths.get(userHome, workspace);
+        Path wPath = getWorkspacePath(userHome, workspace);
         if(Files.notExists(wPath)) {
             Files.createDirectory(wPath);
         }
@@ -85,7 +85,7 @@ public class RegexReplaceTask implements Command {
 
             for(String repository: repositories) {
                 logger.info("Checkout or pull for " + repository);
-                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
                 if(Files.notExists(rPath)) {
                     logger.info("Clone repository to: " + rPath);
                     // clone and switch to branch.
@@ -134,7 +134,7 @@ public class RegexReplaceTask implements Command {
             List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
 
             for(String repository: repositories) {
-                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
                 // switch to branch and check in
                 CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, comment);
                 result = checkinBranchCmd.execute();
@@ -149,7 +149,7 @@ public class RegexReplaceTask implements Command {
         final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher(glob);
         final RegexReplacement rr = new RegexReplacement(match, oldValue, newValue);
 
-        Files.walkFileTree(Paths.get(userHome, workspace), new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(getWorkspacePath(userHome, workspace), new SimpleFileVisitor<Path>() {
 
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {

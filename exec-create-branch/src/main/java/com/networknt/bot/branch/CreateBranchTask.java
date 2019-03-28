@@ -53,7 +53,7 @@ public class CreateBranchTask implements Command {
         if(skipCheckout) return result;
 
         // check if there is a directory workspace in home directory.
-        Path wPath = Paths.get(userHome, workspace);
+        Path wPath = getWorkspacePath(userHome, workspace);
         if(Files.notExists(wPath)) {
             Files.createDirectory(wPath);
         }
@@ -64,7 +64,7 @@ public class CreateBranchTask implements Command {
             String branch = (String) repoGroup.get(Constants.BRANCH);
             List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
             for(String repository: repositories) {
-                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
                 if(Files.notExists(rPath)) {
                     // clone and switch to branch.
                     CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
@@ -92,7 +92,7 @@ public class CreateBranchTask implements Command {
             List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
 
             for(String repository: repositories) {
-                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
                 // create branch
                 CreateBranchCmd createBranchCmd = new CreateBranchCmd(rPath, branch, fromTag? tag : null);
                 result = createBranchCmd.execute();
@@ -112,7 +112,7 @@ public class CreateBranchTask implements Command {
             List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
 
             for(String repository: repositories) {
-                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
                 // push current branch to git
                 PushBranchCmd pushBranchCmd = new PushBranchCmd(rPath, branch);
                 result = pushBranchCmd.execute();

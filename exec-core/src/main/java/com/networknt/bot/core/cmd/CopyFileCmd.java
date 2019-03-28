@@ -18,8 +18,8 @@ public class CopyFileCmd implements Command {
 
     public CopyFileCmd(String userHome, String workspace, String src, String dst) {
         // check if the sPath is Glob pattern, if yes, handle it accordingly.
-        this.sPath = Paths.get(userHome, workspace, src);
-        this.dPath = Paths.get(userHome, workspace, dst);
+        this.sPath = getRepositoryPath(userHome, workspace, src);
+        this.dPath = getRepositoryPath(userHome, workspace, dst);
     }
 
     @Override

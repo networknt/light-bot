@@ -62,7 +62,7 @@ public class VersionUpgradeTask implements Command {
         if(skipCheckout) return result;
 
         // check if there is a directory workspace in home directory.
-        Path wPath = Paths.get(userHome, workspace);
+        Path wPath = getWorkspacePath(userHome, workspace);
         if(Files.notExists(wPath)) {
             Files.createDirectory(wPath);
         }
@@ -74,7 +74,7 @@ public class VersionUpgradeTask implements Command {
             List<String> repositories = (List<String>)repoGroup.get(Constants.REPOSITORY);
 
             for(String repository: repositories) {
-                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
                 if(Files.notExists(rPath)) {
                     // clone and switch to branch.
                     CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
@@ -96,7 +96,7 @@ public class VersionUpgradeTask implements Command {
         if(skipMaven) return result;
 
         for(String maven: mavens) {
-            Path rPath = Paths.get(userHome, workspace, maven);
+            Path rPath = getRepositoryPath(userHome, workspace, maven);
             MavenVersionCmd mavenVersionCmd = new MavenVersionCmd(newVersion, rPath);
             result = mavenVersionCmd.execute();
             if(result != 0) break;
@@ -118,7 +118,7 @@ public class VersionUpgradeTask implements Command {
                 String match = (String)file.get(Constants.MATCH);
                 logger.info("upgrade path {} on match {}", path, match);
                 RegexReplacement rr = new RegexReplacement(match, oldVersion, newVersion);
-                Path upgradePath = Paths.get(userHome, workspace, repoName, path);
+                Path upgradePath = getRepositoryPath(userHome, workspace, repoName, path);
                 // replace old version with new version here.
                 try (Stream<String> lines = Files.lines(upgradePath)) {
                     List<String> replaced = lines
@@ -141,7 +141,7 @@ public class VersionUpgradeTask implements Command {
             List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
 
             for(String repository: repositories) {
-                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
                 // switch to branch and check in
                 CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, comment);
                 result = checkinBranchCmd.execute();
