@@ -1,5 +1,6 @@
 package com.networknt.bot.core.cmd;
 
+import com.networknt.bot.core.Command;
 import org.junit.Assert;
 import org.junit.Test;
 

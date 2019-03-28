@@ -130,7 +130,7 @@ public class DevelopBuildTask implements Command {
 		boolean changed = false;
 
 		// check if there is a directory workspace in home directory.
-		Path wPath = Paths.get(userHome, workspace);
+		Path wPath = getWorkspacePath(userHome, workspace);
 		if (Files.notExists(wPath)) {
 			Files.createDirectory(wPath);
 		}
@@ -150,7 +150,7 @@ public class DevelopBuildTask implements Command {
 			// iterate through the list of repositories
 			List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
 			for (String repository : repositories) {
-				Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+				Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
 				if (Files.notExists(rPath)) {
 					// clone and switch to branch.
 					CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
@@ -220,7 +220,7 @@ public class DevelopBuildTask implements Command {
 			// usage
 			for (String repo : repositories) {
 				// get the path of the file to be merged
-				File filePath = Paths.get(userHome, workspace, repo).toFile();
+				File filePath = getRepositoryPath(userHome, workspace, repo).toFile();
 
 				// load the configuration
 				Map<String, Object> loadedMap = ConfigUtils.getInstance().loadMapConfig(fileType, filePath);
@@ -247,7 +247,7 @@ public class DevelopBuildTask implements Command {
 			String output = (String) namedMerge.get(Constants.OUTPUT);
 
 			// pretty print the output
-			File file = Paths.get(userHome, workspace, output, fileType + "." + outputFormat).toFile();
+			File file = getRepositoryPath(userHome, workspace, output, fileType + "." + outputFormat).toFile();
 			DumperOptions options = new DumperOptions();
 			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 			options.setPrettyFlow(true);
@@ -278,7 +278,7 @@ public class DevelopBuildTask implements Command {
 		// iterate through the list of projects to build
 		List<String> builds = (List<String>) namedBuild.get(Constants.PROJECT);
 		for (String build : builds) {
-			Path path = Paths.get(userHome, workspace, build);
+			Path path = getRepositoryPath(userHome, workspace, build);
 			if (Files.notExists(path)) {
 				logger.error("Path doesn't exist " + build);
 				result = -1;
@@ -335,7 +335,7 @@ public class DevelopBuildTask implements Command {
 				String path = (String) server.get(Constants.PATH);
 				String cmd = (String) server.get(Constants.CMD);
 				logger.info("start server at " + path + " with " + cmd);
-				Path cmdPath = Paths.get(userHome, workspace, path);
+				Path cmdPath = getRepositoryPath(userHome, workspace, path);
 
 				List<String> commands = new ArrayList<>();
 				commands.add("nohup");
@@ -491,7 +491,7 @@ public class DevelopBuildTask implements Command {
 				int timeout = (Integer) server.get(Constants.TIMEOUT);
 
 				logger.info("start server at " + path + " with " + cmd);
-				Path cmdPath = Paths.get(userHome, workspace, path);
+				Path cmdPath = getRepositoryPath(userHome, workspace, path);
 
 				List<String> commands = new ArrayList<>();
 				commands.add("nohup");

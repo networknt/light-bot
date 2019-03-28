@@ -62,7 +62,7 @@ public class ReleaseMavenTask implements Command {
         if(skipCheckout) return result;
 
         // check if there is a directory workspace in home directory.
-        Path wPath = Paths.get(userHome, workspace);
+        Path wPath = getWorkspacePath(userHome, workspace);
         if(Files.notExists(wPath)) {
             Files.createDirectory(wPath);
         }
@@ -73,7 +73,7 @@ public class ReleaseMavenTask implements Command {
             branch = (String) repoGroup.get(Constants.BRANCH);
             List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
             for(String repository: repositories) {
-                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
                 if(Files.notExists(rPath)) {
                     // clone and switch to branch.
                     CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
@@ -95,7 +95,7 @@ public class ReleaseMavenTask implements Command {
         if(skipChangeLog) return result;
 
         for(String release: releases) {
-            Path rPath = Paths.get(userHome, workspace, release);
+            Path rPath = getRepositoryPath(userHome, workspace, release);
 
             // generate changelog.md, check in the current branch
             ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, release, version, branch, prevTag, last, rPath);
@@ -110,7 +110,7 @@ public class ReleaseMavenTask implements Command {
         if(skipCheckin) return result;
 
         for(String release: releases) {
-            Path rPath = Paths.get(userHome, workspace, release);
+            Path rPath = getRepositoryPath(userHome, workspace, release);
 
             // checkin the generated changelog.md to the branch.
             CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, "light-bot checkin CHANGELOG.md");
@@ -125,7 +125,7 @@ public class ReleaseMavenTask implements Command {
         if(skipRelease) return result;
 
         for(String release: releases) {
-            Path rPath = Paths.get(userHome, workspace, release);
+            Path rPath = getRepositoryPath(userHome, workspace, release);
 
             // run maven release plugin to release to maven central
             MavenReleaseCmd mavenReleaseCmd = new MavenReleaseCmd(rPath);
@@ -140,10 +140,10 @@ public class ReleaseMavenTask implements Command {
         if(skipReleaseNote) return result;
 
         for(String release: releases) {
-            Path rPath = Paths.get(userHome, workspace, release);
+            Path rPath = getRepositoryPath(userHome, workspace, release);
             // read CHANGELOG.md for the current release body.
             Charset charset = Charset.forName("UTF-8");
-            Path file = Paths.get(userHome, workspace, release, "CHANGELOG.md");
+            Path file = getRepositoryPath(userHome, workspace, release, "CHANGELOG.md");
             StringBuffer stringBuffer = new StringBuffer();
             try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
                 String line;

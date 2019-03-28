@@ -72,7 +72,7 @@ public class ReleaseDockerTask implements Command {
         if(skipCheckout) return result;
 
         // check if there is a directory workspace in home directory.
-        Path wPath = Paths.get(userHome, workspace);
+        Path wPath = getWorkspacePath(userHome, workspace);
         if(Files.notExists(wPath)) {
             Files.createDirectory(wPath);
         }
@@ -84,7 +84,7 @@ public class ReleaseDockerTask implements Command {
             List<String> repositories = (List<String>) repoGroup.get(Constants.REPOSITORY);
 
             for(String repository: repositories) {
-                Path rPath = Paths.get(userHome, workspace, getDirFromRepo(repository));
+                Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
                 if(Files.notExists(rPath)) {
                     // clone and switch to branch.
                     CloneBranchCmd cloneBranchCmd = new CloneBranchCmd(repository, branch, wPath, rPath);
@@ -107,7 +107,7 @@ public class ReleaseDockerTask implements Command {
         if(skipMaven) return result;
 
         for(String maven: mavens) {
-            Path rPath = Paths.get(userHome, workspace, maven);
+            Path rPath = getRepositoryPath(userHome, workspace, maven);
             MavenBuildCmd mavenBuildCmd = new MavenBuildCmd(rPath);
             result = mavenBuildCmd.execute();
             if(result != 0) break;
@@ -120,7 +120,7 @@ public class ReleaseDockerTask implements Command {
         if(skipChangeLog) return result;
 
         for(String release: releases) {
-            Path rPath = Paths.get(userHome, workspace, release);
+            Path rPath = getRepositoryPath(userHome, workspace, release);
             // generate changelog.md, check in
             ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, release, version, branch, prevTag, last, rPath);
             result = changeLogCmd.execute();
@@ -134,7 +134,7 @@ public class ReleaseDockerTask implements Command {
         if(skipCheckin) return result;
 
         for(String release: releases) {
-            Path rPath = Paths.get(userHome, workspace, release);
+            Path rPath = getRepositoryPath(userHome, workspace, release);
             // check in the generated CHANGELOG.md to the branch
             CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, "light-bot checkin CHANGELOG.md");
             result = checkinBranchCmd.execute();
@@ -148,11 +148,11 @@ public class ReleaseDockerTask implements Command {
         if(skipReleaseNote) return result;
 
         for(String release: releases) {
-            Path rPath = Paths.get(userHome, workspace, release);
+            Path rPath = getRepositoryPath(userHome, workspace, release);
 
             // read CHANGELOG.md for the current release body.
             Charset charset = Charset.forName("UTF-8");
-            Path file = Paths.get(userHome, workspace, release, "CHANGELOG.md");
+            Path file = getRepositoryPath(userHome, workspace, release, "CHANGELOG.md");
             StringBuffer stringBuffer = new StringBuffer();
             try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
                 String line;
@@ -185,7 +185,7 @@ public class ReleaseDockerTask implements Command {
         if(skipDocker) return result;
 
         for(String docker: dockers) {
-            Path rPath = Paths.get(userHome, workspace, docker);
+            Path rPath = getRepositoryPath(userHome, workspace, docker);
             DockerBuildCmd dockerBuildCmd = new DockerBuildCmd(version, rPath);
             result = dockerBuildCmd.execute();
             if(result != 0) break;
