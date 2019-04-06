@@ -16,7 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * This is a command that is used to generate change log before releasing.
+ * This is a command that is used to generate change log before releasing. There are two releases in the light platform
+ * release-maven to build jar and push the jar to the maven central
+ * release-docker to build docker image and push it to the docker hub
+ *
+ * For some repositories like light-proxy and light-router, we have to release both. This will cause the changelog cmd
+ * twice, we need to check if the changelog has already generated before adding a new release entry.
  *
  * @author Steve Hu
  */
@@ -47,10 +52,21 @@ public class ChangeLogCmd implements Command {
     @Override
     public int execute() throws IOException, InterruptedException {
         List<String> genLog = genChangelog();
+        String tagRepoNew = getTagRepository(genLog.get(0));
         List<String> fileContent = new ArrayList<>(Files.readAllLines(Paths.get(rPath.toString(), "CHANGELOG.md"), StandardCharsets.UTF_8));
+        // check if the tag is already in the change log. Cannot compare the entire line as the release-maven and release-docker might have different date.
+        String tagRepoOld = getTagRepository(fileContent.get(2));
+        if(tagRepoNew.equals(tagRepoOld)) {
+            // skip the merge as the same tag has been added to the CHANGELOG.md
+            return 0;
+        }
         fileContent.addAll(2, genLog);
         Files.write(Paths.get(rPath.toString(), "CHANGELOG.md"), fileContent, StandardCharsets.UTF_8);
         return 0;
+    }
+
+    public String getTagRepository(String tagLine) {
+        return tagLine.substring(0, tagLine.lastIndexOf("(") -1);
     }
 
     public List<String> genChangelog() throws IOException, InterruptedException {

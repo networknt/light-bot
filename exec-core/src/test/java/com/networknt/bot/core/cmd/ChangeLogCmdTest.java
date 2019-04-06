@@ -74,4 +74,12 @@ public class ChangeLogCmdTest {
         Assert.assertEquals(0, result);
     }
 
+    @Test
+    public void testGetTagRepo() {
+        Path rPath = Paths.get(userHome, workspace, repository);
+        ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "1.5.33", "1.5.x", "2.0.0-BETA2", 100, rPath);
+        String tagLine = "## [1.6.0](https://github.com/networknt/light-eventuate-4j/tree/1.6.0) (2019-04-05)";
+        String tagRepo = cmd.getTagRepository(tagLine);
+        Assert.assertEquals("## [1.6.0](https://github.com/networknt/light-eventuate-4j/tree/1.6.0)", tagRepo);
+    }
 }
