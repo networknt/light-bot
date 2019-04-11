@@ -441,7 +441,7 @@ public class DevelopBuildTask implements Command {
 		for (Map<String, String> copyFile : copyFiles) {
 			String src = copyFile.get("src");
 			String dst = copyFile.get("dst");
-			logger.info("Copying from " + src + " to " + dst);
+			logger.info("Copying: FROM - " + src + " TO - " + dst);
 			CopyFileCmd copyFileCmd = new CopyFileCmd(userHome, workspace, src, dst);
 			copyFileCmd.execute();
 		}

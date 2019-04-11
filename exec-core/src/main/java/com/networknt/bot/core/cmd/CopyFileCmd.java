@@ -1,13 +1,13 @@
 package com.networknt.bot.core.cmd;
 
 import com.networknt.bot.core.Command;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class CopyFileCmd implements Command {
@@ -24,6 +24,11 @@ public class CopyFileCmd implements Command {
 
     @Override
     public int execute() throws IOException, InterruptedException {
+    	// create folders in case they do not exist
+		if (Files.notExists(dPath)) {
+			Files.createDirectories(dPath);
+		}
+		
         Files.copy(sPath, dPath, StandardCopyOption.REPLACE_EXISTING);
         logger.info("Copy file from " + sPath + " to " + dPath);
         return 0;
