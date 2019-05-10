@@ -33,6 +33,7 @@ public class Constants {
     public static final String START = "start";
     public static final String TASKS = "tasks";
     public static final String SERVICES = "services";
+    public static final String PARALLEL = "parallel";
 
     // config merge
     public static final String SKIP_MERGECONFIG = "skip_mergeConfig";
