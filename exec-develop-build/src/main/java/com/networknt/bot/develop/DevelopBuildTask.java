@@ -274,6 +274,12 @@ public class DevelopBuildTask implements Command {
 		// check whether this task must be skipped
 		if ((Boolean) namedBuild.get(Constants.SKIP))
 			return result;
+		
+		// check whether this build task must be executed with running tests or not
+		boolean skipNamedTests = false;
+		Object skip_test = namedBuild.get(Constants.SKIP_TEST);
+		if(skip_test != null)
+			skipNamedTests = (Boolean)skip_test;
 
 		// iterate through the list of projects to build
 		List<String> builds = (List<String>) namedBuild.get(Constants.PROJECT);
@@ -290,7 +296,7 @@ public class DevelopBuildTask implements Command {
 				commands.add("-c");
 
 				String mavenCmd = "mvn clean install";
-				if (skipTest)
+				if(skipNamedTests || (!skipNamedTests && skipTest))
 					mavenCmd += " -Dmaven.test.skip=true";
 
 				if (!skipGenerateEclipseProject)
@@ -441,7 +447,7 @@ public class DevelopBuildTask implements Command {
 		for (Map<String, String> copyFile : copyFiles) {
 			String src = copyFile.get("src");
 			String dst = copyFile.get("dst");
-			logger.info("Copying from " + src + " to " + dst);
+			logger.info("Copying: FROM - " + src + " TO - " + dst);
 			CopyFileCmd copyFileCmd = new CopyFileCmd(userHome, workspace, src, dst);
 			copyFileCmd.execute();
 		}
