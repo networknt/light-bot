@@ -6,6 +6,7 @@ public class Constants {
     public static final String COMMENT = "comment";
     public static final String CHECKOUT = "checkout";
     public static final String BRANCH = "branch";
+    public static final String SOURCE_FILES_TO_RESET = "reset_source_files";
     public static final String REPOSITORY = "repository";
     public static final String BUILD = "build";
     public static final String PROJECT = "project";

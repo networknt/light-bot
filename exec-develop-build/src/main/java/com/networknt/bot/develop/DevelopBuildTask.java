@@ -142,6 +142,7 @@ public class DevelopBuildTask implements Command {
 		for (Map<String, Object> repoGroup : namedCheckout) {
 			// get the branch and the list of repositories
 			String branch = (String) repoGroup.get(Constants.BRANCH);
+			List<String> sourceFilesToReset = (List<String>) repoGroup.get(Constants.SOURCE_FILES_TO_RESET);
 
 			// check whether this task must be skipped
 			if ((Boolean) repoGroup.get(Constants.SKIP))
@@ -166,8 +167,17 @@ public class DevelopBuildTask implements Command {
 					List<String> commands = new ArrayList<>();
 					commands.add("bash");
 					commands.add("-c");
-					commands.add("git checkout " + branch + " ; git pull origin " + branch);
-					logger.info("git checkout " + branch + " ; git pull origin " + branch + " for " + rPath);
+					String gitCommands = "git checkout " + branch + " ; ";
+					System.out.println("Reset Files");
+					System.out.println(sourceFilesToReset);
+					if (sourceFilesToReset != null) {
+						for (String file : sourceFilesToReset) {
+							gitCommands += "test -f " + file + " && git checkout " + file + " ; ";
+						}
+					}
+					gitCommands += "git pull origin " + branch;
+					commands.add(gitCommands);
+					logger.info(gitCommands + " for " + rPath);
 					result = executor.execute(commands, rPath.toFile());
 					StringBuilder stdout = executor.getStdout();
 					if (stdout != null && stdout.length() > 0)
