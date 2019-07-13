@@ -173,7 +173,7 @@ public class ReleaseDockerTask implements Command {
             }
 
             // call github api to create a new release.
-            GithubReleaseCmd githubReleaseCmd = new GithubReleaseCmd(organization, release, version, stringBuffer.toString(), rPath);
+            GithubReleaseCmd githubReleaseCmd = new GithubReleaseCmd(organization, release, branch, version, stringBuffer.toString(), rPath);
             result = githubReleaseCmd.execute();
             if(result != 0) break;
         }

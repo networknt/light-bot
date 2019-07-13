@@ -25,13 +25,15 @@ public class GithubReleaseCmd implements Command {
     private String token;
     private String organization;
     private String repository;
+    private String branch;
     private String version;
     private String body;
 
 
-    public GithubReleaseCmd(String organization, String repository, String version, String body, Path rPath) {
+    public GithubReleaseCmd(String organization, String repository, String branch, String version, String body, Path rPath) {
         this.organization = organization;
         this.repository = repository;
+        this.branch = branch;
         this.version = version;
         this.body = body;
         this.rPath = rPath;
@@ -48,7 +50,7 @@ public class GithubReleaseCmd implements Command {
 
         Map<String, Object> bodyMap = new HashMap<String, Object>();
         bodyMap.put("tag_name", version);
-        bodyMap.put("target_commitish", "master");
+        bodyMap.put("target_commitish", branch);
         bodyMap.put("name", version);
         bodyMap.put("body", body);
         bodyMap.put("draft", false);

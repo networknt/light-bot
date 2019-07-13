@@ -84,8 +84,11 @@ public class ChangeLogCmd implements Command {
         Map<String, PullRequest> prs = parsePullRequests(getPullRequests());
         for(String number: numbers) {
             PullRequest pr = prs.get(number);
-            String s = String.format("- %s [\\#%s](%s) ([%s](%s))", pr.title.replace("#", "\\#"), number, pr.issureUrl, pr.author, pr.authorUrl);
-            logs.add(s);
+            logger.info("number = " + number + " pr = " + pr);
+            if(pr != null) {
+                String s = String.format("- %s [\\#%s](%s) ([%s](%s))", pr.title.replace("#", "\\#"), number, pr.issureUrl, pr.author, pr.authorUrl);
+                logs.add(s);
+            }
         }
         return logs;
     }
@@ -131,20 +134,22 @@ public class ChangeLogCmd implements Command {
 
     public List<String> getPullRequestsNumbers(String log) {
         List<String> prs = new ArrayList<>();
-        Scanner scanner = new Scanner(log);
-        while(scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            if(line.startsWith("commit ")) {
-                scanner.nextLine(); // Author
-                scanner.nextLine(); // Date
-                scanner.nextLine(); // empty line
-                String title = scanner.nextLine();
-                if(title.endsWith(")")) {
-                    prs.add(getNumberFromTitle(title));
+        if(log != null) {
+            Scanner scanner = new Scanner(log);
+            while(scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if(line.startsWith("commit ")) {
+                    scanner.nextLine(); // Author
+                    scanner.nextLine(); // Date
+                    scanner.nextLine(); // empty line
+                    String title = scanner.nextLine();
+                    if(title.endsWith(")")) {
+                        prs.add(getNumberFromTitle(title));
+                    }
                 }
             }
+            scanner.close();
         }
-        scanner.close();
         return prs;
     }
 
