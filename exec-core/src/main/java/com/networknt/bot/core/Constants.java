@@ -33,6 +33,7 @@ public class Constants {
     public static final String START = "start";
     public static final String TASKS = "tasks";
     public static final String SERVICES = "services";
+    public static final String BUILD_FAT_JAR = "build_FatJar";
 
     // config merge
     public static final String SKIP_MERGECONFIG = "skip_mergeConfig";
@@ -90,4 +91,8 @@ public class Constants {
     // this result code indicate not repository has been change
     // when pulling from remote. need to skip the build and test
     public static final int NO_REPO_CHANGE = 100;
+    
+    // start service
+    public static final String LIGHT_4J_CONFIG_DIR = "light-4j-config-dir";
+    public static final String CONFIG_DIR = "configDir";
 }
