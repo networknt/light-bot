@@ -150,7 +150,7 @@ public class CommandExecutor implements Executor {
             
             Process process = pb.start();
             processes.add(process);
-            logger.info("Added process to processes list for " + process);
+            logger.info("added process to processes list for " + process);
         }
         catch (IOException e)
         {
