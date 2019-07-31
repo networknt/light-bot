@@ -29,8 +29,8 @@ public class CheckoutPullCmd implements Command {
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
-        commands.add("git checkout " + branch + " ; git pull origin " + branch);
-        logger.info("git checkout " + branch + " ; git pull origin " + branch);
+        commands.add("git fetch ; git checkout " + branch + " ; git pull origin " + branch);
+        logger.info("git fetch ; git checkout " + branch + " ; git pull origin " + branch);
         result = executor.execute(commands, rPath.toFile());
         StringBuilder stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
