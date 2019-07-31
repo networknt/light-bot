@@ -57,8 +57,17 @@ public class ChangeLogCmd implements Command {
         // check if the tag is already in the change log. Cannot compare the entire line as the release-maven and release-docker might have different date.
         String tagRepoOld = getTagRepository(fileContent.get(2));
         if(tagRepoNew.equals(tagRepoOld)) {
-            // skip the merge as the same tag has been added to the CHANGELOG.md
-            return 0;
+            // previously we skip the merge as the same tag has been added to the CHANGELOG.md; however, sometimes the release notes are not generated
+            // correctly and there is no way we can regenerate due to the skip. Let's remove the same tag section and regenerate.
+            // logic: remove lines until we reach ## [.
+            fileContent.remove(2);
+            while(true) {
+                if(fileContent.get(2).startsWith("## [")) {
+                    fileContent.add(2, "\n");
+                    break;
+                }
+                fileContent.remove(2);
+            }
         }
         fileContent.addAll(2, genLog);
         Files.write(Paths.get(rPath.toString(), "CHANGELOG.md"), fileContent, StandardCharsets.UTF_8);
