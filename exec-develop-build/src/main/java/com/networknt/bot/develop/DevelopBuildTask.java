@@ -510,6 +510,7 @@ public class DevelopBuildTask implements Command {
 				if(server.get(Constants.CONFIG_DIR)!=null)
 					configDir = (String)server.get(Constants.CONFIG_DIR);
 
+				logger.info("*** start server process ***");
 				logger.info("start server in project: " + path + " with target:" + cmd + " and light-4j config directory: " + configDir);
 				Path cmdPath = getRepositoryPath(userHome, workspace, path);
 
@@ -520,15 +521,10 @@ public class DevelopBuildTask implements Command {
 
 				// add Java start-up command
 				String c = cmdPath.toString() + "/" + cmd;
-				commands.add("java -jar " + c);
-				
-				// add env variables
-				// in this case, the start-up configuration folder
-				Map<String,String> envVars = new HashMap<String, String>();
-				envVars.put(Constants.LIGHT_4J_CONFIG_DIR, configDir);
+				commands.add("java " + "-D" + Constants.LIGHT_4J_CONFIG_DIR + "=" + cmdPath.toString() + "/" + configDir + " -jar " + c);
 				
 				// start the server with env variables set
-				result = executor.startServer(commands, envVars, cmdPath.toFile());
+				result = executor.startServer(commands, cmdPath.toFile());
 				
 				StringBuilder stdout = executor.getStdout();
 				if (stdout != null && stdout.length() > 0)
@@ -542,11 +538,13 @@ public class DevelopBuildTask implements Command {
 				}
 
 				// put a sleep in case the server is not ready.
+				logger.info("wait time - allow server to initialize fully: " + timeout + " ms");
 				Thread.sleep(timeout);
 			}
 
 			// execute test cases
 			logger.info("start testing...");
+			logger.info("*** start process completed ***");
 		}
 
 		return result;
