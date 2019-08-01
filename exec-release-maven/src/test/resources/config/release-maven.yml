@@ -1,5 +1,5 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
-workspace: releasemaven
+workspace: releasemaven_2_0_x
 # release version that is used to generate changelog. This need to be changed every time
 version: 1.5.19
 # github organization as the token is bound to the org in changelog generator. This
@@ -20,6 +20,8 @@ skip_checkin: false
 skip_release: true
 # skip upload release note to the github
 skip_release_note: false
+# skip deploy after the release
+skip_deploy: false
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
   - branch: develop
@@ -77,3 +79,14 @@ release:
   - light-proxy
   - light-router
 #  - light-oauth2
+deploy:
+  - light-codegen:
+    - scp codegen-core/target/codegen-core.jar steve@devops:/home/steve/networknt/light-config-test/light-codegen/2_0_x/service
+    - scp codegen-fwk/target/codegen-fwk.jar steve@devops:/home/steve/networknt/light-config-test/light-codegen/2_0_x/service
+    - scp codegen-web/target/codegen-web.jar steve@devops:/home/steve/networknt/light-config-test/light-codegen/2_0_x/service
+    - scp light-eventuate-4j/target/light-eventuate-4j-generator.jar steve@devops:/home/steve/networknt/light-config-test/light-codegen/2_0_x/service
+    - scp light-graphql-4j/target/light-graphql-4j-generator.jar steve@devops:/home/steve/networknt/light-config-test/light-codegen/2_0_x/service
+    - scp light-hybrid-4j/target/light-hybrid-4j-generator.jar steve@devops:/home/steve/networknt/light-config-test/light-codegen/2_0_x/service
+    - scp light-rest-4j/target/light-rest-4j-generator.jar steve@devops:/home/steve/networknt/light-config-test/light-codegen/2_0_x/service
+  - light-4j:
+    - cp CHANGELOG.md /tmp/CHANGELOG.md

@@ -60,6 +60,7 @@ public class Constants {
     public static final String SKIP_RELEASE_NOTE = "skip_release_note";
     public static final String SKIP_CHANGE_LOG = "skip_change_log";
     public static final String SKIP_MERGE = "skip_merge";
+    public static final String SKIP_DEPLOY = "skip_deploy";
     public static final String PREV_TAG = "prev_tag";
     public static final String LAST = "last";
 
@@ -91,7 +92,10 @@ public class Constants {
     // this result code indicate not repository has been change
     // when pulling from remote. need to skip the build and test
     public static final int NO_REPO_CHANGE = 100;
-    
+
+    // deploy
+    public static final String DEPLOY = "deploy";
+
     // start service
     public static final String LIGHT_4J_CONFIG_DIR = "light-4j-config-dir";
     public static final String CONFIG_DIR = "configDir";
