@@ -31,6 +31,8 @@ public class ReleaseMavenTask implements Command {
     private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
     private boolean skipReleaseNote = (Boolean)config.get(Constants.SKIP_RELEASE_NOTE);
     private boolean skipDeploy = (Boolean)config.get(Constants.SKIP_DEPLOY);
+    private boolean skipUpload = (Boolean)config.get(Constants.SKIP_UPLOAD);
+
     private String branch = null;  // this variable is populated in the checkout method
 
     @SuppressWarnings("unchecked")
@@ -38,6 +40,8 @@ public class ReleaseMavenTask implements Command {
     @SuppressWarnings("unchecked")
     private List<String> releases = (List<String>)config.get(Constants.RELEASE);
     private List<Map<String, List<String>>> deploys = (List<Map<String, List<String>>>) config.get(Constants.DEPLOY);
+    private List<Map<String, List<String>>> uploads = (List<Map<String, List<String>>>) config.get(Constants.UPLOAD);
+
     private String userHome = System.getProperty("user.home");
 
     @Override
@@ -193,4 +197,20 @@ public class ReleaseMavenTask implements Command {
         return result;
     }
 
+    public int upload() throws IOException, InterruptedException {
+        int result = 0;
+        if(skipUpload) return result;
+        for(Map<String, List<String>> upload: uploads) {
+            for(Map.Entry<String, List<String>> entry : upload.entrySet()) {
+                Path rPath = getRepositoryPath(userHome, workspace, entry.getKey());
+                List<String> files = entry.getValue();
+                for(String file: files) {
+                    UploadAssetCmd uploadAssetCmd = new UploadAssetCmd(organization, entry.getKey(), version,  file, rPath);
+                    result = uploadAssetCmd.execute();
+                    if(result != 0) return result;
+                }
+            }
+        }
+        return result;
+    }
 }

@@ -19,4 +19,11 @@ public class ReleaseMavenTaskTest {
         int result = task.deploy();
         Assert.assertEquals(0, result);
     }
+
+    @Test
+    public void testUpload() throws IOException, InterruptedException {
+        ReleaseMavenTask task = new ReleaseMavenTask();
+        int result = task.upload();
+        Assert.assertEquals(0, result);
+    }
 }

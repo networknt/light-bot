@@ -1,30 +1,32 @@
 # Workspace that is used for this operation. Most of time, this is done on local.
 workspace: releasemaven_2_0_x
 # release version that is used to generate changelog. This need to be changed every time
-version: 1.5.19
+version: 2.0.3
 # github organization as the token is bound to the org in changelog generator. This
 # means that you can only release multiple repositories within the same org each time.
 organization: networknt
 # previous tag used to calculate how many commits in between in the git log
-prev_tag: 1.5.18
+prev_tag: 2.0.2
 # last number of pull requests retrieved from the GitHub. 100 minimum.
 last: 100
 # You can skip checkout if you are sure that the code in workspace are the latest and
 # you just want to repeat the release process due to some environmental issue before.
-skip_checkout: false
+skip_checkout: true
 # skip change log generation
-skip_change_log: false
+skip_change_log: true
 # skip check in the generated changelog
-skip_checkin: false
+skip_checkin: true
 # You can skip the last release step so that you can double check the merged result.
 skip_release: true
 # skip upload release note to the github
-skip_release_note: false
+skip_release_note: true
 # skip deploy after the release
-skip_deploy: false
+skip_deploy: true
+# skip upload release assets
+skip_upload: false
 # clone and switch to develop branch / checkout and pull from develop branch
 checkout:
-  - branch: develop
+  - branch: master
     repository:
     - git@github.com:networknt/light-4j.git
     - git@github.com:networknt/openapi-parser.git
@@ -79,6 +81,7 @@ release:
   - light-proxy
   - light-router
 #  - light-oauth2
+# deploy the artifacts to the local or remote location after the release.
 deploy:
   - light-codegen:
     - scp codegen-core/target/codegen-core.jar steve@devops:/home/steve/networknt/light-config-test/light-codegen/2_0_x/service
@@ -90,3 +93,11 @@ deploy:
     - scp light-rest-4j/target/light-rest-4j-generator.jar steve@devops:/home/steve/networknt/light-config-test/light-codegen/2_0_x/service
   - light-4j:
     - cp CHANGELOG.md /tmp/CHANGELOG.md
+# upload additional asserts to the GitHub release page.
+upload:
+  # - light-codegen:
+  #   - codegen-cli/target/codegen-cli.jar
+  - light-proxy:
+    - target/light-proxy.jar
+  - light-router:
+    - target/light-router.jar

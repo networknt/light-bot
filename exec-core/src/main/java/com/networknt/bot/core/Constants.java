@@ -61,6 +61,7 @@ public class Constants {
     public static final String SKIP_CHANGE_LOG = "skip_change_log";
     public static final String SKIP_MERGE = "skip_merge";
     public static final String SKIP_DEPLOY = "skip_deploy";
+    public static final String SKIP_UPLOAD = "skip_upload";
     public static final String PREV_TAG = "prev_tag";
     public static final String LAST = "last";
 
@@ -95,6 +96,9 @@ public class Constants {
 
     // deploy
     public static final String DEPLOY = "deploy";
+
+    // upload
+    public static final String UPLOAD = "upload";
 
     // start service
     public static final String LIGHT_4J_CONFIG_DIR = "light-4j-config-dir";
