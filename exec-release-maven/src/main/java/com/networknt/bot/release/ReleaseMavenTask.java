@@ -62,6 +62,8 @@ public class ReleaseMavenTask implements Command {
         result = releaseNote();
         if(result != 0) return result;
         result = deploy();
+        if(result != 0) return result;
+        result = upload();
         return result;
     }
 
