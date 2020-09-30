@@ -50,6 +50,7 @@ public class Constants {
     public static final String NEW_VERSION = "new_version";
     public static final String MATCH = "match";
     public static final String MAVEN = "maven";
+    public static final String GRADLE = "gradle";
     public static final String VERSION = "version";
     public static final String SKIP_VERSION = "skip_version";
 
@@ -69,6 +70,7 @@ public class Constants {
     public static final String MERGE = "merge";
     public static final String DOCKER = "docker";
     public static final String SKIP_MAVEN = "skip_maven";
+    public static final String SKIP_GRADLE = "skip_gradle";
     public static final String SKIP_DOCKER = "skip_docker";
 
     // regex-replace
