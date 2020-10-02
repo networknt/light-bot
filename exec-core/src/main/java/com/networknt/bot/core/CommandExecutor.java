@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * Please ee the following page for the LGPL license:
  * http://www.gnu.org/licenses/lgpl.txt
- *
+ * @deprecated
  */
 public class CommandExecutor implements Executor {
     static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
