@@ -2,7 +2,6 @@ package com.networknt.bot.docker;
 
 import com.networknt.bot.core.Command;
 import com.networknt.bot.core.Constants;
-import com.networknt.bot.core.RegexReplacement;
 import com.networknt.bot.core.cmd.*;
 import com.networknt.config.Config;
 import org.slf4j.Logger;
@@ -13,11 +12,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ReleaseDockerTask implements Command {
     private static final Logger logger = LoggerFactory.getLogger(ReleaseDockerTask.class);
@@ -30,6 +26,7 @@ public class ReleaseDockerTask implements Command {
     private int last = (Integer)config.get(Constants.LAST);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     private boolean skipMaven = (Boolean)config.get(Constants.SKIP_MAVEN);
+    private boolean skipGradle = (Boolean)config.get(Constants.SKIP_GRADLE);
     private boolean skipChangeLog = (Boolean)config.get(Constants.SKIP_CHANGE_LOG);
     private boolean skipCheckin = (Boolean)config.get(Constants.SKIP_CHECKIN);
     private boolean skipReleaseNote = (Boolean)config.get(Constants.SKIP_RELEASE_NOTE);
@@ -40,6 +37,8 @@ public class ReleaseDockerTask implements Command {
     private List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
     @SuppressWarnings("unchecked")
     private List<String> mavens = (List<String>)config.get(Constants.MAVEN);
+    @SuppressWarnings("unchecked")
+    private List<String> gradles = (List<String>)config.get(Constants.GRADLE);
     @SuppressWarnings("unchecked")
     private List<String> releases = (List<String>)config.get(Constants.RELEASE);
     @SuppressWarnings("unchecked")
@@ -54,6 +53,8 @@ public class ReleaseDockerTask implements Command {
     @Override
     public int execute() throws IOException, InterruptedException {
         int result = checkout();
+        if(result != 0) return result;
+        result = gradle();
         if(result != 0) return result;
         result = maven();
         if(result != 0) return result;
@@ -110,6 +111,19 @@ public class ReleaseDockerTask implements Command {
             Path rPath = getRepositoryPath(userHome, workspace, maven);
             MavenBuildCmd mavenBuildCmd = new MavenBuildCmd(rPath);
             result = mavenBuildCmd.execute();
+            if(result != 0) break;
+        }
+        return result;
+    }
+
+    private int gradle() throws IOException, InterruptedException {
+        int result = 0;
+        if(skipGradle) return result;
+
+        for(String gradle: gradles) {
+            Path rPath = getRepositoryPath(userHome, workspace, gradle);
+            GradleBuildCmd gradleBuildCmd = new GradleBuildCmd(rPath);
+            result = gradleBuildCmd.execute();
             if(result != 0) break;
         }
         return result;
@@ -173,7 +187,7 @@ public class ReleaseDockerTask implements Command {
             }
 
             // call github api to create a new release.
-            GithubReleaseCmd githubReleaseCmd = new GithubReleaseCmd(organization, release, version, stringBuffer.toString(), rPath);
+            GithubReleaseCmd githubReleaseCmd = new GithubReleaseCmd(organization, release, branch, version, stringBuffer.toString(), rPath);
             result = githubReleaseCmd.execute();
             if(result != 0) break;
         }

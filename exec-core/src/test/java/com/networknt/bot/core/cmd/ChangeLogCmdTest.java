@@ -12,14 +12,14 @@ import java.util.Map;
 
 public class ChangeLogCmdTest {
     private String userHome = System.getProperty("user.home");
-    private String workspace = "releasemaven_1_5_x";
+    private String workspace = "releasemaven_2_0_x";
     private String repository = "light-4j";
 
     //@Test
     public void testLocalGitLog() throws IOException, InterruptedException {
         // run the 'ls -l' with GenericSingleCmd
         Path rPath = Paths.get(userHome, workspace, repository);
-        ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "1.5.33", "1.5.x", "2.0.0-BETA2", 100, rPath);
+        ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.3", "master", "2.0.2", 100, rPath);
         String gitLog = cmd.getLocalGitLog();
         System.out.println(gitLog);
     }
@@ -61,7 +61,7 @@ public class ChangeLogCmdTest {
     //@Test
     public void testGenerateChangeLog() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace, repository);
-        ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "1.5.33", "1.5.x", "2.0.0-BETA2", 100, rPath);
+        ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.3", "master", "2.0.2", 100, rPath);
         List<String> list = cmd.genChangelog();
         System.out.println(list);
     }
@@ -69,12 +69,12 @@ public class ChangeLogCmdTest {
     //@Test
     public void testChangeLogCmd() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace, repository);
-        ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "1.5.33", "1.5.x", "2.0.0-BETA2", 100, rPath);
+        ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.3", "master", "2.0.2", 100, rPath);
         int result = cmd.execute();
         Assert.assertEquals(0, result);
     }
 
-    @Test
+    //@Test
     public void testGetTagRepo() {
         Path rPath = Paths.get(userHome, workspace, repository);
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "1.5.33", "1.5.x", "2.0.0-BETA2", 100, rPath);

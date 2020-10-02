@@ -166,8 +166,8 @@ public class DevelopBuildTask implements Command {
 					List<String> commands = new ArrayList<>();
 					commands.add("bash");
 					commands.add("-c");
-					commands.add("git checkout " + branch + " ; git pull origin " + branch);
-					logger.info("git checkout " + branch + " ; git pull origin " + branch + " for " + rPath);
+					commands.add("git fetch ; git checkout " + branch + " ; git pull origin " + branch);
+					logger.info("git fetch ; git checkout " + branch + " ; git pull origin " + branch + " for " + rPath);
 					result = executor.execute(commands, rPath.toFile());
 					StringBuilder stdout = executor.getStdout();
 					if (stdout != null && stdout.length() > 0)
@@ -275,6 +275,11 @@ public class DevelopBuildTask implements Command {
 		if ((Boolean) namedBuild.get(Constants.SKIP))
 			return result;
 		
+		// check whether this build should build a FatJar or not
+		boolean buildFatJar = true;
+		if(namedBuild.get(Constants.BUILD_FAT_JAR) != null)
+			buildFatJar = (Boolean)namedBuild.get(Constants.BUILD_FAT_JAR);
+		
 		// check whether this build task must be executed with running tests or not
 		boolean skipNamedTests = false;
 		Object skip_test = namedBuild.get(Constants.SKIP_TEST);
@@ -299,12 +304,16 @@ public class DevelopBuildTask implements Command {
 				if(skipNamedTests || (!skipNamedTests && skipTest))
 					mavenCmd += " -Dmaven.test.skip=true";
 
-				if (!skipGenerateEclipseProject)
+				if(!skipGenerateEclipseProject)
 					mavenCmd += " eclipse:eclipse";
+				
+				if(buildFatJar)
+					mavenCmd += " -Prelease";
 
 				commands.add(mavenCmd);
 
-				logger.info("mvn clean install for " + build);
+				logger.info(commands.toString());
+				logger.info("mvn clean install for " + build + " build FatJar set to: " + buildFatJar);
 				result = executor.execute(commands, path.toFile());
 				StringBuilder stdout = executor.getStdout();
 				if (stdout != null && stdout.length() > 0)
@@ -495,17 +504,28 @@ public class DevelopBuildTask implements Command {
 				String host = (String) server.get(Constants.HOST);
 				int port = (Integer) server.get(Constants.PORT);
 				int timeout = (Integer) server.get(Constants.TIMEOUT);
+				
+				Object dir = server.get(Constants.CONFIG_DIR);
+				String configDir = "config";
+				if(server.get(Constants.CONFIG_DIR)!=null)
+					configDir = (String)server.get(Constants.CONFIG_DIR);
 
-				logger.info("start server at " + path + " with " + cmd);
+				logger.info("*** start server process ***");
+				logger.info("start server in project: " + path + " with target:" + cmd + " and light-4j config directory: " + configDir);
 				Path cmdPath = getRepositoryPath(userHome, workspace, path);
 
 				List<String> commands = new ArrayList<>();
 				commands.add("nohup");
 				commands.add("bash");
 				commands.add("-c");
+
+				// add Java start-up command
 				String c = cmdPath.toString() + "/" + cmd;
-				commands.add("java -jar " + c);
+				commands.add("java " + "-D" + Constants.LIGHT_4J_CONFIG_DIR + "=" + cmdPath.toString() + "/" + configDir + " -jar " + c);
+				
+				// start the server with env variables set
 				result = executor.startServer(commands, cmdPath.toFile());
+				
 				StringBuilder stdout = executor.getStdout();
 				if (stdout != null && stdout.length() > 0)
 					logger.debug(stdout.toString());
@@ -518,11 +538,13 @@ public class DevelopBuildTask implements Command {
 				}
 
 				// put a sleep in case the server is not ready.
+				logger.info("wait time - allow server to initialize fully: " + timeout + " ms");
 				Thread.sleep(timeout);
 			}
 
 			// execute test cases
 			logger.info("start testing...");
+			logger.info("*** start process completed ***");
 		}
 
 		return result;

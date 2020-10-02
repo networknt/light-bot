@@ -7,9 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class can be used to execute a system command from a Java application.
@@ -126,7 +126,12 @@ public class CommandExecutor implements Executor {
     }
 
     @Override
-    public int startServer(final List<String> commandInformation, File workingDir) throws IOException, InterruptedException
+    public int startServer(final List<String> commandInformation, File workingDir) throws IOException, InterruptedException{
+    	return startServer(commandInformation, null, workingDir);
+    }
+     
+    @Override
+    public int startServer(final List<String> commandInformation, final Map<String,String> envVars, File workingDir) throws IOException, InterruptedException
     {
         int exitValue = 0;
         try
@@ -136,9 +141,16 @@ public class CommandExecutor implements Executor {
             pb.directory(workingDir);
             pb.redirectOutput(ProcessBuilder.Redirect.appendTo(bitbucket));
             pb.redirectError(ProcessBuilder.Redirect.appendTo(bitbucket));
+            
+            if(envVars!=null) {
+	            Map<String,String> env = pb.environment();
+	            env.clear();
+	            env.putAll(envVars);
+            }
+            
             Process process = pb.start();
             processes.add(process);
-            logger.info("Added process to processes list for " + process);
+            logger.info("added process to processes list for " + process);
         }
         catch (IOException e)
         {

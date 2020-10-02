@@ -34,6 +34,7 @@ public class Constants {
     public static final String TASKS = "tasks";
     public static final String SERVICES = "services";
     public static final String PARALLEL = "parallel";
+    public static final String BUILD_FAT_JAR = "build_FatJar";
 
     // config merge
     public static final String SKIP_MERGECONFIG = "skip_mergeConfig";
@@ -50,6 +51,7 @@ public class Constants {
     public static final String NEW_VERSION = "new_version";
     public static final String MATCH = "match";
     public static final String MAVEN = "maven";
+    public static final String GRADLE = "gradle";
     public static final String VERSION = "version";
     public static final String SKIP_VERSION = "skip_version";
 
@@ -60,6 +62,8 @@ public class Constants {
     public static final String SKIP_RELEASE_NOTE = "skip_release_note";
     public static final String SKIP_CHANGE_LOG = "skip_change_log";
     public static final String SKIP_MERGE = "skip_merge";
+    public static final String SKIP_DEPLOY = "skip_deploy";
+    public static final String SKIP_UPLOAD = "skip_upload";
     public static final String PREV_TAG = "prev_tag";
     public static final String LAST = "last";
 
@@ -67,6 +71,7 @@ public class Constants {
     public static final String MERGE = "merge";
     public static final String DOCKER = "docker";
     public static final String SKIP_MAVEN = "skip_maven";
+    public static final String SKIP_GRADLE = "skip_gradle";
     public static final String SKIP_DOCKER = "skip_docker";
 
     // regex-replace
@@ -91,4 +96,14 @@ public class Constants {
     // this result code indicate not repository has been change
     // when pulling from remote. need to skip the build and test
     public static final int NO_REPO_CHANGE = 100;
+
+    // deploy
+    public static final String DEPLOY = "deploy";
+
+    // upload
+    public static final String UPLOAD = "upload";
+
+    // start service
+    public static final String LIGHT_4J_CONFIG_DIR = "light-4j-config-dir";
+    public static final String CONFIG_DIR = "configDir";
 }
