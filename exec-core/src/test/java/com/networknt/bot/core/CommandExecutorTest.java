@@ -22,17 +22,6 @@ public class CommandExecutorTest {
         // execute the command
         Executor executor = SingletonServiceFactory.getBean(Executor.class);
         int result = executor.execute(commands, new File(System.getProperty("user.home")));
-
-        // get the stdout and stderr from the command that was run
-        StringBuilder stdout = executor.getStdout();
-        StringBuilder stderr = executor.getStderr();
-
-        // print the stdout and stderr
-        System.out.println("The numeric result of the command was: " + result);
-        System.out.println("STDOUT:");
-        System.out.println(stdout);
-        System.out.println("STDERR:");
-        System.out.println(stderr);
     }
 
     @Test
@@ -42,17 +31,6 @@ public class CommandExecutorTest {
         // execute the command
         Executor executor = SingletonServiceFactory.getBean(Executor.class);
         int result = executor.execute(commands, new File(System.getProperty("user.home")));
-
-        // get the stdout and stderr from the command that was run
-        StringBuilder stdout = executor.getStdout();
-        StringBuilder stderr = executor.getStderr();
-
-        // print the stdout and stderr
-        System.out.println("The numeric result of the command was: " + result);
-        System.out.println("STDOUT:");
-        System.out.println(stdout);
-        System.out.println("STDERR:");
-        System.out.println(stderr);
 
     }
 
@@ -66,50 +44,18 @@ public class CommandExecutorTest {
         Executor executor = SingletonServiceFactory.getBean(Executor.class);
         int result = executor.execute(commands, new File(System.getProperty("java.io.tmpdir")));
 
-        // get the stdout and stderr from the command that was run
-        StringBuilder stdout = executor.getStdout();
-        StringBuilder stderr = executor.getStderr();
-
-        // print the stdout and stderr
-        System.out.println("The numeric result of the command was: " + result);
-        System.out.println("STDOUT:");
-        System.out.println(stdout);
-        System.out.println("STDERR:");
-        System.out.println(stderr);
-
         commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
         commands.add("git clone https://github.com/networknt/light-4j.git");
         result = executor.execute(commands, new File(System.getProperty("java.io.tmpdir")));
 
-        // get the stdout and stderr from the command that was run
-        stdout = executor.getStdout();
-        stderr = executor.getStderr();
-
-        // print the stdout and stderr
-        System.out.println("The numeric result of the command was: " + result);
-        System.out.println("STDOUT:");
-        System.out.println(stdout);
-        System.out.println("STDERR:");
-        System.out.println(stderr);
-
         commands = new ArrayList<>();
         // switch to branch and pull
         commands.add("bash");
         commands.add("-c");
-        commands.add("git checkout develop");
+        commands.add("git checkout master");
         Path path = Paths.get(System.getProperty("java.io.tmpdir"),"light-4j");
         result = executor.execute(commands, path.toFile());
-
-        // get the stdout and stderr from the command that was run
-        stdout = executor.getStdout();
-        stderr = executor.getStderr();
-
-        System.out.println("The numeric result of the command was: " + result);
-        System.out.println("STDOUT:");
-        System.out.println(stdout);
-        System.out.println("STDERR:");
-        System.out.println(stderr);
     }
 }
