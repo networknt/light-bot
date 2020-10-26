@@ -37,7 +37,7 @@ public class Cli {
     }
 
     public void run() {
-        logger.info("Cli starts with task = %s", task);
+        logger.info("Cli starts with task = " + task);
         TaskRegistry registry = TaskRegistry.getInstance();
         Set<String> tasks = registry.getTasks();
         if(tasks.contains(task)) {
@@ -71,7 +71,7 @@ public class Cli {
                 logger.error("Exception", e);
             }
         } else {
-            logger.error("Invalid task %s", task);
+            logger.error("Invalid task " + task);
         }
     }
 }
