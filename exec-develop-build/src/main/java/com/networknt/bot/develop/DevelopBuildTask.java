@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -102,7 +101,7 @@ public class DevelopBuildTask implements Command {
 			}
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			logger.error("Task could not be executed and failed with: " + e.getMessage());
+			logger.error("Task could not be executed and failed with:", e);
 		} finally {
 			// teardown data, even in case some of the tasks finished abnormally
 			tearDown();
@@ -200,7 +199,7 @@ public class DevelopBuildTask implements Command {
 		for (Map<String, Object> namedMerge : namedMergeList) {
 			// check whether this task must be skipped
 			if ((Boolean) namedMerge.get(Constants.SKIP))
-				return result;
+				continue;
 
 			// get the type of config file to merge
 			String fileType = (String) namedMerge.get(Constants.FILE);
