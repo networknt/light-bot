@@ -155,6 +155,7 @@ public class CommandExecutor implements Executor {
         catch (IOException e)
         {
             // TODO deal with this here, or just throw it?
+            logger.error("Exception:", e);
             throw e;
         }
         finally
