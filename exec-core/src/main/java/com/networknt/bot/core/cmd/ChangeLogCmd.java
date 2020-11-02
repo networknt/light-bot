@@ -110,13 +110,13 @@ public class ChangeLogCmd implements Command {
         commands.add(cmd);
         logger.info(cmd + " for " + rPath);
         int result = executor.execute(commands, rPath.toFile());
-        StringBuilder stdout = executor.getStdout();
+        String stdout = executor.getStdout();
 
         if(stdout != null && stdout.length() > 0) {
-            return stdout.toString();
+            return stdout;
         } else {
-            StringBuilder stderr = executor.getStderr();
-            if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+            String stderr = executor.getStderr();
+            if(stderr != null && stderr.length() > 0) logger.error(stderr);
             return null;
         }
     }
@@ -130,13 +130,13 @@ public class ChangeLogCmd implements Command {
         commands.add(cmd);
         logger.info(cmd + " for " + rPath);
         int result = executor.execute(commands, rPath.toFile());
-        StringBuilder stdout = executor.getStdout();
+        String stdout = executor.getStdout();
 
         if(stdout != null && stdout.length() > 0) {
-            return stdout.toString();
+            return stdout;
         } else {
-            StringBuilder stderr = executor.getStderr();
-            if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+            String stderr = executor.getStderr();
+            if(stderr != null && stderr.length() > 0) logger.error(stderr);
             return null;
         }
     }
@@ -175,17 +175,20 @@ public class ChangeLogCmd implements Command {
         commands.add(cmd);
         logger.info(cmd + " for " + rPath);
         int result = executor.execute(commands, rPath.toFile());
-        StringBuilder stdout = executor.getStdout();
+        String stdout = executor.getStdout();
+        logger.info("getPullRequests stdout: " + stdout);
         if(stdout != null && stdout.length() > 0) {
-            return stdout.toString();
+            return stdout;
         } else {
-            StringBuilder stderr = executor.getStderr();
-            if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+            String stderr = executor.getStderr();
+            logger.info("getPullRequests stderr: " + stderr);
+            if(stderr != null && stderr.length() > 0) logger.error(stderr);
             return null;
         }
     }
 
     public Map<String, PullRequest> parsePullRequests(String pullRequests) {
+        logger.info("pullRequests: " + pullRequests);
         Map<String, PullRequest> result = new HashMap<>();
 
         Map<String, Object> map = JsonMapper.string2Map(pullRequests);

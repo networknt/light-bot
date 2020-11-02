@@ -11,13 +11,17 @@ import java.util.concurrent.TimeoutException;
 public class FasterRollingCommandExecutor extends CommandExecutor implements InOutErrStreamProvider {
     private static final Logger logger = LoggerFactory.getLogger(FasterRollingCommandExecutor.class);
 
-    InputStream userInputStream = System.in;
-    OutputStream logStream = new LoggingOutputStream(logger, LoggingOutputStream.LogLevel.INFO);
-    OutputStream errorLogStream = new LoggingOutputStream(logger, LoggingOutputStream.LogLevel.ERROR);
+    InputStream inputStream = System.in;
+    // OutputStream logStream = new LoggingOutputStream(logger, LoggingOutputStream.LogLevel.INFO);
+    // OutputStream errorLogStream = new LoggingOutputStream(logger, LoggingOutputStream.LogLevel.ERROR);
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
 
     @Override
     public int execute(List<String> commands, File workingDir) throws IOException, InterruptedException {
         logger.info("about to execute this concat command {} in this working directory {} ", commands, workingDir);
+        outputStream = new ByteArrayOutputStream();
+        errorStream = new ByteArrayOutputStream();
         try {
             return new ProcessExecutor().directory(workingDir).command(commands)
                     .redirectInput(getInputStream())
@@ -32,16 +36,32 @@ public class FasterRollingCommandExecutor extends CommandExecutor implements InO
 
     @Override
     public InputStream getInputStream() {
-        return this.userInputStream;
+        return this.inputStream;
     }
 
     @Override
     public OutputStream getOutputStream() {
-        return this.logStream;
+        return this.outputStream;
     }
 
     @Override
     public OutputStream getErrorStream() {
-        return this.errorLogStream;
+        return this.errorStream;
+    }
+
+    /**
+     * Get the standard output (stdout) from the command you just exec'd.
+     */
+    @Override
+    public String getStdout() {
+        return new String(outputStream.toByteArray());
+    }
+
+    /**
+     * Get the standard error (stderr) from the command you just exec'd.
+     */
+    @Override
+    public String getStderr() {
+        return new String(errorStream.toByteArray());
     }
 }

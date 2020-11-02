@@ -65,12 +65,12 @@ public class DevelopParallelBuildTask extends DevelopBuildTask {
                 logger.info("mvn clean install for " + build);
                 try {
                     exitValue = executor.execute(commands, path.toFile());
-                    StringBuilder stdout = executor.getStdout();
+                    String stdout = executor.getStdout();
                     if (stdout != null && stdout.length() > 0)
-                        logger.debug(stdout.toString());
-                    StringBuilder stderr = executor.getStderr();
+                        logger.debug(stdout);
+                    String stderr = executor.getStderr();
                     if (stderr != null && stderr.length() > 0)
-                        logger.error(stderr.toString());
+                        logger.error(stderr);
                 } catch (Exception e) {
                     e.printStackTrace(errorPrintStream);
                 }

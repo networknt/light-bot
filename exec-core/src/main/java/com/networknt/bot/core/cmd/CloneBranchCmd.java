@@ -38,10 +38,10 @@ public class CloneBranchCmd implements Command {
         // execute the command
         result = executor.execute(commands, wPath.toFile());
         // get the stdout and stderr from the command that was run
-        StringBuilder stdout = executor.getStdout();
-        if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
-        StringBuilder stderr = executor.getStderr();
-        if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+        String stdout = executor.getStdout();
+        if(stdout != null && stdout.length() > 0) logger.debug(stdout);
+        String stderr = executor.getStderr();
+        if(stderr != null && stderr.length() > 0) logger.error(stderr);
         if(result != 0) {
             return result;
         }
@@ -53,9 +53,9 @@ public class CloneBranchCmd implements Command {
         logger.info("git checkout " + branch);
         result = executor.execute(commands, rPath.toFile());
         stdout = executor.getStdout();
-        if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
+        if(stdout != null && stdout.length() > 0) logger.debug(stdout);
         stderr = executor.getStderr();
-        if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+        if(stderr != null && stderr.length() > 0) logger.error(stderr);
         return result;
     }
 

@@ -168,14 +168,14 @@ public class DevelopBuildTask implements Command {
 					commands.add("git fetch ; git checkout " + branch + " ; git pull origin " + branch);
 					logger.info("git fetch ; git checkout " + branch + " ; git pull origin " + branch + " for " + rPath);
 					result = executor.execute(commands, rPath.toFile());
-					StringBuilder stdout = executor.getStdout();
+					String stdout = executor.getStdout();
 					if (stdout != null && stdout.length() > 0)
-						logger.debug(stdout.toString());
-					StringBuilder stderr = executor.getStderr();
+						logger.debug(stdout);
+					String stderr = executor.getStderr();
 					if (stderr != null && stderr.length() > 0) {
-						logger.error(stderr.toString());
+						logger.error(stderr);
 						if (!changed)
-							changed = GitUtil.branchChanged(branch, stderr.toString());
+							changed = GitUtil.branchChanged(branch, stderr);
 					}
 					if (result != 0) {
 						break;
@@ -314,12 +314,12 @@ public class DevelopBuildTask implements Command {
 				logger.info(commands.toString());
 				logger.info("mvn clean install for " + build + " build FatJar set to: " + buildFatJar);
 				result = executor.execute(commands, path.toFile());
-				StringBuilder stdout = executor.getStdout();
+				String stdout = executor.getStdout();
 				if (stdout != null && stdout.length() > 0)
-					logger.debug(stdout.toString());
-				StringBuilder stderr = executor.getStderr();
+					logger.debug(stdout);
+				String stderr = executor.getStderr();
 				if (stderr != null && stderr.length() > 0)
-					logger.error(stderr.toString());
+					logger.error(stderr);
 				if (result != 0) {
 					break;
 				}
@@ -358,12 +358,12 @@ public class DevelopBuildTask implements Command {
 				String c = cmdPath.toString() + "/" + cmd;
 				commands.add("java -jar " + c);
 				result = executor.startServer(commands, cmdPath.toFile());
-				StringBuilder stdout = executor.getStdout();
+				String stdout = executor.getStdout();
 				if (stdout != null && stdout.length() > 0)
-					logger.debug(stdout.toString());
-				StringBuilder stderr = executor.getStderr();
+					logger.debug(stdout);
+				String stderr = executor.getStderr();
 				if (stderr != null && stderr.length() > 0)
-					logger.error(stderr.toString());
+					logger.error(stderr);
 				if (result != 0) {
 					logger.info("Start server failed for " + c);
 					break;
@@ -525,12 +525,12 @@ public class DevelopBuildTask implements Command {
 				// start the server with env variables set
 				result = executor.startServer(commands, cmdPath.toFile());
 				
-				StringBuilder stdout = executor.getStdout();
+				String stdout = executor.getStdout();
 				if (stdout != null && stdout.length() > 0)
-					logger.debug(stdout.toString());
-				StringBuilder stderr = executor.getStderr();
+					logger.debug(stdout);
+				String stderr = executor.getStderr();
 				if (stderr != null && stderr.length() > 0)
-					logger.error(stderr.toString());
+					logger.error(stderr);
 				if (result != 0) {
 					logger.info("Start server failed for " + c);
 					break;

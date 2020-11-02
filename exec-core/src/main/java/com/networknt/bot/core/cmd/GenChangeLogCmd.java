@@ -43,10 +43,10 @@ public class GenChangeLogCmd implements Command {
         commands.add(cmd);
         logger.info(cmd + " for " + rPath);
         result = executor.execute(commands, rPath.toFile());
-        StringBuilder stdout = executor.getStdout();
-        if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
-        StringBuilder stderr = executor.getStderr();
-        if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+        String stdout = executor.getStdout();
+        if(stdout != null && stdout.length() > 0) logger.debug(stdout);
+        String stderr = executor.getStderr();
+        if(stderr != null && stderr.length() > 0) logger.error(stderr);
         return result;
     }
 

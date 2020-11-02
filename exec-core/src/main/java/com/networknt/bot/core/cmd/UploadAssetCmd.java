@@ -53,15 +53,15 @@ public class UploadAssetCmd implements Command {
         commands.add(cmd);
         logger.info(cmd);
         result = executor.execute(commands, rPath.toFile());
-        StringBuilder stdout = executor.getStdout();
+        String stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) {
             logger.debug(stdout.toString());
             // parse the release id from the response.
-            Map<String, Object> map = JsonMapper.string2Map(stdout.toString());
+            Map<String, Object> map = JsonMapper.string2Map(stdout);
             releaseId = (Integer)map.get("id");
         }
-        StringBuilder stderr = executor.getStderr();
-        if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+        String stderr = executor.getStderr();
+        if(stderr != null && stderr.length() > 0) logger.error(stderr);
         if(result != 0) return result;
 
         // upload an asset to github.com release. note that --data-binary is the filename with @ as prefix to indicate that is the content of the file.
@@ -73,9 +73,9 @@ public class UploadAssetCmd implements Command {
         logger.info(cmd);
         result = executor.execute(commands, rPath.toFile());
         stdout = executor.getStdout();
-        if(stdout != null && stdout.length() > 0) logger.debug(stdout.toString());
+        if(stdout != null && stdout.length() > 0) logger.debug(stdout);
         stderr = executor.getStderr();
-        if(stderr != null && stderr.length() > 0) logger.error(stderr.toString());
+        if(stderr != null && stderr.length() > 0) logger.error(stderr);
         return result;
     }
 

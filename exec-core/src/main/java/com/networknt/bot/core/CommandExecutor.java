@@ -40,7 +40,7 @@ import java.util.Map;
  * http://www.gnu.org/licenses/lgpl.txt
  * @deprecated
  */
-public class CommandExecutor implements Executor {
+public abstract class CommandExecutor implements Executor {
     static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 
     private String adminPassword;
@@ -168,27 +168,13 @@ public class CommandExecutor implements Executor {
      * Get the standard output (stdout) from the command you just exec'd.
      */
     @Override
-    public StringBuilder getStdout()
-    {
-        if(inputStreamHandler != null) {
-            return inputStreamHandler.getOutputBuffer();
-        } else {
-            return null;
-        }
-    }
+    public abstract String getStdout();
 
     /**
      * Get the standard error (stderr) from the command you just exec'd.
      */
     @Override
-    public StringBuilder getStderr()
-    {
-        if(inputStreamHandler != null) {
-            return errorStreamHandler.getOutputBuffer();
-        } else {
-            return null;
-        }
-    }
+    public abstract String getStderr();
 
     @Override
     public void stopServers() {

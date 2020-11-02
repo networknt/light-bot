@@ -10,6 +10,6 @@ public interface Executor {
      int startServer(List<String> commands, File workingDir) throws IOException, InterruptedException;
      int startServer(List<String> commands, Map<String,String> envVars, File workingDir) throws IOException, InterruptedException;
      void stopServers();
-     StringBuilder getStdout();
-     StringBuilder getStderr();
+     String getStdout();
+     String getStderr();
 }
