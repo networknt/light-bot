@@ -1,6 +1,7 @@
 package com.networknt.bot.core.cmd;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class ChangeLogCmdTest {
     private String repository = "light-4j";
 
     @Test
+    @Ignore
     public void testLocalGitLog() throws IOException, InterruptedException {
         // run the 'ls -l' with GenericSingleCmd
         Path rPath = Paths.get(userHome, workspace, repository);
@@ -24,6 +26,7 @@ public class ChangeLogCmdTest {
     }
 
     @Test
+    @Ignore
     public void testPullRequest() throws IOException, InterruptedException {
         // run the 'ls -l' with GenericSingleCmd
         Path rPath = Paths.get(userHome, workspace, repository);
@@ -41,6 +44,7 @@ public class ChangeLogCmdTest {
     }
 
     @Test
+    @Ignore
     public void testGetPrNumber() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace, repository);
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.19", "master", "2.0.18", 100, rPath);
@@ -49,6 +53,7 @@ public class ChangeLogCmdTest {
     }
 
     @Test
+    @Ignore
     public void testParsePullRequests() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace, repository);
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.19", "master", "2.0.18", 100, rPath);
@@ -57,6 +62,7 @@ public class ChangeLogCmdTest {
     }
 
     @Test
+    @Ignore
     public void testGenerateChangeLog() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace, repository);
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.19", "master", "2.0.18", 100, rPath);
@@ -64,7 +70,8 @@ public class ChangeLogCmdTest {
         System.out.println(list);
     }
 
-    //@Test
+    @Test
+    @Ignore
     public void testChangeLogCmd() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace, repository);
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.19", "master", "2.0.18", 100, rPath);
