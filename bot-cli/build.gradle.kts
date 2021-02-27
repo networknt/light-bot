@@ -27,7 +27,7 @@ val fatJar = task("fatJar", type = Jar::class) {
         attributes["Implementation-Version"] = version
         attributes["Main-Class"] = "com.networknt.bot.cli.Cli"
     }
-    from(configurations.runtime.map({ if (it.isDirectory) it else zipTree(it) }))
+    from(configurations.runtime.get().map({ if (it.isDirectory) it else zipTree(it) }))
     with(tasks["jar"] as CopySpec)
 }
 
