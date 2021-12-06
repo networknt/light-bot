@@ -1,0 +1,7 @@
+# Workspace that is used for this operation. Most of time, this is done on local.
+workspace: syncgitrepo
+source: https://git.lightapi.net:3000/
+target: https://github.com/
+# Organization and repository
+networknt:
+  - light-mq.git
