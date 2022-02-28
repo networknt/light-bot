@@ -4,6 +4,7 @@ import com.networknt.bot.core.Command;
 import com.networknt.bot.core.Constants;
 import com.networknt.bot.core.cmd.*;
 import com.networknt.config.Config;
+import com.networknt.utility.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,6 @@ public class ReleaseMavenTask implements Command {
     private Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
     private String workspace = (String)config.get(Constants.WORKSPACE);
     private String version = (String)config.get(Constants.VERSION);
-    private String organization = (String)config.get(Constants.ORGANIZATION);
     private String prevTag = (String)config.get(Constants.PREV_TAG);
     private int last = (Integer)config.get(Constants.LAST);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
@@ -105,10 +105,14 @@ public class ReleaseMavenTask implements Command {
         if(skipChangeLog) return result;
 
         for(String release: releases) {
-            Path rPath = getRepositoryPath(userHome, workspace, release);
+            // the release is formatted as organization/repository
+            String[] parts = StringUtils.split(release, "/");
+            String organization = parts[0];
+            String repository = parts[1];
+            Path rPath = getRepositoryPath(userHome, workspace, repository);
 
             // generate changelog.md, check in the current branch
-            ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, release, version, branch, prevTag, last, rPath);
+            ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, repository, version, branch, prevTag, last, rPath);
             result = changeLogCmd.execute();
             if (result != 0) break;
         }
@@ -120,7 +124,12 @@ public class ReleaseMavenTask implements Command {
         if(skipCheckin) return result;
 
         for(String release: releases) {
-            Path rPath = getRepositoryPath(userHome, workspace, release);
+            // the release is formatted as organization/repository
+            String[] parts = StringUtils.split(release, "/");
+            String organization = parts[0];
+            String repository = parts[1];
+
+            Path rPath = getRepositoryPath(userHome, workspace, repository);
 
             // checkin the generated changelog.md to the branch.
             CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, "light-bot checkin CHANGELOG.md");
@@ -135,7 +144,11 @@ public class ReleaseMavenTask implements Command {
         if(skipRelease) return result;
 
         for(String release: releases) {
-            Path rPath = getRepositoryPath(userHome, workspace, release);
+            String[] parts = StringUtils.split(release, "/");
+            String organization = parts[0];
+            String repository = parts[1];
+
+            Path rPath = getRepositoryPath(userHome, workspace, repository);
 
             // run maven release plugin to release to maven central
             MavenReleaseCmd mavenReleaseCmd = new MavenReleaseCmd(rPath);
@@ -150,10 +163,14 @@ public class ReleaseMavenTask implements Command {
         if(skipReleaseNote) return result;
 
         for(String release: releases) {
-            Path rPath = getRepositoryPath(userHome, workspace, release);
+            String[] parts = StringUtils.split(release, "/");
+            String organization = parts[0];
+            String repository = parts[1];
+
+            Path rPath = getRepositoryPath(userHome, workspace, repository);
             // read CHANGELOG.md for the current release body.
             Charset charset = Charset.forName("UTF-8");
-            Path file = getRepositoryPath(userHome, workspace, release, "CHANGELOG.md");
+            Path file = getRepositoryPath(userHome, workspace, repository, "CHANGELOG.md");
             StringBuffer stringBuffer = new StringBuffer();
             try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
                 String line;
@@ -175,7 +192,7 @@ public class ReleaseMavenTask implements Command {
             }
 
             // call github api to create a new release.
-            GithubReleaseCmd githubReleaseCmd = new GithubReleaseCmd(organization, release, branch, version, stringBuffer.toString(), rPath);
+            GithubReleaseCmd githubReleaseCmd = new GithubReleaseCmd(organization, repository, branch, version, stringBuffer.toString(), rPath);
             result = githubReleaseCmd.execute();
             if(result != 0) break;
         }
@@ -204,7 +221,10 @@ public class ReleaseMavenTask implements Command {
         if(skipUpload) return result;
         for(Map<String, List<String>> upload: uploads) {
             for(Map.Entry<String, List<String>> entry : upload.entrySet()) {
-                Path rPath = getRepositoryPath(userHome, workspace, entry.getKey());
+                String[] parts = StringUtils.split(entry.getKey(), "/");
+                String organization = parts[0];
+                String repository = parts[1];
+                Path rPath = getRepositoryPath(userHome, workspace, repository);
                 List<String> files = entry.getValue();
                 for(String file: files) {
                     UploadAssetCmd uploadAssetCmd = new UploadAssetCmd(organization, entry.getKey(), version,  file, rPath);

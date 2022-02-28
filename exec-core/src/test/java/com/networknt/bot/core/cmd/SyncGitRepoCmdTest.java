@@ -18,7 +18,7 @@ public class SyncGitRepoCmdTest {
         String target = "https://api.github.com";
         String organization = "networknt";
         String repository = "light-mq.git";
-        String gogsToken = "c18cf5ed6c8466c35e5f5f8827912743b9880dff";
+        String gogsToken = System.getenv("LIGHT_BOT_GOGS_TOKEN");
         SyncGitRepoCmd cmd = new SyncGitRepoCmd(rPath, source, target, organization, repository);
         String repos = cmd.getGogsRepos(source, organization, gogsToken);
         Assert.assertNotNull(repos);
@@ -33,12 +33,11 @@ public class SyncGitRepoCmdTest {
         String target = "https://api.github.com";
         String organization = "networknt";
         String repository = "light-mq.git";
-        String githubToken = "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";
+        String githubToken = System.getenv("CHANGELOG_GITHUB_TOKEN");
         SyncGitRepoCmd cmd = new SyncGitRepoCmd(rPath, source, target, organization, repository);
         String repos = cmd.getGithubRepos(target, organization, githubToken);
         Assert.assertNotNull(repos);
         boolean exist = cmd.repoExist(repos, repository.substring(0, repository.indexOf(".")));
         Assert.assertFalse(exist);
     }
-
 }
