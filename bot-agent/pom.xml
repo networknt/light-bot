@@ -29,7 +29,7 @@
         <version.undertow>2.3.7.Final</version.undertow>
         <version.json-schema-validator>1.0.65</version.json-schema-validator>
         <version.fastscanner>2.18.1</version.fastscanner>
-        <version.jgit>4.9.0.201710071750-r</version.jgit>
+        <version.jgit>6.6.1.202309021850-r</version.jgit>
         <versions.maven-version>2.4</versions.maven-version>
     </properties>
 
