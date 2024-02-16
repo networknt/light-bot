@@ -45,7 +45,7 @@ public class Constants {
 
     // Eclipse project
     public static final String SKIP_GENERATE_ECLIPSE_PROJECT = "skip_generateEclipseProject";
-    
+
     // version-upgrade
     public static final String OLD_VERSION = "old_version";
     public static final String NEW_VERSION = "new_version";

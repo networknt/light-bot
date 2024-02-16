@@ -210,7 +210,7 @@ public class DevelopBuildTask implements Command {
 			if (logger.isInfoEnabled()) {
 				logger.info(String.format("Merging configurations for project %s in file of type %s", (String) namedMerge.get(Constants.PROJECT), fileType));
 			}
-			
+
 			// final merged map
 			SortedMap<String, Object> mergedMap = new TreeMap<String, Object>();
 			Set<String> mergedSet = null;
@@ -254,7 +254,7 @@ public class DevelopBuildTask implements Command {
 			Yaml yaml = new Yaml(options);
 			yaml.dump(mergedMap, new PrintWriter(file));
 			if (logger.isInfoEnabled()) {
-				logger.info(String.format("Merged configurations for project %s in file of type %s into file %s", 
+				logger.info(String.format("Merged configurations for project %s in file of type %s into file %s",
 						(String) namedMerge.get(Constants.PROJECT), fileType, file));
 			}
 		}
@@ -273,12 +273,12 @@ public class DevelopBuildTask implements Command {
 		// check whether this task must be skipped
 		if ((Boolean) namedBuild.get(Constants.SKIP))
 			return result;
-		
+
 		// check whether this build should build a FatJar or not
 		boolean buildFatJar = true;
 		if(namedBuild.get(Constants.BUILD_FAT_JAR) != null)
 			buildFatJar = (Boolean)namedBuild.get(Constants.BUILD_FAT_JAR);
-		
+
 		// check whether this build task must be executed with running tests or not
 		boolean skipNamedTests = false;
 		Object skip_test = namedBuild.get(Constants.SKIP_TEST);
@@ -305,7 +305,7 @@ public class DevelopBuildTask implements Command {
 
 				if(!skipGenerateEclipseProject)
 					mavenCmd += " eclipse:eclipse";
-				
+
 				if(buildFatJar)
 					mavenCmd += " -Prelease";
 
@@ -503,7 +503,7 @@ public class DevelopBuildTask implements Command {
 				String host = (String) server.get(Constants.HOST);
 				int port = (Integer) server.get(Constants.PORT);
 				int timeout = (Integer) server.get(Constants.TIMEOUT);
-				
+
 				Object dir = server.get(Constants.CONFIG_DIR);
 				String configDir = "config";
 				if(server.get(Constants.CONFIG_DIR)!=null)
@@ -521,10 +521,10 @@ public class DevelopBuildTask implements Command {
 				// add Java start-up command
 				String c = cmdPath.toString() + "/" + cmd;
 				commands.add("java " + "-D" + Constants.LIGHT_4J_CONFIG_DIR + "=" + cmdPath.toString() + "/" + configDir + " -jar " + c);
-				
+
 				// start the server with env variables set
 				result = executor.startServer(commands, cmdPath.toFile());
-				
+
 				String stdout = executor.getStdout();
 				if (stdout != null && stdout.length() > 0)
 					logger.debug(stdout);

@@ -23,10 +23,10 @@ import com.networknt.config.Config;
  *
  */
 public abstract class ConfigUtils {
-	
+
 	// abstract methods that need be implemented by all implementations
     public abstract Map<String, Object> loadMapConfig(String configName, File filePath);
-	
+
 	protected ConfigUtils() {
 	}
 
@@ -36,7 +36,7 @@ public abstract class ConfigUtils {
 
 	private static final class ConfigUtilsImpl extends ConfigUtils {
 		private static final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
-		
+
 		String CONFIG_EXT_JSON = ".json";
 		String CONFIG_EXT_YAML = ".yaml";
 		String CONFIG_EXT_YML = ".yml";
@@ -94,7 +94,7 @@ public abstract class ConfigUtils {
 
 		/**
 		 * Get an input stream for a config file as a map, specifying the file name as well as the directory from where it is loaded
-		 */		
+		 */
 		private InputStream getConfigStream(String configFilename, File filePath) {
 
 			FileInputStream inStream = null;

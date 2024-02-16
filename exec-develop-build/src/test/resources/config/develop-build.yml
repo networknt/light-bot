@@ -23,7 +23,7 @@ tasks:
   # one set of operations
   checkoutSetOne:   checkout
   buildProjectsOne: build
-  testProjects:     test     
+  testProjects:     test
   copyProjectFiles: copyFile
   copyWildCardFiles: copyWildcardFile
 
@@ -48,7 +48,7 @@ checkout:
       - git@github.com:networknt/light-docker.git
 build:
   buildProjectsOne:
-    skip: false  
+    skip: false
     project:
     - light-4j
     - openapi-parser

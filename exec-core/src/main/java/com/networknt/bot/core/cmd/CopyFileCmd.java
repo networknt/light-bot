@@ -28,7 +28,7 @@ public class CopyFileCmd implements Command {
 		if (Files.notExists(dPath)) {
 			Files.createDirectories(dPath);
 		}
-		
+
         Files.copy(sPath, dPath, StandardCopyOption.REPLACE_EXISTING);
         logger.info("Copy file from " + sPath + " to " + dPath);
         return 0;
