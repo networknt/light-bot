@@ -18,7 +18,7 @@ import java.util.Set;
 public class Cli {
     static final Logger logger = LoggerFactory.getLogger(Cli.class);
     private static final String CONFIG_NAME = "cli";
-    private static Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
+    private static final Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
 
     private boolean skipEmail = false;
     private String email = "steve.hu@gmail.com";

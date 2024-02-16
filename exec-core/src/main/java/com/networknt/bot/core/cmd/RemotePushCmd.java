@@ -11,31 +11,35 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CheckoutPullCmd implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(CheckoutPullCmd.class);
+/**
+ * Push the master and sync branches to the internal Git server
+ */
+public class RemotePushCmd implements Command {
+    private static final Logger logger = LoggerFactory.getLogger(RemotePushCmd.class);
     private final Executor executor = SingletonServiceFactory.getBean(Executor.class);
-    private final String origin;
-    private final String branch;
     private final Path rPath;
+    private final String toOrigin;
+    private final String toBranch;
+    private final String remoteUrl;
 
-    public CheckoutPullCmd(String origin, String branch, Path rPath) {
-        this.origin = origin;
-        this.branch = branch;
+    public RemotePushCmd(Path rPath, String toOrigin, String toBranch, String remoteUrl) {
         this.rPath = rPath;
-    }
-    public CheckoutPullCmd(String branch, Path rPath) {
-        this("origin", branch, rPath);
+        this.toOrigin = toOrigin;
+        this.toBranch = toBranch;
+        this.remoteUrl = remoteUrl;
     }
 
     @Override
     public int execute() throws IOException, InterruptedException {
         int result;
-        // checkout and pull
+        // merge from fromBranch to toBranch
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
-        commands.add("git fetch ; git checkout " + branch + " ; git pull " + origin + " " + branch);
-        logger.info("git fetch ; git checkout " + branch + " ; git pull " + origin + " " + branch);
+        // first check if the remote is already added to the local repo. If not, add it.
+        String command = String.format("if ! git remote get-url %s &>/dev/null; then git remote add %s %s; fi; git checkout %s; git push %s %s;", toOrigin, toOrigin, remoteUrl, toBranch, toOrigin, toBranch);
+        commands.add(command);
+        logger.info(command + " for " + rPath);
         result = executor.execute(commands, rPath.toFile());
         String stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout);
@@ -46,6 +50,7 @@ public class CheckoutPullCmd implements Command {
 
     @Override
     public String getName() {
-        return "CheckoutPull";
+        return "RemotePush";
     }
+
 }

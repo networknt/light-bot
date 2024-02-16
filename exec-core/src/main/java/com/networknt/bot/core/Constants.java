@@ -106,4 +106,18 @@ public class Constants {
     // start service
     public static final String LIGHT_4J_CONFIG_DIR = "light-4j-config-dir";
     public static final String CONFIG_DIR = "configDir";
+
+    // sync git repo
+    public static final String EXTERNAL_ORIGIN = "external_origin";
+    public static final String INTERNAL_ORIGIN = "internal_origin";
+    public static final String EXTERNAL_BRANCH = "external_branch";
+    public static final String INTERNAL_BRANCH = "internal_branch";
+    public static final String SKIP_EXTERNAL_CHECKOUT = "skip_external_checkout";
+    public static final String SKIP_INTERNAL_PUSH = "skip_internal_push";
+    public static final String SKIP_INTERNAL_MERGE = "skip_internal_merge";
+    public static final String SKIP_INTERNAL_PULL = "skip_internal_pull";
+    public static final String SKIP_EXTERNAL_PUSH = "skip_external_push";
+    public static final String EXTERNAL_REPO = "external_repo";
+    public static final String INTERNAL_REPO = "internal_repo";
+
 }
