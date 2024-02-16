@@ -48,6 +48,10 @@ public class SyncGitRepoTask implements Command {
         result = internalPushInternalBranch(); // create remote internalOrigin if not exist. Push to the internal Git server with internalOrigin (internal) and internalBranch (sync).
         if(result != 0) return result;
         result = internalPushExternalBranch(); // create remote internalOrigin if not exist. Push to the internal Git server with internalOrigin (internal) and externalBranch (master).
+        if(result != 0) return result;
+        result = internalPullInternalBranch(); // Pull from the internal Git server with internalOrigin (internal) and internalBranch (sync).
+        if(result != 0) return result;
+        result = externalPushInternalBranch(); // Push to the internal Git server with externalOrigin (origin) and externalBranch (sync).
         return result;
     }
 
@@ -126,6 +130,38 @@ public class SyncGitRepoTask implements Command {
             Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
             // check if remote to the internal and create it if it doesn't exist.
             RemotePushCmd remotePushCmd = new RemotePushCmd(rPath, internalOrigin, externalBranch, repository);
+            result = remotePushCmd.execute();
+            if(result != 0) break;
+        }
+        return result;
+    }
+
+    // Pull from the internal Git server with internalOrigin (internal) and internalBranch (sync).
+    private int internalPullInternalBranch() throws IOException, InterruptedException {
+        int result = 0;
+        if(skipInternalPull) return result;
+
+        // iterate over each internal repository
+        for(String repository: internalRepo) {
+            Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
+            // check if remote to the internal and create it if it doesn't exist.
+            CheckoutPullCmd checkoutPullCmd = new CheckoutPullCmd(internalOrigin, internalBranch, rPath);
+            result = checkoutPullCmd.execute();
+            if(result != 0) break;
+        }
+        return result;
+    }
+
+    // Push to the internal server with externalOrigin and internalBranch.
+    private int externalPushInternalBranch() throws IOException, InterruptedException {
+        int result = 0;
+        if(skipExternalPush) return result;
+
+        // iterate over each internal repository
+        for(String repository: externalRepo) {
+            Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
+            // check if remote to the internal and create it if it doesn't exist.
+            RemotePushCmd remotePushCmd = new RemotePushCmd(rPath, externalOrigin, internalBranch, repository);
             result = remotePushCmd.execute();
             if(result != 0) break;
         }
