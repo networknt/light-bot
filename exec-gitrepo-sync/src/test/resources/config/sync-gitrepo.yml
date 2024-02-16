@@ -1,0 +1,30 @@
+# This task is used to sync a list of repos from GitHub to internal Git server for master branch
+# and also from Git server to GitHub for sync branch.
+# Workspace that is used for this operation.
+workspace: syncgitrepo
+# The external main branch from GitHub server or other cloud Git server.
+external_branch: master
+# The internal main branch from internal git server
+internal_branch: sync
+# You can skip the clone or checkout from the external repo.
+skip_external_checkout: false
+# You can skip the merge from the external branch to internal branch on the internal Git server.
+skip_internal_merge: false
+# You can skip the push to the internal repo.
+skip_internal_push: false
+# You can skip the pull from internal git server to local.
+skip_internal_pull: false
+# You can skip the push from local to external GitHub.
+skip_external_push: false
+# Clone or switch to the downstream branch and pull from GitHub and push to internal Git
+# On the internal Git server, merge from the downstream branch to the upstream branch.
+external_repo:
+  - git@github.com:networknt/json-overlay.git
+  - git@github.com:networknt/openapi-parser.git
+  - git@github.com:networknt/light-4j.git
+# Pull from internal Git upstream branch and push to GitHub downstream branch
+internal_repo:
+  - git@198.55.49.186:networknt/json-overlay.git
+  - git@198.55.49.186:networknt/openapi-parser.git
+  - git@198.55.49.186:networknt/light-4j.git
+

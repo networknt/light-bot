@@ -15,6 +15,7 @@ dependencies {
     compile(project(":exec-regex-replace"))
     compile(project(":exec-create-branch"))
     compile(project(":exec-merge-branch"))
+    compile(project(":exec-gitrepo-sync"))
     compile("com.networknt:email-sender:1.6.4")
     compile("com.beust:jcommander:1.72")
     compile("ch.qos.logback:logback-classic:1.2.3")

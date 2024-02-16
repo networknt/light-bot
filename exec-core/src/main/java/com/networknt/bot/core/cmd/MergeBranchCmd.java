@@ -13,10 +13,10 @@ import java.util.List;
 
 public class MergeBranchCmd implements Command {
     private static final Logger logger = LoggerFactory.getLogger(MergeBranchCmd.class);
-    private Executor executor = SingletonServiceFactory.getBean(Executor.class);
-    private Path rPath;
-    private String fromBranch;
-    private String toBranch;
+    private final Executor executor = SingletonServiceFactory.getBean(Executor.class);
+    private final Path rPath;
+    private final String fromBranch;
+    private final String toBranch;
 
     public MergeBranchCmd(Path rPath, String fromBranch, String toBranch) {
         this.rPath = rPath;
@@ -31,9 +31,10 @@ public class MergeBranchCmd implements Command {
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
-        String command = String.format("git checkout %s; git checkout %s; git merge %s", fromBranch, toBranch, fromBranch);
-        commands.add(command);
+        String command = String.format("if git show-ref --verify --quiet refs/heads/%s; then git checkout %s; else git checkout -b %s; fi; git merge %s;", toBranch, toBranch, toBranch, fromBranch);
+        // [bash, -c, if git show-ref --verify --quiet refs/heads/sync; then git checkout sync; else git checkout -b sync; fi; git merge master;]
         logger.info(command + " for " + rPath);
+        commands.add(command);
         result = executor.execute(commands, rPath.toFile());
         String stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout);

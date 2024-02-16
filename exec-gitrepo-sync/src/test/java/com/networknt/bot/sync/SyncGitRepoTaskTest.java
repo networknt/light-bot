@@ -1,4 +1,4 @@
-package com.networknt.bot.gitsync;
+package com.networknt.bot.sync;
 
 import org.junit.Assert;
 import org.junit.Ignore;

@@ -11,3 +11,4 @@ singletons:
   - com.networknt.bot.regex.replace.RegexReplaceTask
   - com.networknt.bot.branch.CreateBranchTask
   - com.networknt.bot.branch.MergeBranchTask
+  - com.networknt.bot.sync.SyncGitRepoTask
