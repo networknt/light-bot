@@ -27,4 +27,3 @@ internal_repo:
   - git@198.55.49.186:networknt/json-overlay.git
   - git@198.55.49.186:networknt/openapi-parser.git
   - git@198.55.49.186:networknt/light-4j.git
-

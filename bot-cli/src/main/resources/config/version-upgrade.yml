@@ -247,7 +247,7 @@ version:
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
   - path: common/multidb/dbconfig/pom.xml
     match: <version.openapi-parser>\d*\.\d*\.\d*</version.openapi-parser>
-    
+
   # graphql framework
   # graphql subscription
   - path: graphql/subscription/pom.xml
@@ -443,4 +443,3 @@ version:
   # webserver
   - path: webserver/api-simple-web/pom.xml
     match: <version.light[a-z-]+4j>\d*\.\d*\.\d*</version.light[a-z-]+4j>
-  

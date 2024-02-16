@@ -104,9 +104,9 @@
             <artifactId>org.eclipse.jgit</artifactId>
             <version>${version.jgit}</version>
         </dependency>
-        
-        
-        
+
+
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>
@@ -114,7 +114,7 @@
             <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
-        
+
     </dependencies>
 
 

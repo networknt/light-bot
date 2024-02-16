@@ -129,7 +129,7 @@ public abstract class CommandExecutor implements Executor {
     public int startServer(final List<String> commandInformation, File workingDir) throws IOException, InterruptedException{
     	return startServer(commandInformation, null, workingDir);
     }
-     
+
     @Override
     public int startServer(final List<String> commandInformation, final Map<String,String> envVars, File workingDir) throws IOException, InterruptedException
     {
@@ -141,13 +141,13 @@ public abstract class CommandExecutor implements Executor {
             pb.directory(workingDir);
             pb.redirectOutput(ProcessBuilder.Redirect.appendTo(bitbucket));
             pb.redirectError(ProcessBuilder.Redirect.appendTo(bitbucket));
-            
+
             if(envVars!=null) {
 	            Map<String,String> env = pb.environment();
 	            env.clear();
 	            env.putAll(envVars);
             }
-            
+
             Process process = pb.start();
             processes.add(process);
             logger.info("added process to processes list for " + process);

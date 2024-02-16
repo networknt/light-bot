@@ -27,8 +27,8 @@ skip_start: true
 tasks:
   checkoutMainProjects: checkout
   buildMainProjects:    build
-  testProjects:         test     
-  copyProjectFiles:     copyFile 
+  testProjects:         test
+  copyProjectFiles:     copyFile
 
 # This section defines groups of projects to be checked out, by declared task names
 # you would declare a task checkout with the name checkOutTask1
@@ -321,7 +321,7 @@ copyFile:
 
 # start one or more services within a given named start task
 # ex.: startOne is a set of services to be started
-# 
+#
 start:
 
 # These tasks should be automatically invoked in every test
@@ -330,5 +330,3 @@ setup:
 teardown:
 
 stop:
-
-
