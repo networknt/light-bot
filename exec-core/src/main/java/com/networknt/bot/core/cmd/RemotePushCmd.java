@@ -37,7 +37,7 @@ public class RemotePushCmd implements Command {
         commands.add("bash");
         commands.add("-c");
         // first check if the remote is already added to the local repo. If not, add it.
-        String command = String.format("if ! git remote get-url %s &>/dev/null; then git remote add %s %s; fi; git checkout %s; git push %s %s;", toOrigin, toOrigin, remoteUrl, toBranch, toOrigin, toBranch);
+        String command = String.format("if ! git remote get-url %s &>/dev/null; then git remote add %s %s; fi; git checkout %s; git pull %s %s; git push %s %s;", toOrigin, toOrigin, remoteUrl, toBranch, toOrigin, toBranch, toOrigin, toBranch);
         commands.add(command);
         logger.info(command + " for " + rPath);
         result = executor.execute(commands, rPath.toFile());
