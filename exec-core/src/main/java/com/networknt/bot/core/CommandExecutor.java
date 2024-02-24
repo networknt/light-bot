@@ -12,32 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class can be used to execute a system command from a Java application.
- * See the documentation for the public methods of this class for more
- * information.
- *
- * Documentation for this class is available at this URL:
- *
- * http://devdaily.com/java/java-processbuilder-process-system-exec
- *
- *
- * Copyright 2010 alvin j. alexander, devdaily.com.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
-
- * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Please ee the following page for the LGPL license:
- * http://www.gnu.org/licenses/lgpl.txt
  * @deprecated
  */
 public abstract class CommandExecutor implements Executor {
@@ -48,23 +22,6 @@ public abstract class CommandExecutor implements Executor {
     private ThreadedStreamHandler errorStreamHandler;
     public static List<Process> processes = new ArrayList<>();
 
-    /**
-     * Pass in the system command you want to run as a List of Strings, as shown here:
-     *
-     * List<String> commands = new ArrayList<String>();
-     * commands.add("/sbin/ping");
-     * commands.add("-c");
-     * commands.add("5");
-     * commands.add("www.google.com");
-     * SystemCommandExecutor commandExecutor = new SystemCommandExecutor(commands);
-     * commandExecutor.executeCommand();
-     *
-     * Note: I've removed the other constructor that was here to support executing
-     *       the sudo command. I'll add that back in when I get the sudo command
-     *       working to the point where it won't hang when the given password is
-     *       wrong.
-     *
-     */
     public CommandExecutor() {
 
     }
