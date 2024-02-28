@@ -71,7 +71,7 @@
         <version.slf4j>2.0.9</version.slf4j>
         <version.logback>1.4.14</version.logback>
         <version.junit>4.13.2</version.junit>
-        <version.undertow>2.3.10.Final</version.undertow>
+        <version.undertow>2.3.12.Final</version.undertow>
         <version.json-schema-validator>1.0.47</version.json-schema-validator>
         <version.snakeyaml>2.2</version.snakeyaml>
         <version.jcommander>1.82</version.jcommander>
