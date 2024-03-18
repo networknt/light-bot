@@ -39,7 +39,7 @@ public class CheckinBranchCmd implements Command {
         String stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout);
         String stderr = executor.getStderr();
-        if(stderr != null && stderr.length() > 0) logger.error(stderr);
+        if(stderr != null && stderr.length() > 0) logger.info(stderr);
         return result;
     }
 
