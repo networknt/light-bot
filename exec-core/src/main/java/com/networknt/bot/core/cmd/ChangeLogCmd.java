@@ -116,7 +116,7 @@ public class ChangeLogCmd implements Command {
             return stdout;
         } else {
             String stderr = executor.getStderr();
-            if(stderr != null && stderr.length() > 0) logger.error(stderr);
+            if(stderr != null && stderr.length() > 0) logger.info(stderr);
             return null;
         }
     }
@@ -136,7 +136,7 @@ public class ChangeLogCmd implements Command {
             return stdout;
         } else {
             String stderr = executor.getStderr();
-            if(stderr != null && stderr.length() > 0) logger.error(stderr);
+            if(stderr != null && stderr.length() > 0) logger.info(stderr);
             return null;
         }
     }
@@ -182,7 +182,7 @@ public class ChangeLogCmd implements Command {
         } else {
             String stderr = executor.getStderr();
             logger.info("getPullRequests stderr: " + stderr);
-            if(stderr != null && stderr.length() > 0) logger.error(stderr);
+            if(stderr != null && stderr.length() > 0) logger.info(stderr);
             return null;
         }
     }

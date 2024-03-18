@@ -66,7 +66,7 @@ public class SyncGitRepoCmd implements Command {
         }
         String stderr = executor.getStderr();
         if(stderr != null && stderr.length() > 0) {
-            logger.error(stderr);
+            logger.info(stderr);
         }
         return String.format("{\"error\":\"%s\"}", stderr);
     }
@@ -88,7 +88,7 @@ public class SyncGitRepoCmd implements Command {
         }
         String stderr = executor.getStderr();
         if(stderr != null && stderr.length() > 0) {
-            logger.error(stderr);
+            logger.info(stderr);
         }
         return String.format("{\"error\":\"%s\"}", stderr);
     }

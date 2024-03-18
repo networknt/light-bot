@@ -61,7 +61,7 @@ public class UploadAssetCmd implements Command {
             releaseId = (Integer)map.get("id");
         }
         String stderr = executor.getStderr();
-        if(stderr != null && stderr.length() > 0) logger.error(stderr);
+        if(stderr != null && stderr.length() > 0) logger.info(stderr);
         if(result != 0) return result;
 
         // upload an asset to github.com release. note that --data-binary is the filename with @ as prefix to indicate that is the content of the file.
@@ -75,7 +75,7 @@ public class UploadAssetCmd implements Command {
         stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout);
         stderr = executor.getStderr();
-        if(stderr != null && stderr.length() > 0) logger.error(stderr);
+        if(stderr != null && stderr.length() > 0) logger.info(stderr);
         return result;
     }
 
