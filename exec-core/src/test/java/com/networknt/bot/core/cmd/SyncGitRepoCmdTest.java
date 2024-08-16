@@ -1,6 +1,7 @@
 package com.networknt.bot.core.cmd;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -11,7 +12,13 @@ public class SyncGitRepoCmdTest {
     private String userHome = System.getProperty("user.home");
     private String workspace = "syncgitrepo";
 
+    /**
+     * This test is disabled as it depends on a folder syncgitrepo to be created in your home directory.
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @Test
+    @Ignore
     public void testCheckGogsRepoCmd() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace);
         String source = "https://git.lightapi.net";
@@ -26,7 +33,13 @@ public class SyncGitRepoCmdTest {
         Assert.assertTrue(exist);
     }
 
+    /**
+     * This test is disabled as it depends on a folder syncgitrepo to be created in your home directory.
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @Test
+    @Ignore
     public void testCheckGithubRepoCmd() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace);
         String source = "https://git.lightapi.net";
