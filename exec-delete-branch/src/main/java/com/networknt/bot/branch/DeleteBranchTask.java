@@ -124,4 +124,3 @@ public class DeleteBranchTask implements Command {
         return result;
     }
 }
-
