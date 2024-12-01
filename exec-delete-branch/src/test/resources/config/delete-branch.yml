@@ -1,0 +1,18 @@
+# This task is used to delete a branch locally and remotely.
+# Workspace that is used for this operation. Most likely, this is done on local.
+workspace: delete-branch-test
+# The new branch name that is going to be deleted
+branch: patch
+# You can skip checkout if you are sure that the code in workspace are the latest and
+# you just want to repeat the create branch process due to some environmental issue before.
+skip_checkout: false
+# You can skip the deletion of branch locally step if skip_local is set true.
+skip_local: false
+# You can skip the deletion of branch remotely step if skip_remote is set true.
+skip_remote: false
+# clone and switch to the branch specified in checkout step.
+checkout:
+  - branch: master
+    repository:
+      - git@github.com:networknt/light-supergloo.git
+      - git@github.com:networknt/light-4j-starter.git

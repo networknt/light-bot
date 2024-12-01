@@ -120,4 +120,7 @@ public class Constants {
     public static final String EXTERNAL_REPO = "external_repo";
     public static final String INTERNAL_REPO = "internal_repo";
 
+    // delete-branch
+    public static final String SKIP_LOCAL = "skip_local";
+    public static final String SKIP_REMOTE = "skip_remote";
 }

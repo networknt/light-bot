@@ -2,7 +2,7 @@
 singletons:
 # Executor to CommandExecutor binding
 - com.networknt.bot.core.Executor:
-  - com.networknt.bot.core.CommandExecutor
+  - com.networknt.bot.core.FasterRollingCommandExecutor
 - com.networknt.bot.core.Command:
   - com.networknt.bot.develop.DevelopBuildTask
   - com.networknt.bot.version.VersionUpgradeTask
@@ -11,4 +11,5 @@ singletons:
   - com.networknt.bot.regex.replace.RegexReplaceTask
   - com.networknt.bot.branch.CreateBranchTask
   - com.networknt.bot.branch.MergeBranchTask
+  - com.networknt.bot.branch.DeleteBranchTask
   - com.networknt.bot.sync.SyncGitRepoTask

@@ -3,3 +3,5 @@ singletons:
 # Executor to CommandExecutor binding
 - com.networknt.bot.core.Executor:
   - com.networknt.bot.core.FasterRollingCommandExecutor
+- com.networknt.bot.core.Command:
+  - com.networknt.bot.branch.DeleteBranchTask

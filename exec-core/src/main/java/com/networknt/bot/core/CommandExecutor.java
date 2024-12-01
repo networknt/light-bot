@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @deprecated
- */
 public abstract class CommandExecutor implements Executor {
     static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 

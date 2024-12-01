@@ -6,11 +6,11 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class CreateBranchTaskTest {
+public class DeleteBranchTaskTest {
     @Test
     @Ignore
-    public void testCreateBranch() throws IOException, InterruptedException {
-        CreateBranchTask cmd = new CreateBranchTask();
+    public void testDeleteBranch() throws IOException, InterruptedException {
+        DeleteBranchTask cmd = new DeleteBranchTask();
         int result = cmd.execute();
         Assert.assertEquals(0, result);
     }

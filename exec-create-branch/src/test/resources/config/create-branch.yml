@@ -1,12 +1,12 @@
 # This task is used to create a new branch from an existing branch or a tag.
 # Workspace that is used for this operation. Most of time, this is done on local.
-workspace: createbranch
+workspace: create-branch-test
 # The new branch name that is going to be created
-branch: 1.6.x
+branch: patch
 # If the new branch is created from a tag
-from_tag: false
+from_tag: true
 # The original tag to create a new branch if from_tag is true.
-tag: 1.5.32
+tag: 2.1.37
 # You can skip checkout if you are sure that the code in workspace are the latest and
 # you just want to repeat the create branch process due to some environmental issue before.
 skip_checkout: false
@@ -16,7 +16,7 @@ skip_branch: false
 skip_push: true
 # clone and switch to the branch specified in checkout step.
 checkout:
-  - branch: develop
+  - branch: master
     repository:
     - git@github.com:networknt/json-overlay.git
     - git@github.com:networknt/openapi-parser.git

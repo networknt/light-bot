@@ -96,6 +96,7 @@
     <modules>
         <module>exec-core</module>
         <module>exec-create-branch</module>
+        <module>exec-delete-branch</module>
         <module>exec-develop-build</module>
         <module>exec-gitrepo-sync</module>
         <module>exec-merge-branch</module>
