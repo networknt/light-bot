@@ -27,8 +27,8 @@ public class MavenReleaseCmd implements Command {
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
-        commands.add("mvn clean install -DskipTests -DperformRelease");
-        logger.info("mvn clean install -DskipTests -DperformRelease in " + rPath);
+        commands.add("mvn clean install deploy -DskipTests -DperformRelease");
+        logger.info("mvn clean install deploy -DskipTests -DperformRelease in " + rPath);
         result = executor.execute(commands, rPath.toFile());
         String stdout = executor.getStdout();
         if(stdout != null && stdout.length() > 0) logger.debug(stdout);
