@@ -110,13 +110,14 @@ public class Constants {
     // sync git repo
     public static final String EXTERNAL_ORIGIN = "external_origin";
     public static final String INTERNAL_ORIGIN = "internal_origin";
-    public static final String EXTERNAL_BRANCH = "external_branch";
-    public static final String INTERNAL_BRANCH = "internal_branch";
-    public static final String SKIP_EXTERNAL_CHECKOUT = "skip_external_checkout";
-    public static final String SKIP_INTERNAL_PUSH = "skip_internal_push";
-    public static final String SKIP_INTERNAL_MERGE = "skip_internal_merge";
-    public static final String SKIP_INTERNAL_PULL = "skip_internal_pull";
-    public static final String SKIP_EXTERNAL_PUSH = "skip_external_push";
+    public static final String MASTER_BRANCH = "master_branch";
+    public static final String SYNC_BRANCH = "sync_branch";
+    public static final String SKIP_EXTERNAL_MASTER_CHECKOUT = "skip_external_master_checkout";
+    public static final String SKIP_INTERNAL_MASTER_PUSH = "skip_internal_master_push";
+    public static final String SKIP_INTERNAL_SYNC_PUSH = "skip_internal_sync_push";
+    public static final String SKIP_EXTERNAL_SYNC_PUSH = "skip_external_sync_push";
+    public static final String SKIP_SYNC_MASTER_MERGE = "skip_sync_master_merge";
+    public static final String SKIP_EXTERNAL_MASTER_PUSH = "skip_external_master_push";
     public static final String EXTERNAL_REPO = "external_repo";
     public static final String INTERNAL_REPO = "internal_repo";
 
