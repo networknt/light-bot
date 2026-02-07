@@ -19,6 +19,7 @@ dependencies {
     implementation("com.networknt:email-sender:2.3.3-SNAPSHOT")
     implementation("com.beust:jcommander:1.82")
     implementation("ch.qos.logback:logback-classic:1.4.14")
+    testImplementation("junit:junit:4.13.2")
 }
 
 val fatJar = tasks.register<Jar>("fatJar") {
@@ -35,4 +36,21 @@ val fatJar = tasks.register<Jar>("fatJar") {
 
 tasks.build {
     dependsOn(fatJar)
+}
+
+tasks.test {
+    useJUnit()
+    outputs.upToDateWhen { true }
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+}
+
+// Disable the test task failing when no tests are found
+gradle.taskGraph.whenReady {
+    tasks.withType<Test>().configureEach {
+        if (inputs.sourceFiles.isEmpty) {
+            enabled = false
+        }
+    }
 }

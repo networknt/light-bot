@@ -6,6 +6,11 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class DevelopBuildTaskTest {
+    @Test
+    public void placeholderTest() {
+        // Placeholder test to prevent Gradle 9 from failing on no tests discovered
+    }
+    
     //@Test
     public void testDevelop() throws IOException, InterruptedException {
         DevelopBuildTask cmd = new DevelopBuildTask();
