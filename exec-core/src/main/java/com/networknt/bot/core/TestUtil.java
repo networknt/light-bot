@@ -8,6 +8,7 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.networknt.client.Http2Client;
+import com.networknt.client.simplepool.SimpleConnectionHolder;
 import io.undertow.UndertowOptions;
 import io.undertow.client.ClientConnection;
 import io.undertow.client.ClientRequest;
@@ -18,7 +19,6 @@ import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xnio.IoUtils;
 import org.xnio.OptionMap;
 
 import java.net.URI;
@@ -113,8 +113,10 @@ public class TestUtil {
     public static ClientResponse request(String host, String path, HttpString method, Map<String, Object> requestHeader) {
         final CountDownLatch latch = new CountDownLatch(1);
         final ClientConnection connection;
+        SimpleConnectionHolder.ConnectionToken token = null;
         try {
-            connection = client.connect(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+            token = client.borrow(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true));
+            connection = (ClientConnection) token.getRawConnection();
         } catch (Exception e) {
             logger.error("request Exception: " + " host = " + host + " path = " + path + " method = " + method + " header = " + requestHeader, e);
             throw new RuntimeException(e);
@@ -135,7 +137,7 @@ public class TestUtil {
             logger.error("Exception: ", e);
             throw new RuntimeException(e);
         } finally {
-            IoUtils.safeClose(connection);
+            client.restore(token);
         }
         return reference.get();
     }
@@ -143,8 +145,10 @@ public class TestUtil {
     public static ClientResponse requestWithBody(String host, String path, HttpString method, Map<String, Object> requestHeader, String requestBody) {
         final CountDownLatch latch = new CountDownLatch(1);
         final ClientConnection connection;
+        SimpleConnectionHolder.ConnectionToken token = null;
         try {
-            connection = client.connect(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+            token = client.borrow(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true));
+            connection = (ClientConnection) token.getRawConnection();
         } catch (Exception e) {
             logger.error("requestWithBody Exception: " + " host = " + host + " path = " + path + " method = " + method + " header = " + requestHeader + " requestBody = " + requestBody, e);
             throw new RuntimeException(e);
@@ -166,7 +170,7 @@ public class TestUtil {
             logger.error("Exception: ", e);
             throw new RuntimeException(e);
         } finally {
-            IoUtils.safeClose(connection);
+            client.restore(token);
         }
         return reference.get();
     }

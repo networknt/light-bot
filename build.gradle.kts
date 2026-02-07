@@ -4,8 +4,9 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 allprojects {
@@ -13,13 +14,16 @@ allprojects {
     version = "1.0"
     repositories {
         mavenLocal() // mavenLocal must be added first.
-        jcenter()
+        mavenCentral()
     }
 }
 
-dependencies {
-    // Make the root project archives configuration depend on every sub-project
-    subprojects.forEach {
-        archives(it)
+subprojects {
+    apply(plugin = "java")
+    
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(21))
+        }
     }
 }

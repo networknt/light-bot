@@ -3,10 +3,10 @@ plugins {
 }
 
 dependencies {
-    compile(project(":exec-core"))
-    compile("org.slf4j:slf4j-api:1.7.25")
-    compile("com.networknt:config:1.6.5")
-    compile("com.networknt:service:1.6.5")
-    testCompile("junit:junit:4.12")
-    testCompile("ch.qos.logback:logback-classic:1.2.3")
+    implementation(project(":exec-core"))
+    implementation("org.slf4j:slf4j-api:2.0.9")
+    implementation("com.networknt:config:2.3.3-SNAPSHOT")
+    implementation("com.networknt:service:2.3.3-SNAPSHOT")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("ch.qos.logback:logback-classic:1.4.14")
 }
