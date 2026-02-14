@@ -2,7 +2,7 @@
 package net.lightapi.bot.agent.handler;
 
 import com.networknt.client.Http2Client;
-import com.networknt.client.simplepool.SimpleConnectionHolder;
+import com.networknt.client.simplepool.SimpleConnectionState;
 import com.networknt.exception.ApiException;
 import com.networknt.exception.ClientException;
 import io.undertow.UndertowOptions;
@@ -39,7 +39,7 @@ public class CheckoutTest {
         final String requestBody = "{\"host\":\"lightapi.net\",\"service\":\"agent\",\"action\":\"checkout\",\"version\":\"0.1.0\",\"data\":{\"repository\":\"git@github.com:networknt/light-4j.git\",\"branch\":\"develop\",\"cascade\":true}}";
         final Http2Client client = Http2Client.getInstance();
         final CountDownLatch latch = new CountDownLatch(1);
-        final SimpleConnectionHolder.ConnectionToken token;
+        final SimpleConnectionState.ConnectionToken token;
 
         try {
 
@@ -78,7 +78,7 @@ public class CheckoutTest {
         final String requestBody = "{\"host\":\"lightapi.net\",\"service\":\"agent\",\"action\":\"checkout\",\"version\":\"0.1.0\",\"data\":{\"repository\":\"git@github.com:networknt/light-4j.git\",\"branch\":\"master\",\"cascade\":true}}";
         final Http2Client client = Http2Client.getInstance();
         final CountDownLatch latch = new CountDownLatch(1);
-        final SimpleConnectionHolder.ConnectionToken token;
+        final SimpleConnectionState.ConnectionToken token;
 
         try {
 

@@ -8,7 +8,7 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.networknt.client.Http2Client;
-import com.networknt.client.simplepool.SimpleConnectionHolder;
+import com.networknt.client.simplepool.SimpleConnectionState;
 import io.undertow.UndertowOptions;
 import io.undertow.client.ClientConnection;
 import io.undertow.client.ClientRequest;
@@ -113,7 +113,7 @@ public class TestUtil {
     public static ClientResponse request(String host, String path, HttpString method, Map<String, Object> requestHeader) {
         final CountDownLatch latch = new CountDownLatch(1);
         final ClientConnection connection;
-        SimpleConnectionHolder.ConnectionToken token = null;
+        SimpleConnectionState.ConnectionToken token = null;
         try {
             token = client.borrow(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true));
             connection = (ClientConnection) token.getRawConnection();
@@ -145,7 +145,7 @@ public class TestUtil {
     public static ClientResponse requestWithBody(String host, String path, HttpString method, Map<String, Object> requestHeader, String requestBody) {
         final CountDownLatch latch = new CountDownLatch(1);
         final ClientConnection connection;
-        SimpleConnectionHolder.ConnectionToken token = null;
+        SimpleConnectionState.ConnectionToken token = null;
         try {
             token = client.borrow(new URI(host), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true));
             connection = (ClientConnection) token.getRawConnection();
