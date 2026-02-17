@@ -90,11 +90,12 @@ public abstract class CommandExecutor implements Executor {
         int exitValue = 0;
         try
         {
-            File bitbucket = new File("/dev/null");
+            File logFile = new File(workingDir, "server.log");
+            logger.info("Redirecting server output to " + logFile.getAbsolutePath());
             ProcessBuilder pb = new ProcessBuilder(commandInformation);
             pb.directory(workingDir);
-            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(bitbucket));
-            pb.redirectError(ProcessBuilder.Redirect.appendTo(bitbucket));
+            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(logFile));
+            pb.redirectError(ProcessBuilder.Redirect.appendTo(logFile));
 
             if(envVars!=null) {
 	            Map<String,String> env = pb.environment();
