@@ -95,7 +95,12 @@ public class ChangeLogCmd implements Command {
             PullRequest pr = prs.get(number);
             logger.info("number = " + number + " pr = " + pr);
             if(pr != null) {
-                String s = String.format("- %s [\\#%s](%s) ([%s](%s))", pr.title.replace("#", "\\#"), number, pr.issureUrl, pr.author, pr.authorUrl);
+                String s;
+                if (pr.author != null) {
+                    s = String.format("- %s [\\#%s](%s) ([%s](%s))", pr.title.replace("#", "\\#"), number, pr.issureUrl, pr.author, pr.authorUrl);
+                } else {
+                    s = String.format("- %s [\\#%s](%s)", pr.title.replace("#", "\\#"), number, pr.issureUrl);
+                }
                 logs.add(s);
             }
         }
@@ -205,8 +210,10 @@ public class ChangeLogCmd implements Command {
                 pr.title = (String)node.get("title");
                 pr.issureUrl = (String)node.get("url");
                 Map<String, String> author = (Map<String, String>)node.get("author");
-                pr.author = author.get("login");
-                pr.authorUrl = author.get("url");
+                if (author != null) {
+                    pr.author = author.get("login");
+                    pr.authorUrl = author.get("url");
+                }
                 result.put(number.toString(), pr);
             }
         }
