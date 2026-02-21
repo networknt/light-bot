@@ -1,7 +1,7 @@
 package com.networknt.bot.core;
 
 import com.networknt.bot.core.cmd.CopyWildcardFileCmd;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

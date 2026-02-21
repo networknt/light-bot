@@ -10,6 +10,7 @@ dependencies {
     implementation("com.jayway.jsonpath:json-path:2.9.0")
     implementation("org.zeroturnaround:zt-exec:1.12")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
     testImplementation("ch.qos.logback:logback-classic:1.4.14")
 }

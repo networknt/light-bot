@@ -19,7 +19,8 @@ dependencies {
     implementation("com.networknt:email-sender:2.3.3-SNAPSHOT")
     implementation("com.beust:jcommander:1.82")
     implementation("ch.qos.logback:logback-classic:1.4.14")
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
 }
 
 val fatJar = tasks.register<Jar>("fatJar") {
@@ -39,7 +40,7 @@ tasks.build {
 }
 
 tasks.test {
-    useJUnit()
+    useJUnitPlatform()
     outputs.upToDateWhen { true }
     testLogging {
         events("passed", "skipped", "failed")

@@ -1,8 +1,8 @@
 package com.networknt.bot.core.cmd;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -18,7 +18,7 @@ public class SyncGitRepoCmdTest {
      * @throws InterruptedException
      */
     @Test
-    @Ignore
+    @Disabled
     public void testCheckGogsRepoCmd() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace);
         String source = "https://git.lightapi.net";
@@ -28,9 +28,9 @@ public class SyncGitRepoCmdTest {
         String gogsToken = System.getenv("LIGHT_BOT_GOGS_TOKEN");
         SyncGitRepoCmd cmd = new SyncGitRepoCmd(rPath, source, target, organization, repository);
         String repos = cmd.getGogsRepos(source, organization, gogsToken);
-        Assert.assertNotNull(repos);
+        Assertions.assertNotNull(repos);
         boolean exist = cmd.repoExist(repos, repository.substring(0, repository.indexOf(".")));
-        Assert.assertTrue(exist);
+        Assertions.assertTrue(exist);
     }
 
     /**
@@ -39,7 +39,7 @@ public class SyncGitRepoCmdTest {
      * @throws InterruptedException
      */
     @Test
-    @Ignore
+    @Disabled
     public void testCheckGithubRepoCmd() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace);
         String source = "https://git.lightapi.net";
@@ -49,8 +49,8 @@ public class SyncGitRepoCmdTest {
         String githubToken = System.getenv("CHANGELOG_GITHUB_TOKEN");
         SyncGitRepoCmd cmd = new SyncGitRepoCmd(rPath, source, target, organization, repository);
         String repos = cmd.getGithubRepos(target, organization, githubToken);
-        Assert.assertNotNull(repos);
+        Assertions.assertNotNull(repos);
         boolean exist = cmd.repoExist(repos, repository.substring(0, repository.indexOf(".")));
-        Assert.assertFalse(exist);
+        Assertions.assertFalse(exist);
     }
 }

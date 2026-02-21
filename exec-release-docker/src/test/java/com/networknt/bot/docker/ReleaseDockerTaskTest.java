@@ -1,7 +1,7 @@
 package com.networknt.bot.docker;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -15,6 +15,6 @@ public class ReleaseDockerTaskTest {
     public void testReleaseDocker() throws IOException, InterruptedException {
         ReleaseDockerTask cmd = new ReleaseDockerTask();
         int result = cmd.execute();
-        Assert.assertEquals(0, result);
+        Assertions.assertEquals(0, result);
     }
 }

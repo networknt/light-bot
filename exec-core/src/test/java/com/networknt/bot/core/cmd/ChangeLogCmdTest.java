@@ -1,8 +1,8 @@
 package com.networknt.bot.core.cmd;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,7 +16,7 @@ public class ChangeLogCmdTest {
     private String repository = "light-4j";
 
     @Test
-    @Ignore
+    @Disabled
     public void testLocalGitLog() throws IOException, InterruptedException {
         // run the 'ls -l' with GenericSingleCmd
         Path rPath = Paths.get(userHome, workspace, repository);
@@ -26,7 +26,7 @@ public class ChangeLogCmdTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testPullRequest() throws IOException, InterruptedException {
         // run the 'ls -l' with GenericSingleCmd
         Path rPath = Paths.get(userHome, workspace, repository);
@@ -40,11 +40,11 @@ public class ChangeLogCmdTest {
         String title = "    -fixed issue for consul's ttl check, now the ttl interval will be still the same as \"checkInterval\", but the heartbeat will be 2/3 of \"checkInterval\" (#428)";
         Path rPath = Paths.get(userHome, workspace, repository);
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.19", "master", "2.0.18", 100, rPath);
-        Assert.assertEquals("428", cmd.getNumberFromTitle(title));
+        Assertions.assertEquals("428", cmd.getNumberFromTitle(title));
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testGetPrNumber() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace, repository);
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.19", "master", "2.0.18", 100, rPath);
@@ -53,7 +53,7 @@ public class ChangeLogCmdTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testParsePullRequests() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace, repository);
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.19", "master", "2.0.18", 100, rPath);
@@ -62,7 +62,7 @@ public class ChangeLogCmdTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testGenerateChangeLog() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace, repository);
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.19", "master", "2.0.18", 100, rPath);
@@ -71,12 +71,12 @@ public class ChangeLogCmdTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testChangeLogCmd() throws IOException, InterruptedException {
         Path rPath = Paths.get(userHome, workspace, repository);
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.19", "master", "2.0.18", 100, rPath);
         int result = cmd.execute();
-        Assert.assertEquals(0, result);
+        Assertions.assertEquals(0, result);
     }
 
     @Test
@@ -85,6 +85,6 @@ public class ChangeLogCmdTest {
         ChangeLogCmd cmd = new ChangeLogCmd("networknt", "light-4j", "2.0.19", "master", "2.0.18", 100, rPath);
         String tagLine = "## [1.6.0](https://github.com/networknt/light-eventuate-4j/tree/1.6.0) (2019-04-05)";
         String tagRepo = cmd.getTagRepository(tagLine);
-        Assert.assertEquals("## [1.6.0](https://github.com/networknt/light-eventuate-4j/tree/1.6.0)", tagRepo);
+        Assertions.assertEquals("## [1.6.0](https://github.com/networknt/light-eventuate-4j/tree/1.6.0)", tagRepo);
     }
 }

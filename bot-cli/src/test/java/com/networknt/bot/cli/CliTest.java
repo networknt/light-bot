@@ -1,6 +1,6 @@
 package com.networknt.bot.cli;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CliTest {
     @Test

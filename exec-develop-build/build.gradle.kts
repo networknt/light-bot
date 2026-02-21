@@ -9,6 +9,7 @@ dependencies {
     implementation("com.networknt:service:2.3.3-SNAPSHOT")
     implementation("com.networknt:client:2.3.3-SNAPSHOT")
     implementation("io.undertow:undertow-core:2.3.18.Final")
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
     testImplementation("ch.qos.logback:logback-classic:1.4.14")
 }

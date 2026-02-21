@@ -1,7 +1,7 @@
 package com.networknt.bot.develop;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -37,14 +37,14 @@ public class DevelopBuildTaskTest {
     public void testTest() throws IOException, InterruptedException {
         DevelopBuildTask cmd = new DevelopBuildTask();
         int result = cmd.test("testSetOne");
-        Assert.assertEquals(0, result);
+        Assertions.assertEquals(0, result);
     }
 
     //@Test
     public void testCopyWildcardFile() throws IOException, InterruptedException {
         DevelopBuildTask cmd = new DevelopBuildTask();
         int result = cmd.copyWildcardFile("copyWildcardFile");
-        Assert.assertEquals(0, result);
+        Assertions.assertEquals(0, result);
     }
 
 }

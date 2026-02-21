@@ -1,17 +1,17 @@
 package com.networknt.bot.branch;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 public class CreateBranchTaskTest {
     @Test
-    @Ignore
+    @Disabled
     public void testCreateBranch() throws IOException, InterruptedException {
         CreateBranchTask cmd = new CreateBranchTask();
         int result = cmd.execute();
-        Assert.assertEquals(0, result);
+        Assertions.assertEquals(0, result);
     }
 }

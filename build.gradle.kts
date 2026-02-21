@@ -28,7 +28,7 @@ subprojects {
     }
     
     tasks.withType<Test> {
-        useJUnit()
+        useJUnitPlatform()
         testLogging {
             events("passed", "skipped", "failed")
         }

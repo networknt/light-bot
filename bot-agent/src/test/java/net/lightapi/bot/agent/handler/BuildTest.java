@@ -11,9 +11,10 @@ import io.undertow.client.ClientRequest;
 import io.undertow.client.ClientResponse;
 import io.undertow.util.Headers;
 import io.undertow.util.Methods;
-import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xnio.IoUtils;
@@ -24,8 +25,17 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class BuildTest {
-    @ClassRule
     public static TestServer server = TestServer.getInstance();
+
+    @BeforeAll
+    public static void setUp() {
+        server.start();
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        server.stop();
+    }
 
     static final Logger logger = LoggerFactory.getLogger(Build.class);
     static final boolean enableHttp2 = server.getServerConfig().isEnableHttp2();
@@ -69,8 +79,8 @@ public class BuildTest {
         }
         int statusCode = reference.get().getResponseCode();
         String body = reference.get().getAttachment(Http2Client.RESPONSE_BODY);
-        Assert.assertEquals(200, statusCode);
-        Assert.assertNotNull(body);
+        Assertions.assertEquals(200, statusCode);
+        Assertions.assertNotNull(body);
         */
     }
 }
