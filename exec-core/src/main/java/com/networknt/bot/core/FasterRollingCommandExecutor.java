@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 public class FasterRollingCommandExecutor extends CommandExecutor implements InOutErrStreamProvider {
     private static final Logger logger = LoggerFactory.getLogger(FasterRollingCommandExecutor.class);
 
-    InputStream inputStream = System.in;
+    InputStream inputStream = new java.io.ByteArrayInputStream(new byte[0]);
     // OutputStream logStream = new LoggingOutputStream(logger, LoggingOutputStream.LogLevel.INFO);
     // OutputStream errorLogStream = new LoggingOutputStream(logger, LoggingOutputStream.LogLevel.ERROR);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
