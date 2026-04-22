@@ -26,6 +26,7 @@
     </parent>
 
     <artifactId>exec-release-docker</artifactId>
+    <name>exec-release-docker</name>
     <packaging>jar</packaging>
     <description>light-bot release docker.</description>
 

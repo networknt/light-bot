@@ -26,6 +26,7 @@
     </parent>
 
     <artifactId>exec-gitrepo-sync</artifactId>
+    <name>exec-gitrepo-sync</name>
     <packaging>jar</packaging>
     <description>light-bot gitrepo sync.</description>
 

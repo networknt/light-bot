@@ -26,6 +26,7 @@
     </parent>
 
     <artifactId>exec-develop-build</artifactId>
+    <name>exec-develop-build</name>
     <packaging>jar</packaging>
     <description>light-bot develop build.</description>
 

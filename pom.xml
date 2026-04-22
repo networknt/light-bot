@@ -21,7 +21,7 @@
     <artifactId>light-bot</artifactId>
     <version>2.3.4</version>
     <packaging>pom</packaging>
-    <name>Parent POM</name>
+    <name>light-bot</name>
     <description>Light Bot</description>
     <url>https://github.com/networknt/light-bot</url>
 

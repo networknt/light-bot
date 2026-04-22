@@ -26,6 +26,7 @@
     </parent>
 
     <artifactId>bot-cli</artifactId>
+    <name>bot-cli</name>
     <packaging>jar</packaging>
     <description>light bot cli.</description>
 

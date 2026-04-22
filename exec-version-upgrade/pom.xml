@@ -26,6 +26,7 @@
     </parent>
 
     <artifactId>exec-version-upgrade</artifactId>
+    <name>exec-version-upgrade</name>
     <packaging>jar</packaging>
     <description>light-bot version upgrade.</description>
 

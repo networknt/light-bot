@@ -26,6 +26,7 @@
     </parent>
 
     <artifactId>exec-delete-branch</artifactId>
+    <name>exec-delete-branch</name>
     <packaging>jar</packaging>
     <description>light-bot delete branch.</description>
 

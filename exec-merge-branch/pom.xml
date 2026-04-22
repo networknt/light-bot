@@ -26,6 +26,7 @@
     </parent>
 
     <artifactId>exec-merge-branch</artifactId>
+    <name>exec-merge-branch</name>
     <packaging>jar</packaging>
     <description>light-bot merge branch.</description>
 

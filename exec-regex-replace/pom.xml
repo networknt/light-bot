@@ -26,6 +26,7 @@
     </parent>
 
     <artifactId>exec-regex-replace</artifactId>
+    <name>exec-regex-replace</name>
     <packaging>jar</packaging>
     <description>light-bot regex replace.</description>
 

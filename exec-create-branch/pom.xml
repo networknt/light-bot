@@ -26,6 +26,7 @@
     </parent>
 
     <artifactId>exec-create-branch</artifactId>
+    <name>exec-create-branch</name>
     <packaging>jar</packaging>
     <description>light-bot create branch.</description>
 

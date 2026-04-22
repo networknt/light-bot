@@ -26,6 +26,7 @@
     </parent>
 
     <artifactId>exec-core</artifactId>
+    <name>exec-core</name>
     <packaging>jar</packaging>
     <description>light bot exec core.</description>
 
