@@ -8,20 +8,14 @@ external_origin: origin
 internal_origin: internal
 # The external main branch from GitHub server or other cloud Git server.
 master_branch: master
-# The internal main branch from internal git server
+# The branch used for syncing feature developments to GitHub
 sync_branch: sync
 # You can skip the clone or checkout from the external repo master branch.
 skip_external_master_checkout: false
 # You can skip the push to the internal repo master branch.
 skip_internal_master_push: false
-# You can skip the push to the internal repo sync branch.
-skip_internal_sync_push: false
-# You can skip the push to the external repo sync branch.
-skip_external_sync_push: false
-# You can skip the merge from sync to master
-skip_sync_master_merge: false
-# You can skip the internal merge git server to local.
-skip_external_master_push: false
+# You can skip the pruning of feature branches that are merged into master
+skip_branch_pruning: false
 # Clone or switch to the downstream branch and pull from GitHub and push to internal Git
 # On the internal Git server, merge from the downstream branch to the upstream branch.
 external_repo:

@@ -114,10 +114,8 @@ public class Constants {
     public static final String SYNC_BRANCH = "sync_branch";
     public static final String SKIP_EXTERNAL_MASTER_CHECKOUT = "skip_external_master_checkout";
     public static final String SKIP_INTERNAL_MASTER_PUSH = "skip_internal_master_push";
-    public static final String SKIP_INTERNAL_SYNC_PUSH = "skip_internal_sync_push";
     public static final String SKIP_EXTERNAL_SYNC_PUSH = "skip_external_sync_push";
-    public static final String SKIP_SYNC_MASTER_MERGE = "skip_sync_master_merge";
-    public static final String SKIP_EXTERNAL_MASTER_PUSH = "skip_external_master_push";
+    public static final String SKIP_BRANCH_PRUNING = "skip_branch_pruning";
     public static final String EXTERNAL_REPO = "external_repo";
     public static final String INTERNAL_REPO = "internal_repo";
 
