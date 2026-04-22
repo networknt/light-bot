@@ -116,7 +116,7 @@ public class DeleteBranchTask implements Command {
             for(String repository: repositories) {
                 Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
                 // delete remote branch from git server
-                DeleteRemoteBranchCmd deleteRemoteBranchCmd = new DeleteRemoteBranchCmd(rPath, branch);
+                DeleteRemoteBranchCmd deleteRemoteBranchCmd = new DeleteRemoteBranchCmd(rPath, "origin", branch);
                 result = deleteRemoteBranchCmd.execute();
                 if(result != 0) break;
             }

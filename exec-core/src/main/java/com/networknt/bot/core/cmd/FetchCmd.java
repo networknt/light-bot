@@ -11,33 +11,26 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This command is to delete a remote branch in the workspace.
- *
- */
-public class DeleteRemoteBranchCmd implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(DeleteRemoteBranchCmd.class);
+public class FetchCmd implements Command {
+    private static final Logger logger = LoggerFactory.getLogger(FetchCmd.class);
     private final Executor executor = SingletonServiceFactory.getBean(Executor.class);
     private final Path rPath;
     private final String remote;
-    private final String branch;
 
-    public DeleteRemoteBranchCmd(Path rPath, String remote, String branch) {
+    public FetchCmd(Path rPath, String remote) {
         this.rPath = rPath;
         this.remote = remote;
-        this.branch = branch;
     }
 
     @Override
     public int execute() throws IOException, InterruptedException {
         int result;
-        // delete a branch from the remote
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
 
-        commands.add("git push -d " + remote + " " + branch);
-        logger.info("git push -d {} {} for {}", remote, branch, rPath);
+        commands.add("git fetch " + remote);
+        logger.info("git fetch {} for {}", remote, rPath);
 
         result = executor.execute(commands, rPath.toFile());
         String stdout = executor.getStdout();
@@ -49,6 +42,6 @@ public class DeleteRemoteBranchCmd implements Command {
 
     @Override
     public String getName() {
-        return "DeleteRemoteBranch";
+        return "Fetch";
     }
 }
