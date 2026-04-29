@@ -32,3 +32,7 @@ exec-regex-replace/bin/
 exec-release-docker/bin/
 exec-release-maven/bin/
 exec-version-upgrade/bin/
+.gitnexus
+.claude/
+AGENTS.md
+CLAUDE.md
