@@ -111,7 +111,6 @@
         <version.jsonpath>2.10.0</version.jsonpath>
         <version.zt-exec>1.12</version.zt-exec>
         <version.maven-version>2.4</version.maven-version>
-        <version.javadoc-packagelist-plugin>1.0.0</version.javadoc-packagelist-plugin>
         <version.maven-javadoc>3.4.1</version.maven-javadoc>
         <version.maven-source>3.2.0</version.maven-source>
         <version.maven-jar>3.2.0</version.maven-jar>
