@@ -42,14 +42,15 @@ public class SyncGitRepoTaskTest {
         externalClone = tempDir.resolve("external-clone");
         internalClone = tempDir.resolve("internal-clone");
         
-        // Init bare repos
-        runCommand("git init --bare " + externalBare.toString());
-        runCommand("git init --bare " + internalBare.toString());
-        
+        // Init bare repos. The branch is named explicitly so the test does not depend on the
+        // init.defaultBranch setting of the machine it runs on (master vs main).
+        runCommand("git init --bare --initial-branch=master " + externalBare.toString());
+        runCommand("git init --bare --initial-branch=master " + internalBare.toString());
+
         // Setup external with initial master commit
         runCommand("git clone " + externalBare.toString() + " " + externalClone.toString());
         Files.writeString(externalClone.resolve("README.md"), "Initial Master");
-        runCommand(externalClone.toFile(), "git config user.email 'test@example.com'; git config user.name 'Test'; git add .; git commit -m 'initial'; git push origin master");
+        runCommand(externalClone.toFile(), "git config user.email 'test@example.com'; git config user.name 'Test'; git checkout -B master; git add .; git commit -m 'initial'; git push origin master");
         
         // Setup internal repo (customer)
         runCommand("git clone " + internalBare.toString() + " " + internalClone.toString());
