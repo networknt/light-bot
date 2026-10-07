@@ -24,7 +24,6 @@ public class ReleaseMavenTask implements Command {
     private String workspace = (String)config.get(Constants.WORKSPACE);
     private String version = (String)config.get(Constants.VERSION);
     private String prevTag = (String)config.get(Constants.PREV_TAG);
-    private int last = (Integer)config.get(Constants.LAST);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     private boolean skipChangeLog = (Boolean)config.get(Constants.SKIP_CHANGE_LOG);
     private boolean skipCheckin = (Boolean)config.get(Constants.SKIP_CHECKIN);
@@ -112,7 +111,7 @@ public class ReleaseMavenTask implements Command {
             Path rPath = getRepositoryPath(userHome, workspace, repository);
 
             // generate changelog.md, check in the current branch
-            ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, repository, version, branch, prevTag, last, rPath);
+            ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, repository, version, prevTag, rPath);
             result = changeLogCmd.execute();
             if (result != 0) break;
         }
@@ -132,7 +131,7 @@ public class ReleaseMavenTask implements Command {
             Path rPath = getRepositoryPath(userHome, workspace, repository);
 
             // checkin the generated changelog.md to the branch.
-            CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, "light-bot checkin CHANGELOG.md");
+            CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, Constants.CHANGELOG_CHECKIN_MESSAGE);
             result = checkinBranchCmd.execute();
             if (result != 0) break;
         }
@@ -182,7 +181,6 @@ public class ReleaseMavenTask implements Command {
                         break;
                     }
                     if(tokenFound) {
-                        line = line.replace("'", "\\'");
                         stringBuffer.append(line);
                         stringBuffer.append("\n");
                     }

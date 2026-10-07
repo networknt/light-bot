@@ -2,7 +2,9 @@
 workspace: releasedocker
 # new upgraded version. This needs to be changed for every release.
 version: 1.5.19
-# github organization as the token is bound to the org in changelog generator. This
+# Previous release tag must exist locally and be an ancestor of HEAD.
+prev_tag: 1.5.18
+# GitHub organization used for release publication. This
 # means that you can only release multiple repositories within the same org each time.
 organization: networknt
 # skip checkout if you know all latest code has been checkout in the previous build

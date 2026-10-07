@@ -23,7 +23,6 @@ public class ReleaseDockerTask implements Command {
     private String version = (String)config.get(Constants.VERSION);
     private String organization = (String)config.get(Constants.ORGANIZATION);
     private String prevTag = (String)config.get(Constants.PREV_TAG);
-    private int last = (Integer)config.get(Constants.LAST);
     private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
     private boolean skipMaven = (Boolean)config.get(Constants.SKIP_MAVEN);
     private boolean skipGradle = (Boolean)config.get(Constants.SKIP_GRADLE);
@@ -136,7 +135,7 @@ public class ReleaseDockerTask implements Command {
         for(String release: releases) {
             Path rPath = getRepositoryPath(userHome, workspace, release);
             // generate changelog.md, check in
-            ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, release, version, branch, prevTag, last, rPath);
+            ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, release, version, prevTag, rPath);
             result = changeLogCmd.execute();
             if(result != 0) break;
         }
@@ -150,7 +149,7 @@ public class ReleaseDockerTask implements Command {
         for(String release: releases) {
             Path rPath = getRepositoryPath(userHome, workspace, release);
             // check in the generated CHANGELOG.md to the branch
-            CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, "light-bot checkin CHANGELOG.md");
+            CheckinBranchCmd checkinBranchCmd = new CheckinBranchCmd(branch, rPath, Constants.CHANGELOG_CHECKIN_MESSAGE);
             result = checkinBranchCmd.execute();
             if(result != 0) break;
         }

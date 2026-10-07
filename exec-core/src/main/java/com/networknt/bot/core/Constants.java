@@ -65,7 +65,7 @@ public class Constants {
     public static final String SKIP_DEPLOY = "skip_deploy";
     public static final String SKIP_UPLOAD = "skip_upload";
     public static final String PREV_TAG = "prev_tag";
-    public static final String LAST = "last";
+    public static final String CHANGELOG_CHECKIN_MESSAGE = "light-bot checkin CHANGELOG.md";
 
     // release-docker
     public static final String MERGE = "merge";

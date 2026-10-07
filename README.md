@@ -55,3 +55,32 @@ In microservices architecture, different teams might have their own organization
 ##### Idempotency
 
 The testing aspect of the build, whether it is against multiple environments or not, should indeed use shared infrastructure (say Kafka across DIT/SIT) but also segregated back-ends. In all cases, testing using multiple bots needs to be idempotent. Idempotent testing is an aspect with most customers are struggling right now, especially in an evolving eco-system (ex, you don't have to create and delete APIs available maybe yet you still wish to test adding a product to a customer. this needs to be addressed via other means)
+
+## Release changelogs
+
+Maven release, snapshot, and Docker release changelogs are generated from git
+commit history by default. No source-selection setting is required. Configure
+the previous release tag and new version in the release configuration:
+
+```yaml
+prev_tag: 2.3.7
+version: 2.3.8
+```
+
+Generation uses each repository's `prev_tag..HEAD` ancestry range and emits
+commit subjects with GitHub SHA links, including PR commits and direct commits.
+It needs local git history and the previous tag, but no `CHANGELOG_GITHUB_TOKEN`
+or GitHub API calls. The previous tag must be
+present locally and be an ancestor of HEAD; generation fails before writing
+the changelog otherwise. Fetch the required history and tags before running
+the release task if the checkout is shallow or missing tags.
+
+Merge commits, `light-bot checkin CHANGELOG.md`, `bot checkin`, and Maven release
+plugin preparation commits are omitted. Other commits are included regardless
+of their author. Entries credit the git author and retain issue/PR references.
+User mentions and Markdown formatting in subjects and author names are neutralized. Generation creates a missing `CHANGELOG.md`, preserves older
+release sections, and replaces the current version's section on reruns.
+
+Git errors retain their diagnostics and stop the task. The CLI returns a nonzero
+exit status and uses the configured failure notification for task failures.
+GitHub release publication passes JSON directly to curl without a shell.

@@ -7,8 +7,6 @@ version: 2.0.3
 organization: networknt
 # previous tag used to calculate how many commits in between in the git log
 prev_tag: 2.0.2
-# last number of pull requests retrieved from the GitHub. 100 minimum.
-last: 100
 # You can skip checkout if you are sure that the code in workspace are the latest and
 # you just want to repeat the release process due to some environmental issue before.
 skip_checkout: true
@@ -63,7 +61,7 @@ checkout:
     - git@github.com:networknt/react-file-manager.git
     - git@github.com:networknt/light-commerce.git
     - git@github.com:networknt/light-cms.git
-# generate changelog.md from github issues and check in
+# generate CHANGELOG.md from git commit history and check in
 # release to maven central
 # merge the changelog.md to develop branch
 # publish the release to github repository

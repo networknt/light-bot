@@ -32,46 +32,56 @@ public class Cli {
                 .addObject(cli)
                 .build()
                 .parse(argv);
-        cli.run();
-        System.exit(0);
+        System.exit(cli.run());
     }
 
-    public void run() {
+    public int run() {
         logger.info("Cli starts with task = " + task);
         TaskRegistry registry = TaskRegistry.getInstance();
         Set<String> tasks = registry.getTasks();
         if(tasks.contains(task)) {
             Command command = registry.getCommand(task);
-            try {
-                int result = command.execute();
-                if(result == Constants.NO_REPO_CHANGE) {
-                    logger.info("none of the repo has been changed, skip build!");
-                } else if(result == 0) {
-                    logger.info("build successfully!");
-                } else {
-                    logger.error("build or test failed!");
-                    // send email here with the attachment bot.log
-                    // send email to stevehu@gmail.com
-                    if(config != null) {
-                    	skipEmail = config.get("skipEmail") == null ? false : ((Boolean)config.get("skipEmail")).booleanValue();
-                    	email = config.get("email") == null ? email = "steve.hu@gmail.com" : (String)config.get("email");
-                    }
-                    if(!skipEmail) {
-                        EmailSender emailSender = new EmailSender();
-                        try {
-                            File file = new File("bot.log");
-                            String absolutePath = file.getAbsolutePath();
-                            emailSender.sendMailWithAttachment(email, "Build Error", "Please check the build log", absolutePath);
-                        } catch (MessagingException e) {
-                            logger.error("Failed to send email ", e);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("Exception", e);
-            }
+            return runCommand(command);
         } else {
             logger.error("Invalid task " + task);
+            return 1;
+        }
+    }
+
+    int runCommand(Command command) {
+        int result;
+        try {
+            result = command.execute();
+        } catch (Exception e) {
+            logger.error("Task failed", e);
+            if (e instanceof InterruptedException) Thread.currentThread().interrupt();
+            result = 1;
+        }
+        if (result == Constants.NO_REPO_CHANGE) {
+            logger.info("none of the repo has been changed, skip build!");
+            return 0;
+        }
+        if (result == 0) {
+            logger.info("build successfully!");
+        } else {
+            logger.error("build or test failed!");
+            try {
+                notifyFailure();
+            } catch (Exception e) {
+                logger.error("Failed to send failure notification", e);
+            }
+        }
+        return result;
+    }
+
+    void notifyFailure() throws MessagingException {
+        if (config != null) {
+            skipEmail = Boolean.TRUE.equals(config.get("skipEmail"));
+            email = (String)config.getOrDefault("email", "steve.hu@gmail.com");
+        }
+        if (!skipEmail) {
+            new EmailSender().sendMailWithAttachment(email, "Build Error", "Please check the build log",
+                    new File("bot.log").getAbsolutePath());
         }
     }
 }
