@@ -9,7 +9,6 @@ out/
 .project
 .classpath
 .settings
-.gradle
 .metadata/
 *.iml
 *.log
@@ -36,3 +35,7 @@ exec-version-upgrade/bin/
 .claude/
 AGENTS.md
 CLAUDE.md
+
+# Legacy Gradle caches and Maven-generated metadata
+.gradle/
+bot-cli/dependency-reduced-pom.xml

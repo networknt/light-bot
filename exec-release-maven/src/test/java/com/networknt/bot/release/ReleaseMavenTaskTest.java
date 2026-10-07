@@ -1,16 +1,10 @@
 package com.networknt.bot.release;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 public class ReleaseMavenTaskTest {
-    @Test
-    public void placeholderTest() {
-        // Placeholder test for Gradle 9 compatibility
-    }
-    
     //@Test
     public void testReleaseMaven() throws IOException, InterruptedException {
         ReleaseMavenTask cmd = new ReleaseMavenTask();

@@ -33,6 +33,10 @@
     <dependencies>
         <dependency>
             <groupId>com.networknt</groupId>
+            <artifactId>exec-delete-branch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.networknt</groupId>
             <artifactId>exec-core</artifactId>
         </dependency>
         <dependency>
@@ -124,6 +128,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>

@@ -56,6 +56,34 @@ In microservices architecture, different teams might have their own organization
 
 The testing aspect of the build, whether it is against multiple environments or not, should indeed use shared infrastructure (say Kafka across DIT/SIT) but also segregated back-ends. In all cases, testing using multiple bots needs to be idempotent. Idempotent testing is an aspect with most customers are struggling right now, especially in an evolving eco-system (ex, you don't have to create and delete APIs available maybe yet you still wish to test adding a product to a customer. this needs to be addressed via other means)
 
+## Build and run
+
+light-bot uses Maven for all modules and CLI packaging. Install JDK 25 and
+Maven 3.6.3 or newer, then run these commands from the repository root:
+
+```sh
+mvn clean verify
+```
+
+This builds all modules, runs their tests, and creates the executable CLI JAR
+at `bot-cli/target/bot-cli.jar`. To install the module artifacts in your local
+Maven repository, run `mvn clean install`.
+
+The CLI runtime also requires Java 25 or newer. Maven Enforcer checks the
+build requirements before compilation. Source and Javadoc JARs are generated
+only by the existing `release-sign-artifacts` profile.
+
+Prepare a complete external task configuration directory, including
+`service.yml` and the configuration for each registered task. Bundled files
+are examples, not a runnable default: release tasks require additional keys
+such as `skip_change_log` and `skip_gradle`. Register only the tasks you intend
+to use. Run from your configuration workspace with:
+
+```sh
+java -Dlight-4j-config-dir=/absolute/path/to/config \
+  -jar /absolute/path/to/light-bot/bot-cli/target/bot-cli.jar --task <task-name>
+```
+
 ## Release changelogs
 
 Maven release, snapshot, and Docker release changelogs are generated from git

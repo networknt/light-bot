@@ -1,1 +1,0 @@
-include("exec-core", "exec-develop-build", "exec-version-upgrade", "exec-release-maven", "exec-release-docker", "exec-regex-replace", "exec-create-branch", "exec-delete-branch", "exec-merge-branch", "exec-gitrepo-sync", "bot-cli")
