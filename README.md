@@ -112,3 +112,45 @@ release sections, and replaces the current version's section on reruns.
 Git errors retain their diagnostics and stop the task. The CLI returns a nonzero
 exit status and uses the configured failure notification for task failures.
 GitHub release publication passes JSON directly to curl without a shell.
+
+## Maven release preparation
+
+Both `ReleaseMavenTask` and `SnapshotMavenTask` support optional local
+preparation commands in `release-maven.yml`. They run after
+checkout and before changelog generation, checkin, and Maven publication. A
+nonzero exit stops the task before those later stages. Existing configurations
+without `prepare` retain their previous behavior.
+
+```yaml
+skip_prepare: false
+prepare:
+  - light-4j:
+      - mvn clean install -pl status,monad-result,config,client-config,cluster -am
+release:
+  - networknt/http-client
+  - networknt/light-4j
+prev_tags:
+  networknt/http-client: 1.0.18
+```
+
+Each preparation entry maps a repository directory in the configured workspace
+to commands run there, in list order. Use one repository per entry when order
+matters. The foundational build supplies the framework artifacts needed to
+compile `http-client` without selecting framework modules that depend on it.
+Preparation runs even with `skip_release: true`; use `skip_prepare: true` to
+skip an already completed build on a retry. The configured commands should use
+local build goals, without `deploy` or the release-signing profile.
+
+`prev_tags` overrides `prev_tag` for individual `organization/repository`
+entries. Repositories without an override use the shared `prev_tag`. This lets
+a repository join the release cycle from a different previous tag.
+
+Prepare and review release POM versions before running this task: `version`
+labels changelogs and GitHub releases and does not rewrite Maven versions.
+For a coordinated version, align the `http-client` project version and its
+`version.light-4j`, the framework version and its `version.http-client`, and
+downstream consumers. Use release versions rather than snapshots. The local
+installation makes the ordered builds possible, but Central publication of
+separate repositories is not atomic: the new client may be visible before its
+framework dependencies. No staging or publication-wait behavior is added by
+the preparation phase.

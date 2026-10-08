@@ -13,35 +13,59 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
 public class ReleaseMavenTask implements Command {
     private static final Logger logger = LoggerFactory.getLogger(ReleaseMavenTask.class);
     private static final String CONFIG_NAME = "release-maven";
-    private Map<String, Object> config = Config.getInstance().getJsonMapConfig(CONFIG_NAME);
-    private String workspace = (String)config.get(Constants.WORKSPACE);
-    private String version = (String)config.get(Constants.VERSION);
-    private String prevTag = (String)config.get(Constants.PREV_TAG);
-    private boolean skipCheckout = (Boolean)config.get(Constants.SKIP_CHECKOUT);
-    private boolean skipChangeLog = (Boolean)config.get(Constants.SKIP_CHANGE_LOG);
-    private boolean skipCheckin = (Boolean)config.get(Constants.SKIP_CHECKIN);
-    private boolean skipRelease = (Boolean)config.get(Constants.SKIP_RELEASE);
-    private boolean skipReleaseNote = (Boolean)config.get(Constants.SKIP_RELEASE_NOTE);
-    private boolean skipDeploy = (Boolean)config.get(Constants.SKIP_DEPLOY);
-    private boolean skipUpload = (Boolean)config.get(Constants.SKIP_UPLOAD);
+    private String workspace;
+    private String version;
+    private String prevTag;
+    private boolean skipCheckout;
+    private boolean skipChangeLog;
+    private boolean skipCheckin;
+    private boolean skipRelease;
+    private boolean skipReleaseNote;
+    private boolean skipDeploy;
+    private boolean skipUpload;
+    private boolean skipPrepare;
 
     private String branch = null;  // this variable is populated in the checkout method
 
-    @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> checkout = (List<Map<String, Object>>)config.get(Constants.CHECKOUT);
-    @SuppressWarnings("unchecked")
-    private List<String> releases = (List<String>)config.get(Constants.RELEASE);
-    private List<Map<String, List<String>>> deploys = (List<Map<String, List<String>>>) config.get(Constants.DEPLOY);
-    private List<Map<String, List<String>>> uploads = (List<Map<String, List<String>>>) config.get(Constants.UPLOAD);
+    private List<Map<String, Object>> checkout;
+    private List<String> releases;
+    private List<Map<String, List<String>>> deploys;
+    private List<Map<String, List<String>>> uploads;
+    private List<Map<String, List<String>>> preparationBuilds;
+    private Map<String, String> previousTags;
 
     private String userHome = System.getProperty("user.home");
+
+    public ReleaseMavenTask() {
+        this(Config.getInstance().getJsonMapConfig(CONFIG_NAME));
+    }
+
+    @SuppressWarnings("unchecked")
+    ReleaseMavenTask(Map<String, Object> config) {
+        workspace = (String) config.get(Constants.WORKSPACE);
+        version = (String) config.get(Constants.VERSION);
+        prevTag = (String) config.get(Constants.PREV_TAG);
+        skipCheckout = (Boolean) config.get(Constants.SKIP_CHECKOUT);
+        skipChangeLog = (Boolean) config.get(Constants.SKIP_CHANGE_LOG);
+        skipCheckin = (Boolean) config.get(Constants.SKIP_CHECKIN);
+        skipRelease = (Boolean) config.get(Constants.SKIP_RELEASE);
+        skipReleaseNote = (Boolean) config.get(Constants.SKIP_RELEASE_NOTE);
+        skipDeploy = (Boolean) config.get(Constants.SKIP_DEPLOY);
+        skipUpload = (Boolean) config.get(Constants.SKIP_UPLOAD);
+        skipPrepare = Boolean.TRUE.equals(config.get("skip_prepare"));
+        checkout = (List<Map<String, Object>>) config.get(Constants.CHECKOUT);
+        releases = (List<String>) config.get(Constants.RELEASE);
+        deploys = (List<Map<String, List<String>>>) config.get(Constants.DEPLOY);
+        uploads = (List<Map<String, List<String>>>) config.get(Constants.UPLOAD);
+        preparationBuilds = (List<Map<String, List<String>>>) config.getOrDefault("prepare", List.of());
+        previousTags = (Map<String, String>) config.getOrDefault("prev_tags", Map.of());
+    }
 
     @Override
     public String getName() {
@@ -51,6 +75,8 @@ public class ReleaseMavenTask implements Command {
     @Override
     public int execute() throws IOException, InterruptedException {
         int result = checkout();
+        if(result != 0) return result;
+        result = prepare();
         if(result != 0) return result;
         result = changeLog();
         if(result != 0) return result;
@@ -64,6 +90,28 @@ public class ReleaseMavenTask implements Command {
         if(result != 0) return result;
         result = upload();
         return result;
+    }
+
+    private int prepare() throws IOException, InterruptedException {
+        if (skipPrepare) return 0;
+        for (Map<String, List<String>> build : preparationBuilds) {
+            for (Map.Entry<String, List<String>> entry : build.entrySet()) {
+                Path rPath = getRepositoryPath(userHome, workspace, entry.getKey());
+                for (String command : entry.getValue()) {
+                    int result = runPreparationCommand(command, rPath);
+                    if (result != 0) return result;
+                }
+            }
+        }
+        return 0;
+    }
+
+    int runPreparationCommand(String command, Path rPath) throws IOException, InterruptedException {
+        return new GenericSingleCmd(command, rPath).execute();
+    }
+
+    String previousTag(String release) {
+        return previousTags.getOrDefault(release, prevTag);
     }
 
     private int checkout() throws IOException, InterruptedException {
@@ -111,7 +159,7 @@ public class ReleaseMavenTask implements Command {
             Path rPath = getRepositoryPath(userHome, workspace, repository);
 
             // generate changelog.md, check in the current branch
-            ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, repository, version, prevTag, rPath);
+            ChangeLogCmd changeLogCmd = new ChangeLogCmd(organization, repository, version, previousTag(release), rPath);
             result = changeLogCmd.execute();
             if (result != 0) break;
         }
@@ -149,12 +197,14 @@ public class ReleaseMavenTask implements Command {
 
             Path rPath = getRepositoryPath(userHome, workspace, repository);
 
-            // run maven release plugin to release to maven central
-            MavenReleaseCmd mavenReleaseCmd = new MavenReleaseCmd(rPath);
-            result = mavenReleaseCmd.execute();
+            result = runRelease(rPath);
             if(result != 0) break;
         }
         return result;
+    }
+
+    int runRelease(Path rPath) throws IOException, InterruptedException {
+        return new MavenReleaseCmd(rPath).execute();
     }
 
     private int releaseNote() throws IOException, InterruptedException {
