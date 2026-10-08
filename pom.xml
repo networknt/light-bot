@@ -108,7 +108,7 @@
         <version.json-schema-validator>2.0.8</version.json-schema-validator>
         <version.snakeyaml>2.7</version.snakeyaml>
         <version.jcommander>1.82</version.jcommander>
-        <version.jsonpath>2.10.0</version.jsonpath>
+        <version.json-path>3.0.0</version.json-path>
         <version.zt-exec>1.12</version.zt-exec>
         <version.maven-version>2.4</version.maven-version>
         <version.maven-javadoc>3.12.0</version.maven-javadoc>
@@ -239,7 +239,7 @@
             <dependency>
                 <groupId>com.jayway.jsonpath</groupId>
                 <artifactId>json-path</artifactId>
-                <version>${version.jsonpath}</version>
+                <version>${version.json-path}</version>
             </dependency>
 
             <dependency>
