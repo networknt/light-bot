@@ -106,7 +106,7 @@
         <version.junit>5.11.4</version.junit>
         <version.undertow>2.4.1.Final</version.undertow>
         <version.json-schema-validator>2.0.8</version.json-schema-validator>
-        <version.snakeyaml>2.4</version.snakeyaml>
+        <version.snakeyaml>2.7</version.snakeyaml>
         <version.jcommander>1.82</version.jcommander>
         <version.jsonpath>2.10.0</version.jsonpath>
         <version.zt-exec>1.12</version.zt-exec>
