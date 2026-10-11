@@ -40,6 +40,8 @@ public class ReleaseMavenTask implements Command {
     private List<Map<String, List<String>>> preparationBuilds;
     private Map<String, String> previousTags;
 
+    private PublicationPreflight preflight;
+
     private String userHome = System.getProperty("user.home");
 
     public ReleaseMavenTask() {
@@ -78,6 +80,7 @@ public class ReleaseMavenTask implements Command {
         if(result != 0) return result;
         result = prepare();
         if(result != 0) return result;
+        publicationPreflight();
         result = changeLog();
         if(result != 0) return result;
         result = checkin();
@@ -104,6 +107,36 @@ public class ReleaseMavenTask implements Command {
             }
         }
         return 0;
+    }
+
+    private void publicationPreflight() throws IOException, InterruptedException {
+        if (skipRelease) return;
+        boolean blocked = false;
+        try {
+            for (String repository : releases) {
+                try {
+                    String[] parts = StringUtils.split(repository, "/");
+                    if (parts == null || parts.length != 2) throw new IOException("Expected organization/repository");
+                    Path directory = getRepositoryPath(userHome, workspace, parts[1]);
+                    runPublicationPreflight(directory);
+                } catch (IOException | RuntimeException e) {
+                    logger.error("Publication preflight failed for {}: {}", repository,
+                            e instanceof IOException ? e.getMessage() : e.getClass().getSimpleName());
+                    blocked = true;
+                }
+            }
+        } finally {
+            if (preflight != null) {
+                preflight.close();
+                preflight = null;
+            }
+        }
+        if (blocked) throw new IOException("Publication preflight blocked release; no changelog check-in or publication was started. Review existing artifacts and retry only unpublished repositories.");
+    }
+
+    void runPublicationPreflight(Path directory) throws IOException, InterruptedException {
+        if (preflight == null) preflight = new PublicationPreflight();
+        preflight.check(directory);
     }
 
     int runPreparationCommand(String command, Path rPath) throws IOException, InterruptedException {

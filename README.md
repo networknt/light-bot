@@ -145,6 +145,39 @@ local build goals, without `deploy` or the release-signing profile.
 entries. Repositories without an override use the shared `prev_tag`. This lets
 a repository join the release cycle from a different previous tag.
 
+Official `release-maven` runs a publication preflight after local preparation and
+before generating or checking in changelogs. It resolves every release repository's
+reactor with `maven-help-plugin:effective-pom` using `-DperformRelease`, then checks
+each module's effective `groupId:artifactId:version` (including parent POMs) using
+Central Portal's authenticated `GET /api/v1/publisher/published` API. Only HTTP 200
+with a boolean `published: false` allows publication. Existing artifacts, snapshot
+versions (including lowercase and timestamped snapshots), unresolved models,
+network errors, malformed responses, and other HTTP statuses block the entire run.
+Module failures are collected without discarding other module results. All
+repositories are checked before the first publication, with up to four concurrent
+module requests and one HTTP client shared across the preflight and closed afterward.
+No repository is silently skipped. For a retry, review the reported coordinates
+and explicitly select only unpublished repositories in `release`; a partially
+published reactor requires separate recovery planning.
+
+Authentication reuses the active Central publishing plugin's `publishingServerId`
+(default `central`) and the corresponding username/password from Maven's effective
+settings, including Maven-resolved environment references. Settings output is
+written to a temporary file, never logged, and deleted after use. Normal effective-POM
+Maven diagnostics are retained. Encrypted settings passwords and reactors with
+multiple publishing server IDs currently fail closed; they are not silently
+replaced with anonymous repository probes. Use resolved publishing token credentials
+for this preflight. Do not put tokens in release configuration or source files.
+
+The preflight is bypassed with `skip_release: true`, allowing release-note recovery.
+`release-snapshot` is unchanged. Checks use actual POM versions, not Git tags or
+the configured changelog version. Portal status avoids relying on public repository
+synchronization and avoids probing unpublished POM URLs. It is still not a
+reservation: pending deployments and concurrent publishers can race the check.
+Central remains the final authority on duplicate versions. Effective-POM/settings
+goals may download Maven plugins or model dependencies, but do not run build,
+signing, or deployment lifecycle goals.
+
 Prepare and review release POM versions before running this task: `version`
 labels changelogs and GitHub releases and does not rewrite Maven versions.
 For a coordinated version, align the `http-client` project version and its

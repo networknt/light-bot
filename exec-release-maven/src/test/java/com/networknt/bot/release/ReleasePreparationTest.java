@@ -46,6 +46,11 @@ class ReleasePreparationTest {
         }
 
         @Override
+        void runPublicationPreflight(Path directory) {
+            calls.add("check " + directory.getFileName());
+        }
+
+        @Override
         int runRelease(Path directory) {
             calls.add("release " + directory.getFileName());
             directories.add(directory);
@@ -61,7 +66,7 @@ class ReleasePreparationTest {
         RecordingTask task = new RecordingTask(config);
 
         assertEquals(0, task.execute());
-        assertEquals(List.of(build, "release http-client", "release light-4j"), task.calls);
+        assertEquals(List.of(build, "check http-client", "check light-4j", "release http-client", "release light-4j"), task.calls);
         assertEquals(List.of(workspace.resolve("light-4j"), workspace.resolve("http-client"),
                 workspace.resolve("light-4j")), task.directories);
     }
@@ -99,14 +104,14 @@ class ReleasePreparationTest {
         RecordingTask task = new RecordingTask(config);
 
         assertEquals(0, task.execute());
-        assertEquals(List.of("release http-client", "release light-4j"), task.calls);
+        assertEquals(List.of("check http-client", "check light-4j", "release http-client", "release light-4j"), task.calls);
     }
 
     @Test
     void oldConfigurationNeedsNoNewKeys() throws Exception {
         RecordingTask task = new RecordingTask(config());
         assertEquals(0, task.execute());
-        assertEquals(List.of("release http-client", "release light-4j"), task.calls);
+        assertEquals(List.of("check http-client", "check light-4j", "release http-client", "release light-4j"), task.calls);
         assertEquals("2.4.0", task.previousTag("networknt/http-client"));
     }
 
@@ -115,7 +120,7 @@ class ReleasePreparationTest {
         RecordingTask task = new RecordingTask(config());
         task.releaseResult = 23;
         assertEquals(23, task.execute());
-        assertEquals(List.of("release http-client"), task.calls);
+        assertEquals(List.of("check http-client", "check light-4j", "release http-client"), task.calls);
     }
 
     @Test
