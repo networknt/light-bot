@@ -148,8 +148,10 @@ a repository join the release cycle from a different previous tag.
 Official `release-maven` runs a publication preflight after local preparation and
 before generating or checking in changelogs. It resolves every release repository's
 reactor with `maven-help-plugin:effective-pom` using `-DperformRelease`, then checks
-each module's effective `groupId:artifactId:version` (including parent POMs) using
-Central Portal's authenticated `GET /api/v1/publisher/published` API. Only HTTP 200
+each publishable module's effective `groupId:artifactId:version` (including parent POMs) using
+Central Portal's authenticated `GET /api/v1/publisher/published` API. Modules listed
+in the active Central publishing plugin's `excludeArtifacts` are reported as
+`EXCLUDED` and do not count as unpublished artifacts (exact artifactId matching). Only HTTP 200
 with a boolean `published` value gives a known status. Snapshot
 versions (including lowercase and timestamped snapshots), unresolved models,
 network errors, malformed responses, and other HTTP statuses block the entire run.

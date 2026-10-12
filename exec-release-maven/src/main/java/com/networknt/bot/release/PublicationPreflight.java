@@ -108,8 +108,12 @@ final class PublicationPreflight implements AutoCloseable {
                 index++;
                 String label = "module #" + index + " (artifactId=" + text(project, "artifactId") + ")";
                 try {
-                    String group = value(project, "groupId");
                     String artifact = value(project, "artifactId");
+                    if (excluded(project, artifact)) {
+                        logger.info("EXCLUDED {} by Central publishing configuration", artifact);
+                        continue;
+                    }
+                    String group = value(project, "groupId");
                     String version = value(project, "version");
                     String coordinate = group + ":" + artifact + ":" + version;
                     if (SNAPSHOT.matcher(version).matches()) {
@@ -146,6 +150,8 @@ final class PublicationPreflight implements AutoCloseable {
             throw new IOException("Partially published reactor. Published modules: " + String.join(", ", published)
                     + "; Unpublished modules: " + String.join(", ", unpublished));
         }
+        if (published.isEmpty() && unpublished.isEmpty())
+            throw new IOException("Reactor has no artifacts selected for Central publication");
         return published.isEmpty() ? Status.UNPUBLISHED : Status.PUBLISHED;
     }
 
@@ -169,6 +175,24 @@ final class PublicationPreflight implements AutoCloseable {
             // Never log HTTP bodies, headers, or exception messages containing credentials.
             return new ModuleStatus(coordinate, false, coordinate + " publication status unknown (" + e.getClass().getSimpleName() + ")");
         }
+    }
+
+    private static boolean excluded(Element project, String artifact) {
+        Element build = child(project, "build");
+        Element plugins = build == null ? null : child(build, "plugins");
+        if (plugins == null) return false;
+        for (Element plugin : children(plugins, "plugin")) {
+            if (text(plugin, "groupId").equals("org.sonatype.central")
+                    && text(plugin, "artifactId").equals("central-publishing-maven-plugin")) {
+                Element configuration = child(plugin, "configuration");
+                Element exclusions = configuration == null ? null : child(configuration, "excludeArtifacts");
+                if (exclusions != null) for (Element exclusion : children(exclusions, "excludeArtifact")) {
+                    // Publisher 0.11.0 filters by exact artifactId, not glob or GAV.
+                    if (artifact.equals(exclusion.getTextContent().trim())) return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static String encode(String value) { return URLEncoder.encode(value, StandardCharsets.UTF_8); }

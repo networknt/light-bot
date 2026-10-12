@@ -67,6 +67,40 @@ class PublicationPreflightTest {
     }
 
     @Test
+    void publisherExcludedModulesDoNotCauseFalsePartialPublication() throws Exception {
+        List<String> requests = java.util.Collections.synchronizedList(new ArrayList<>());
+        boolean[] published = {true};
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/", exchange -> {
+            requests.add(exchange.getRequestURI().getQuery());
+            byte[] body = ("{\"published\":" + published[0] + "}").getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+        try {
+            String configuration = "<build><plugins><plugin><groupId>org.sonatype.central</groupId>"
+                    + "<artifactId>central-publishing-maven-plugin</artifactId><configuration><excludeArtifacts>"
+                    + "<excludeArtifact>hybrid-command</excludeArtifact><excludeArtifact>hybrid-query</excludeArtifact>"
+                    + "<excludeArtifact>light-portal-dist</excludeArtifact></excludeArtifacts></configuration></plugin></plugins></build>";
+            StringBuilder model = new StringBuilder("<projects>");
+            for (String artifact : List.of("light-portal", "command-common", "hybrid-command", "hybrid-query", "light-portal-dist"))
+                model.append(project(artifact, "2.4.1").replace("</project>", configuration + "</project>"));
+            Path pom = directory.resolve("effective.xml");
+            Files.writeString(pom, model.append("</projects>"));
+            PublicationPreflight check = newCheck(null, URI.create("http://127.0.0.1:" + server.getAddress().getPort() + "/"));
+            assertEquals(PublicationPreflight.Status.PUBLISHED, check.checkEffectivePom(pom));
+            assertEquals(2, requests.size());
+            assertFalse(requests.stream().anyMatch(query -> query.contains("hybrid-") || query.contains("light-portal-dist")));
+            requests.clear();
+            published[0] = false;
+            assertEquals(PublicationPreflight.Status.UNPUBLISHED, check.checkEffectivePom(pom));
+            assertEquals(2, requests.size());
+        } finally { server.stop(0); }
+    }
+
+    @Test
     void onlyPublishedFalseAllowsPublicationAndUnknownStatusBlocks() throws Exception {
         int[] status = {200};
         String[] response = {"{\"published\":false}"};
