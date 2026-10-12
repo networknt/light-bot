@@ -41,6 +41,7 @@ public class ReleaseMavenTask implements Command {
     private Map<String, String> previousTags;
 
     private PublicationPreflight preflight;
+    private List<String> pendingReleases;
 
     private String userHome = System.getProperty("user.home");
 
@@ -76,11 +77,15 @@ public class ReleaseMavenTask implements Command {
 
     @Override
     public int execute() throws IOException, InterruptedException {
+        pendingReleases = null;
         int result = checkout();
         if(result != 0) return result;
         result = prepare();
         if(result != 0) return result;
         publicationPreflight();
+        if (!skipRelease && pendingReleases.isEmpty()) {
+            logger.info("All release repositories are fully published; nothing to publish.");
+        }
         result = changeLog();
         if(result != 0) return result;
         result = checkin();
@@ -89,6 +94,7 @@ public class ReleaseMavenTask implements Command {
         if(result != 0) return result;
         result = releaseNote();
         if(result != 0) return result;
+        if (!skipRelease && pendingReleases.isEmpty()) return 0;
         result = deploy();
         if(result != 0) return result;
         result = upload();
@@ -112,13 +118,20 @@ public class ReleaseMavenTask implements Command {
     private void publicationPreflight() throws IOException, InterruptedException {
         if (skipRelease) return;
         boolean blocked = false;
+        List<String> pending = new java.util.ArrayList<>();
         try {
             for (String repository : releases) {
                 try {
                     String[] parts = StringUtils.split(repository, "/");
                     if (parts == null || parts.length != 2) throw new IOException("Expected organization/repository");
                     Path directory = getRepositoryPath(userHome, workspace, parts[1]);
-                    runPublicationPreflight(directory);
+                    PublicationPreflight.Status status = runPublicationPreflight(directory);
+                    if (status == PublicationPreflight.Status.UNPUBLISHED) {
+                        pending.add(repository);
+                        logger.info("Release repository {} is unpublished; scheduled for publication", repository);
+                    } else if (status == PublicationPreflight.Status.PUBLISHED) {
+                        logger.info("Skipping fully published release repository {}", repository);
+                    } else throw new IOException("Publication preflight returned no status");
                 } catch (IOException | RuntimeException e) {
                     logger.error("Publication preflight failed for {}: {}", repository,
                             e instanceof IOException ? e.getMessage() : e.getClass().getSimpleName());
@@ -131,12 +144,19 @@ public class ReleaseMavenTask implements Command {
                 preflight = null;
             }
         }
-        if (blocked) throw new IOException("Publication preflight blocked release; no changelog check-in or publication was started. Review existing artifacts and retry only unpublished repositories.");
+        if (blocked) throw new IOException("Publication preflight blocked release; no changelog check-in or publication was started. Resolve partially published reactors or unknown publication status before retrying.");
+        pendingReleases = List.copyOf(pending);
+        logger.info("Publication preflight complete: {} repositories to publish, {} fully published repositories skipped",
+                pending.size(), releases.size() - pending.size());
     }
 
-    void runPublicationPreflight(Path directory) throws IOException, InterruptedException {
+    PublicationPreflight.Status runPublicationPreflight(Path directory) throws IOException, InterruptedException {
         if (preflight == null) preflight = new PublicationPreflight();
-        preflight.check(directory);
+        return preflight.check(directory);
+    }
+
+    private List<String> releasesToProcess() {
+        return pendingReleases == null ? releases : pendingReleases;
     }
 
     int runPreparationCommand(String command, Path rPath) throws IOException, InterruptedException {
@@ -184,7 +204,7 @@ public class ReleaseMavenTask implements Command {
         int result = 0;
         if(skipChangeLog) return result;
 
-        for(String release: releases) {
+        for(String release: releasesToProcess()) {
             // the release is formatted as organization/repository
             String[] parts = StringUtils.split(release, "/");
             String organization = parts[0];
@@ -203,7 +223,7 @@ public class ReleaseMavenTask implements Command {
         int result = 0;
         if(skipCheckin) return result;
 
-        for(String release: releases) {
+        for(String release: releasesToProcess()) {
             // the release is formatted as organization/repository
             String[] parts = StringUtils.split(release, "/");
             String organization = parts[0];
@@ -223,7 +243,7 @@ public class ReleaseMavenTask implements Command {
         int result = 0;
         if(skipRelease) return result;
 
-        for(String release: releases) {
+        for(String release: releasesToProcess()) {
             String[] parts = StringUtils.split(release, "/");
             String organization = parts[0];
             String repository = parts[1];
@@ -273,11 +293,15 @@ public class ReleaseMavenTask implements Command {
             }
 
             // call github api to create a new release.
-            GithubReleaseCmd githubReleaseCmd = new GithubReleaseCmd(organization, repository, branch, version, stringBuffer.toString(), rPath);
-            result = githubReleaseCmd.execute();
+            result = runReleaseNote(organization, repository, branch, version, stringBuffer.toString(), rPath);
             if(result != 0) break;
         }
         return result;
+    }
+
+    int runReleaseNote(String organization, String repository, String branch, String version, String body,
+                       Path directory) throws IOException, InterruptedException {
+        return new GithubReleaseCmd(organization, repository, branch, version, body, directory, true).execute();
     }
 
     public int deploy() throws IOException, InterruptedException {

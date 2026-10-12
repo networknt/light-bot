@@ -53,14 +53,14 @@ class PublicationPreflightTest {
             PublicationPreflight check = newCheck(null,
                     URI.create("http://127.0.0.1:" + server.getAddress().getPort() + "/"));
             IOException failure = assertThrows(IOException.class, () -> check.checkEffectivePom(pom));
-            assertTrue(failure.getMessage().contains("com.example:parent:2.4.1 already exists"));
+            assertTrue(failure.getMessage().contains("Partially published reactor"));
             assertEquals(java.util.Set.of("namespace=com.example&name=parent&version=2.4.1",
                     "namespace=com.example&name=child&version=2.4.1"), new java.util.HashSet<>(requests));
             assertEquals(2, requests.size());
             Files.writeString(pom, "<projects>" + project("parent", "2.4.1")
                     + project("bad", "${revision}") + project("last", "2.4.1") + "</projects>");
             String message = assertThrows(IOException.class, () -> check.checkEffectivePom(pom)).getMessage();
-            assertTrue(message.contains("parent:2.4.1 already exists"));
+            assertTrue(message.contains("Published modules: com.example:parent:2.4.1"));
             assertTrue(message.contains("module #2 (artifactId=bad)"));
             assertTrue(requests.stream().anyMatch(query -> query.contains("name=last")));
         } finally { server.stop(0); }
@@ -83,7 +83,12 @@ class PublicationPreflightTest {
             Files.writeString(pom, project("client", "2.4.1"));
             PublicationPreflight check = newCheck(null,
                     URI.create("http://127.0.0.1:" + server.getAddress().getPort() + "/"));
-            check.checkEffectivePom(pom);
+            assertEquals(PublicationPreflight.Status.UNPUBLISHED, check.checkEffectivePom(pom));
+            response[0] = "{\"published\":true}";
+            Files.writeString(pom, "<projects>" + project("parent", "2.4.1") + project("child", "2.4.1") + "</projects>");
+            assertEquals(PublicationPreflight.Status.PUBLISHED, check.checkEffectivePom(pom));
+            response[0] = "{\"published\":false}";
+            Files.writeString(pom, project("client", "2.4.1"));
             for (int code : List.of(401, 403, 404, 429, 500, 302)) {
                 status[0] = code;
                 assertTrue(assertThrows(IOException.class, () -> check.checkEffectivePom(pom))
@@ -223,7 +228,7 @@ class PublicationPreflightTest {
         List<Path> checked = new ArrayList<>();
         List<Path> published = new ArrayList<>();
         ReleaseMavenTask task = new ReleaseMavenTask(config) {
-            @Override void runPublicationPreflight(Path path) { checked.add(path); }
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) { checked.add(path); return PublicationPreflight.Status.UNPUBLISHED; }
             @Override int runRelease(Path path) { published.add(path); return 0; }
         };
         assertEquals(0, task.execute());
@@ -246,7 +251,7 @@ class PublicationPreflightTest {
     void allRepositoriesAreCheckedBeforeFirstPublication() throws Exception {
         List<String> calls = new ArrayList<>();
         ReleaseMavenTask task = new ReleaseMavenTask(config()) {
-            @Override void runPublicationPreflight(Path path) { calls.add("check " + path.getFileName()); }
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) { calls.add("check " + path.getFileName()); return PublicationPreflight.Status.UNPUBLISHED; }
             @Override int runRelease(Path path) { calls.add("publish " + path.getFileName()); return 0; }
         };
         assertEquals(0, task.execute());
@@ -259,11 +264,155 @@ class PublicationPreflightTest {
         Map<String, Object> config = config();
         config.put("skip_change_log", false);
         ReleaseMavenTask task = new ReleaseMavenTask(config) {
-            @Override void runPublicationPreflight(Path path) throws IOException {
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) throws IOException {
                 calls.add("check " + path.getFileName());
                 if (path.getFileName().toString().equals("first")) throw new IllegalStateException("unexpected failure");
+                return PublicationPreflight.Status.UNPUBLISHED;
             }
             @Override int runRelease(Path path) { fail("must not publish"); return 0; }
+        };
+        assertThrows(IOException.class, task::execute);
+        assertEquals(List.of("check first", "check second"), calls);
+    }
+
+    @Test
+    void retryPublishesOnlyFullyUnpublishedRepositories() throws Exception {
+        List<String> calls = new ArrayList<>();
+        ReleaseMavenTask task = new ReleaseMavenTask(config()) {
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) {
+                calls.add("check " + path.getFileName());
+                return path.getFileName().toString().equals("first")
+                        ? PublicationPreflight.Status.PUBLISHED : PublicationPreflight.Status.UNPUBLISHED;
+            }
+            @Override int runRelease(Path path) { calls.add("publish " + path.getFileName()); return 0; }
+        };
+        assertEquals(0, task.execute());
+        assertEquals(List.of("check first", "check second", "publish second"), calls);
+    }
+
+    @Test
+    void publishedRepositoryDoesNotRequireAnotherChangelog() throws Exception {
+        Path pending = Files.createDirectory(directory.resolve("second"));
+        for (List<String> command : List.of(List.of("git", "init", "-q"),
+                List.of("git", "-c", "user.name=Fixture", "-c", "user.email=fixture@example.com",
+                        "commit", "--allow-empty", "-q", "-m", "baseline"),
+                List.of("git", "tag", "2.4.0"))) {
+            Process process = new ProcessBuilder(command).directory(pending.toFile()).redirectErrorStream(true).start();
+            String output = new String(process.getInputStream().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            assertEquals(0, process.waitFor(), output);
+        }
+        Map<String, Object> config = config();
+        config.put("prev_tag", "2.4.0");
+        config.put("skip_change_log", false);
+        ReleaseMavenTask task = new ReleaseMavenTask(config) {
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) {
+                return path.getFileName().toString().equals("first")
+                        ? PublicationPreflight.Status.PUBLISHED : PublicationPreflight.Status.UNPUBLISHED;
+            }
+            @Override int runRelease(Path path) { assertEquals(pending, path); return 0; }
+        };
+        assertEquals(0, task.execute());
+        assertTrue(Files.readString(pending.resolve("CHANGELOG.md")).contains("## [2.4.1]"));
+        assertFalse(Files.exists(directory.resolve("first/CHANGELOG.md")));
+    }
+
+    @Test
+    void allPublishedStillEnsuresReleaseNotesWithoutRepublishing() throws Exception {
+        Map<String, Object> config = config();
+        for (String flag : List.of("skip_change_log", "skip_checkin", "skip_release_note", "skip_deploy", "skip_upload"))
+            config.put(flag, false);
+        List<String> calls = new ArrayList<>();
+        for (String repo : List.of("first", "second")) {
+            Path path = Files.createDirectory(directory.resolve(repo));
+            Files.writeString(path.resolve("CHANGELOG.md"), "## [2.4.1]\nRecovered notes for " + repo);
+        }
+        ReleaseMavenTask task = new ReleaseMavenTask(config) {
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) {
+                calls.add("check " + path.getFileName());
+                return PublicationPreflight.Status.PUBLISHED;
+            }
+            @Override int runRelease(Path path) { fail("must not republish"); return 0; }
+            @Override int runReleaseNote(String org, String repo, String branch, String version, String body, Path path) {
+                calls.add("notes " + repo);
+                return 0;
+            }
+        };
+        assertEquals(0, task.execute());
+        assertEquals(List.of("check first", "check second", "notes first", "notes second"), calls);
+    }
+
+    @Test
+    void mixedRetryEnsuresNotesForBothPublishedAndNewlyPublishedRepositories() throws Exception {
+        Map<String, Object> config = config();
+        config.put("skip_release_note", false);
+        List<String> calls = new ArrayList<>();
+        for (String repo : List.of("first", "second")) {
+            Path path = Files.createDirectory(directory.resolve(repo));
+            Files.writeString(path.resolve("CHANGELOG.md"), "## [2.4.1]\nRecovered notes for " + repo);
+        }
+        ReleaseMavenTask task = new ReleaseMavenTask(config) {
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) {
+                return path.getFileName().toString().equals("first")
+                        ? PublicationPreflight.Status.PUBLISHED : PublicationPreflight.Status.UNPUBLISHED;
+            }
+            @Override int runRelease(Path path) { calls.add("publish " + path.getFileName()); return 0; }
+            @Override int runReleaseNote(String org, String repo, String branch, String version, String body, Path path) {
+                calls.add("notes " + repo);
+                assertTrue(body.contains("Recovered notes for " + repo));
+                return 0;
+            }
+        };
+        assertEquals(0, task.execute());
+        assertEquals(List.of("publish second", "notes first", "notes second"), calls);
+    }
+
+    @Test
+    void releaseNoteFailureAfterAllPublishedStillFailsTask() throws Exception {
+        Map<String, Object> config = config();
+        config.put("skip_release_note", false);
+        for (String repo : List.of("first", "second")) {
+            Path path = Files.createDirectory(directory.resolve(repo));
+            Files.writeString(path.resolve("CHANGELOG.md"), "## [2.4.1]\nNotes");
+        }
+        ReleaseMavenTask task = new ReleaseMavenTask(config) {
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) { return PublicationPreflight.Status.PUBLISHED; }
+            @Override int runReleaseNote(String org, String repo, String branch, String version, String body, Path path) { return 22; }
+        };
+        assertEquals(22, task.execute());
+    }
+
+    @Test
+    void explicitReleaseNoteRecoveryKeepsFullListWithoutPublicationChecks() throws Exception {
+        Map<String, Object> config = config();
+        config.put("skip_release", true);
+        config.put("skip_release_note", false);
+        List<String> notes = new ArrayList<>();
+        for (String repo : List.of("first", "second")) {
+            Path path = Files.createDirectory(directory.resolve(repo));
+            Files.writeString(path.resolve("CHANGELOG.md"), "## [2.4.1]\nNotes");
+        }
+        ReleaseMavenTask task = new ReleaseMavenTask(config) {
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) { fail("must not check publication"); return null; }
+            @Override int runRelease(Path path) { fail("must not publish"); return 0; }
+            @Override int runReleaseNote(String org, String repo, String branch, String version, String body, Path path) {
+                notes.add(repo);
+                return 0;
+            }
+        };
+        assertEquals(0, task.execute());
+        assertEquals(List.of("first", "second"), notes);
+    }
+
+    @Test
+    void partialPublicationBlocksEvenWhenAnotherRepositoryIsReady() throws Exception {
+        List<String> calls = new ArrayList<>();
+        ReleaseMavenTask task = new ReleaseMavenTask(config()) {
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) throws IOException {
+                calls.add("check " + path.getFileName());
+                if (path.getFileName().toString().equals("second")) throw new IOException("Partially published reactor");
+                return PublicationPreflight.Status.UNPUBLISHED;
+            }
+            @Override int runRelease(Path path) { fail("must not publish before full preflight passes"); return 0; }
         };
         assertThrows(IOException.class, task::execute);
         assertEquals(List.of("check first", "check second"), calls);
@@ -274,7 +423,7 @@ class PublicationPreflightTest {
         Map<String, Object> config = config();
         config.put("skip_release", true);
         ReleaseMavenTask task = new ReleaseMavenTask(config) {
-            @Override void runPublicationPreflight(Path path) { fail("must not check"); }
+            @Override PublicationPreflight.Status runPublicationPreflight(Path path) { fail("must not check"); return PublicationPreflight.Status.UNPUBLISHED; }
             @Override int runRelease(Path path) { fail("must not publish"); return 0; }
         };
         assertEquals(0, task.execute());

@@ -46,8 +46,9 @@ class ReleasePreparationTest {
         }
 
         @Override
-        void runPublicationPreflight(Path directory) {
+        PublicationPreflight.Status runPublicationPreflight(Path directory) {
             calls.add("check " + directory.getFileName());
+            return PublicationPreflight.Status.UNPUBLISHED;
         }
 
         @Override

@@ -28,6 +28,9 @@ import java.util.regex.Pattern;
 
 /** Read-only, fail-closed check of official release coordinates against Central Portal. */
 final class PublicationPreflight implements AutoCloseable {
+    enum Status { PUBLISHED, UNPUBLISHED }
+    private record ModuleStatus(String coordinate, boolean published, String failure) {}
+
     private static final Logger logger = LoggerFactory.getLogger(PublicationPreflight.class);
     private static final Pattern SNAPSHOT = Pattern.compile(".*(?:SNAPSHOT|-[0-9]{8}\\.[0-9]{6}-[0-9]+)$", Pattern.CASE_INSENSITIVE);
     private final Executor executor;
@@ -48,7 +51,7 @@ final class PublicationPreflight implements AutoCloseable {
         this.providedAuthorization = authorization;
     }
 
-    void check(Path directory) throws IOException, InterruptedException {
+    Status check(Path directory) throws IOException, InterruptedException {
         Path output = Files.createTempFile("light-bot-effective-pom-", ".xml");
         try {
             int result = executor.execute(List.of("mvn", "-B", "-DskipTests", "-DperformRelease",
@@ -61,15 +64,15 @@ final class PublicationPreflight implements AutoCloseable {
             if (result != 0) throw new IOException("Cannot resolve release reactor (Maven exit " + result + ")");
             List<Element> projects = projects(output);
             String authorization = providedAuthorization != null ? providedAuthorization : authorization(directory, projects);
-            checkProjects(projects, authorization);
+            return checkProjects(projects, authorization);
         } finally {
             Files.deleteIfExists(output);
         }
     }
 
-    void checkEffectivePom(Path output) throws IOException, InterruptedException {
+    Status checkEffectivePom(Path output) throws IOException, InterruptedException {
         if (providedAuthorization == null) throw new IOException("Publishing authentication is required");
-        checkProjects(projects(output), providedAuthorization);
+        return checkProjects(projects(output), providedAuthorization);
     }
 
     private static Element xml(Path output) throws IOException {
@@ -94,9 +97,11 @@ final class PublicationPreflight implements AutoCloseable {
         return projects;
     }
 
-    private void checkProjects(List<Element> projects, String authorization) throws IOException, InterruptedException {
+    private Status checkProjects(List<Element> projects, String authorization) throws IOException, InterruptedException {
         List<String> failures = new ArrayList<>();
-        List<Future<String>> checks = new ArrayList<>();
+        List<Future<ModuleStatus>> checks = new ArrayList<>();
+        List<String> published = new ArrayList<>();
+        List<String> unpublished = new ArrayList<>();
         try (var workers = Executors.newFixedThreadPool(4)) {
             int index = 0;
             for (Element project : projects) {
@@ -115,10 +120,12 @@ final class PublicationPreflight implements AutoCloseable {
                 }
             }
             try {
-                for (Future<String> check : checks) {
+                for (Future<ModuleStatus> check : checks) {
                     try {
-                        String failure = check.get();
-                        if (failure != null) failures.add(failure);
+                        ModuleStatus status = check.get();
+                        if (status.failure() != null) failures.add(status.failure());
+                        else if (status.published()) published.add(status.coordinate());
+                        else unpublished.add(status.coordinate());
                     } catch (ExecutionException e) {
                         if (e.getCause() instanceof InterruptedException interrupted) throw interrupted;
                         failures.add("Publication status check failed (" + e.getCause().getClass().getSimpleName() + ")");
@@ -130,28 +137,37 @@ final class PublicationPreflight implements AutoCloseable {
                 throw e;
             }
         }
-        if (!failures.isEmpty()) throw new IOException(String.join("; ", failures));
+        if (!failures.isEmpty()) {
+            if (!published.isEmpty()) failures.add("Published modules: " + String.join(", ", published));
+            if (!unpublished.isEmpty()) failures.add("Unpublished modules: " + String.join(", ", unpublished));
+            throw new IOException(String.join("; ", failures));
+        }
+        if (!published.isEmpty() && !unpublished.isEmpty()) {
+            throw new IOException("Partially published reactor. Published modules: " + String.join(", ", published)
+                    + "; Unpublished modules: " + String.join(", ", unpublished));
+        }
+        return published.isEmpty() ? Status.UNPUBLISHED : Status.PUBLISHED;
     }
 
-    private String published(String group, String artifact, String version, String authorization) throws InterruptedException {
+    private ModuleStatus published(String group, String artifact, String version, String authorization) throws InterruptedException {
         String coordinate = group + ":" + artifact + ":" + version;
         URI uri = URI.create(endpoint + "?namespace=" + encode(group) + "&name=" + encode(artifact) + "&version=" + encode(version));
         try {
             var response = client.send(HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(15))
                     .header("Authorization", authorization).header("Accept", "application/json").GET().build(),
                     HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            if (response.statusCode() != 200) return coordinate + " publication status unknown (HTTP " + response.statusCode() + ")";
+            if (response.statusCode() != 200) return new ModuleStatus(coordinate, false, coordinate + " publication status unknown (HTTP " + response.statusCode() + ")");
             var published = Config.getInstance().getMapper().readTree(response.body()).get("published");
-            if (published == null || !published.isBoolean()) return coordinate + " publication status unknown (invalid Portal response)";
+            if (published == null || !published.isBoolean()) return new ModuleStatus(coordinate, false, coordinate + " publication status unknown (invalid Portal response)");
             if (published.booleanValue()) {
-                logger.error("PUBLISHED {}", coordinate);
-                return coordinate + " already exists on Central Portal";
+                logger.info("PUBLISHED {}", coordinate);
+                return new ModuleStatus(coordinate, true, null);
             }
             logger.info("UNPUBLISHED {}", coordinate);
-            return null;
+            return new ModuleStatus(coordinate, false, null);
         } catch (IOException | RuntimeException e) {
             // Never log HTTP bodies, headers, or exception messages containing credentials.
-            return coordinate + " publication status unknown (" + e.getClass().getSimpleName() + ")";
+            return new ModuleStatus(coordinate, false, coordinate + " publication status unknown (" + e.getClass().getSimpleName() + ")");
         }
     }
 

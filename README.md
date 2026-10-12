@@ -150,20 +150,34 @@ before generating or checking in changelogs. It resolves every release repositor
 reactor with `maven-help-plugin:effective-pom` using `-DperformRelease`, then checks
 each module's effective `groupId:artifactId:version` (including parent POMs) using
 Central Portal's authenticated `GET /api/v1/publisher/published` API. Only HTTP 200
-with a boolean `published: false` allows publication. Existing artifacts, snapshot
+with a boolean `published` value gives a known status. Snapshot
 versions (including lowercase and timestamped snapshots), unresolved models,
 network errors, malformed responses, and other HTTP statuses block the entire run.
 Module failures are collected without discarding other module results. All
 repositories are checked before the first publication, with up to four concurrent
 module requests and one HTTP client shared across the preflight and closed afterward.
-No repository is silently skipped. For a retry, review the reported coordinates
-and explicitly select only unpublished repositories in `release`; a partially
-published reactor requires separate recovery planning.
+Fully published repositories are explicitly reported and skipped for changelog
+updates, check-in, and Maven publication. Fully
+unpublished repositories continue in configured order. A reactor with both published
+and unpublished modules blocks the entire run and reports both sets of coordinates;
+unknown statuses also block it. GitHub release notes are checked for every configured repository, including those
+already published. Existing releases for the requested tag count as success and are
+kept unchanged; missing releases are created from the existing changelog. Lookup or
+creation errors still fail the task. A creation HTTP 422 counts as success only if
+a fresh lookup confirms the requested release exists (for a concurrent creator).
+If every repository is fully published, the task logs `nothing to publish`, still
+ensures GitHub release notes unless `skip_release_note: true`, and returns success
+only after that stage succeeds; deploy/upload are not repeated in this case. Local preparation
+still runs before preflight. For release-note-only recovery, use `skip_release: true`;
+that bypasses publication checks and retains the full configured release-note list.
+Existing GitHub releases no longer require trimming that list by hand. Separately configured deploy/upload operations are unchanged
+when there are pending repositories.
 
 Authentication reuses the active Central publishing plugin's `publishingServerId`
 (default `central`) and the corresponding username/password from Maven's effective
 settings, including Maven-resolved environment references. Settings output is
-written to a temporary file, never logged, and deleted after use. Normal effective-POM
+written to an owner-readable temporary file, never logged, and deleted after use.
+A killed JVM can leave that file behind; account for this on shared release hosts. Normal effective-POM
 Maven diagnostics are retained. Encrypted settings passwords and reactors with
 multiple publishing server IDs currently fail closed; they are not silently
 replaced with anonymous repository probes. Use resolved publishing token credentials
