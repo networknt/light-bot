@@ -31,13 +31,13 @@ public class GetRemoteBranchesCmd implements Command {
         List<String> commands = new ArrayList<>();
         commands.add("bash");
         commands.add("-c");
-        
+
         String gitCmd = "git ls-remote --heads " + remote;
         if (prefix != null && !prefix.isEmpty()) {
             gitCmd += " " + prefix + "*";
         }
         commands.add(gitCmd);
-        
+
         result = executor.execute(commands, rPath.toFile());
         String stdout = executor.getStdout();
         if(stdout != null && !stdout.isEmpty()) {
