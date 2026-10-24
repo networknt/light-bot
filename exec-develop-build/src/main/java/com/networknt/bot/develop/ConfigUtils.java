@@ -13,7 +13,8 @@ import java.util.ServiceLoader;
 import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
+import org.snakeyaml.engine.v2.api.Load;
+import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.networknt.config.Config;
@@ -43,6 +44,11 @@ public abstract class ConfigUtils {
 
 		private static final ConfigUtils DEFAULT = initialize();
 
+		private ConfigUtilsImpl() {
+			logger.warn("Loading build configuration with SnakeYAML Engine YAML 1.2 Core: legacy YAML 1.1 "
+					+ "boolean, numeric, and timestamp values may resolve differently. Review configuration before rollout.");
+		}
+
 		private static ConfigUtils initialize() {
 			Iterator<ConfigUtils> it;
 			it = ServiceLoader.load(ConfigUtils.class).iterator();
@@ -55,13 +61,15 @@ public abstract class ConfigUtils {
 		 */
 		public Map<String, Object> loadMapConfig(String configName, File filePath) {
 			Map<String, Object> config = null;
-			Yaml yaml = new Yaml();
+			Load yaml = BuildYaml.newLoad();
 
 			String ymlFilename = configName + CONFIG_EXT_YML;
 			try (InputStream inStream = getConfigStream(ymlFilename, filePath)) {
 				if (inStream != null) {
-					config = (Map<String, Object>) yaml.load(inStream);
+					config = (Map<String, Object>) yaml.loadFromInputStream(inStream);
 				}
+			} catch (YamlEngineException | ClassCastException e) {
+				throw new IllegalStateException("Unable to parse " + ymlFilename + " using YAML 1.2 Core", e);
 			} catch (IOException ioe) {
 				logger.error("IOException", ioe);
 			}
@@ -71,8 +79,10 @@ public abstract class ConfigUtils {
 			String yamlFilename = configName + CONFIG_EXT_YAML;
 			try (InputStream inStream = getConfigStream(yamlFilename, filePath)) {
 				if (inStream != null) {
-					config = (Map<String, Object>) yaml.load(inStream);
+					config = (Map<String, Object>) yaml.loadFromInputStream(inStream);
 				}
+			} catch (YamlEngineException | ClassCastException e) {
+				throw new IllegalStateException("Unable to parse " + yamlFilename + " using YAML 1.2 Core", e);
 			} catch (IOException ioe) {
 				logger.error("IOException", ioe);
 			}
@@ -97,7 +107,7 @@ public abstract class ConfigUtils {
 		 */
 		private InputStream getConfigStream(String configFilename, File filePath) {
 
-			FileInputStream inStream = null;
+			InputStream inStream = null;
 			try {
 				inStream = new FileInputStream(filePath + "/"+ configFilename);
 			} catch (FileNotFoundException ex) {
@@ -115,14 +125,14 @@ public abstract class ConfigUtils {
 				logger.info(
 						"Trying to load config from classpath directory for file " + Encode.forJava(configFilename));
 			}
-			inStream = (FileInputStream) getClass().getClassLoader().getResourceAsStream(configFilename);
+			inStream = getClass().getClassLoader().getResourceAsStream(configFilename);
 			if (inStream != null) {
 				if (logger.isInfoEnabled()) {
 					logger.info("config loaded from classpath for " + Encode.forJava(configFilename));
 				}
 				return inStream;
 			}
-			inStream = (FileInputStream) getClass().getClassLoader().getResourceAsStream("config/" + configFilename);
+			inStream = getClass().getClassLoader().getResourceAsStream("config/" + configFilename);
 			if (inStream != null) {
 				if (logger.isInfoEnabled()) {
 					logger.info("Config loaded from default folder for " + Encode.forJava(configFilename));

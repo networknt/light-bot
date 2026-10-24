@@ -36,6 +36,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.snakeyaml</groupId>
+            <artifactId>snakeyaml-engine</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>exec-core</artifactId>
         </dependency>
