@@ -107,6 +107,7 @@
         <version.undertow>2.4.4.Final</version.undertow>
         <version.json-schema-validator>2.0.8</version.json-schema-validator>
         <version.snakeyaml>2.7</version.snakeyaml>
+        <version.snakeyaml-engine>3.0.1</version.snakeyaml-engine>
         <version.jcommander>1.82</version.jcommander>
         <version.json-path>3.0.0</version.json-path>
         <version.zt-exec>1.12</version.zt-exec>
@@ -255,9 +256,15 @@
                 <version>${version.undertow}</version>
             </dependency>
             <dependency>
+                <!-- Compatibility pin for transitive consumers of the classic API. -->
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${version.snakeyaml}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.snakeyaml</groupId>
+                <artifactId>snakeyaml-engine</artifactId>
+                <version>${version.snakeyaml-engine}</version>
             </dependency>
             <dependency>
                 <groupId>com.beust</groupId>

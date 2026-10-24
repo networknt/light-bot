@@ -203,3 +203,9 @@ installation makes the ordered builds possible, but Central publication of
 separate repositories is not atomic: the new client may be visible before its
 framework dependencies. No staging or publication-wait behavior is added by
 the preparation phase.
+
+## YAML configuration migration
+
+The develop-build loader and merged-config writer use SnakeYAML Engine with
+YAML 1.2 Core resolution. Review the [migration notes](exec-develop-build/README.md)
+for scalar changes, dependency compatibility, and output behavior before rollout.

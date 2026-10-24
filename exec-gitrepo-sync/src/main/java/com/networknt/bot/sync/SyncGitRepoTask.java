@@ -115,7 +115,7 @@ public class SyncGitRepoTask implements Command {
 
         for(String repository: internalRepo) {
             Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
-            
+
             GetRemoteBranchesCmd getBranchesCmd = new GetRemoteBranchesCmd(rPath, internalOrigin, "");
             result = getBranchesCmd.execute();
             if(result != 0) break;
@@ -136,7 +136,7 @@ public class SyncGitRepoTask implements Command {
                 String targetRef = "refs/remotes/" + externalOrigin + "/" + masterBranch;
                 IsBranchMergedCmd isMergedCmd = new IsBranchMergedCmd(rPath, featureRef, targetRef);
                 int isMergedResult = isMergedCmd.execute();
-                
+
                 if (isMergedResult == 0) {
                     logger.info("Branch {} is merged into master. Pruning from internal origin...", syncBranch);
                     DeleteRemoteBranchCmd deleteCmd = new DeleteRemoteBranchCmd(rPath, internalOrigin, syncBranch);
@@ -157,7 +157,7 @@ public class SyncGitRepoTask implements Command {
         // iterate over each external repository to push the matching branch from internal
         for(String repository: externalRepo) {
             Path rPath = getRepositoryPath(userHome, workspace, getDirFromRepo(repository));
-            
+
             GetRemoteBranchesCmd getBranchesCmd = new GetRemoteBranchesCmd(rPath, internalOrigin, "");
             result = getBranchesCmd.execute();
             if(result != 0) break;
@@ -173,17 +173,17 @@ public class SyncGitRepoTask implements Command {
                 CheckoutPullCmd checkoutPullCmd = new CheckoutPullCmd(internalOrigin, syncBranch, rPath);
                 result = checkoutPullCmd.execute();
                 if (result != 0) break;
-                
+
                 // Push to external
                 RemotePushCmd remotePushCmd = new RemotePushCmd(rPath, externalOrigin, syncBranch, repository);
                 result = remotePushCmd.execute();
                 if(result != 0) break;
             }
-            
+
             // Switch back to master after processing sync branch
             CheckoutPullCmd checkoutMaster = new CheckoutPullCmd(externalOrigin, masterBranch, rPath);
             checkoutMaster.execute();
-            
+
             if(result != 0) break;
         }
         return result;

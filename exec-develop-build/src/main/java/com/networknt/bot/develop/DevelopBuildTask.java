@@ -12,12 +12,9 @@ import io.undertow.util.HeaderMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -222,7 +219,7 @@ public class DevelopBuildTask implements Command {
 				File filePath = getRepositoryPath(userHome, workspace, repo).toFile();
 
 				// load the configuration
-				Map<String, Object> loadedMap = ConfigUtils.getInstance().loadMapConfig(fileType, filePath);
+				Map<String, Object> loadedMap = ConfigUtils.loadRepositoryMapConfig(fileType, filePath);
 				if (loadedMap == null) {
 					logger.error("File could not be loaded: " + repo);
 					return -1;
@@ -247,12 +244,7 @@ public class DevelopBuildTask implements Command {
 
 			// pretty print the output
 			File file = getRepositoryPath(userHome, workspace, output, fileType + "." + outputFormat).toFile();
-			DumperOptions options = new DumperOptions();
-			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-			options.setPrettyFlow(true);
-
-			Yaml yaml = new Yaml(options);
-			yaml.dump(mergedMap, new PrintWriter(file));
+			BuildYaml.write(file, mergedMap);
 			if (logger.isInfoEnabled()) {
 				logger.info(String.format("Merged configurations for project %s in file of type %s into file %s",
 						(String) namedMerge.get(Constants.PROJECT), fileType, file));

@@ -32,7 +32,7 @@ public class IsBranchMergedCmd implements Command {
         commands.add("-c");
 
         commands.add("git merge-base --is-ancestor " + featureBranchRef + " " + targetBranchRef);
-        
+
         result = executor.execute(commands, rPath.toFile());
         // Do not log stdout/stderr as errors for this, as a non-zero exit simply means false.
         return result;
