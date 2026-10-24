@@ -40,6 +40,11 @@
             <artifactId>snakeyaml-engine</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>exec-core</artifactId>
         </dependency>

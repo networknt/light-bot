@@ -3,10 +3,12 @@ package com.networknt.bot.develop;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -87,7 +89,7 @@ class BuildYamlTest {
         values.put("empty", null);
         BuildYaml.write(directory.resolve("roundtrip.yml").toFile(), values);
         assertEquals(values, ConfigUtils.getInstance().loadMapConfig("roundtrip", directory.toFile()));
-        assertTrue(Files.readString(directory.resolve("roundtrip.yml")).contains("nested:\n"));
+        assertTrue(Files.readString(directory.resolve("roundtrip.yml")).contains("\"nested\":\n"));
     }
 
     @Test
@@ -114,5 +116,69 @@ class BuildYamlTest {
     void reportsOutputIoFailure() {
         assertThrows(IOException.class,
                 () -> BuildYaml.write(directory.resolve("missing/output.yml").toFile(), Map.of("key", "value")));
+    }
+
+    @Test
+    void emittedStringsStayStringsWithClassicYaml11Reader() throws IOException {
+        List<String> ambiguous = List.of("on", "yes", "no", "off", "0b11", "1_000", "1:30", "1:30.5",
+                "2026-10-24", "0755", "true", "null", "1_0.5");
+        Map<String, Object> values = new LinkedHashMap<>();
+        for (String value : ambiguous) {
+            values.put(value, value);
+        }
+        values.put("list", ambiguous);
+        values.put("boolean", true);
+        values.put("integer", 123);
+        values.put("text", "café λ\u0085line\u2029end");
+        Path output = directory.resolve("classic.yml");
+        BuildYaml.write(output.toFile(), values);
+        assertEquals(values, new Yaml().load(Files.readString(output)));
+        assertEquals(values, ConfigUtils.getInstance().loadMapConfig("classic", directory.toFile()));
+    }
+
+    @Test
+    void nonMappingRootHasShapeDiagnostic() throws IOException {
+        Files.writeString(directory.resolve("sequence.yml"), "- one\n- two\n");
+        IllegalStateException failure = assertThrows(IllegalStateException.class,
+                () -> ConfigUtils.getInstance().loadMapConfig("sequence", directory.toFile()));
+        assertEquals("Configuration sequence.yml must have a mapping root", failure.getMessage());
+        assertNull(failure.getCause());
+    }
+
+    @Test
+    void atomicReplacementReplacesExistingConfigWithoutTemporaryFiles() throws IOException {
+        Path output = directory.resolve("replace.yml");
+        Files.writeString(output, "sentinel");
+        BuildYaml.write(output.toFile(), Map.of("value", "yes"));
+        assertEquals(Map.of("value", "yes"), new Yaml().load(Files.readString(output)));
+        try (var files = Files.list(directory)) {
+            assertEquals(List.of(output), files.toList());
+        }
+    }
+
+    @Test
+    void failedReplacementLeavesDestinationAndCleansTemporaryFile() throws IOException {
+        Path output = Files.createDirectory(directory.resolve("destination"));
+        Path sentinel = output.resolve("sentinel");
+        Files.writeString(sentinel, "previous config");
+        assertThrows(IOException.class, () -> BuildYaml.write(output.toFile(), Map.of("value", "replacement")));
+        assertEquals("previous config", Files.readString(sentinel));
+        try (var files = Files.list(directory)) {
+            assertEquals(List.of(output), files.toList());
+        }
+    }
+
+    @Test
+    void newFilesUseNormalPermissionsAndReplacementPreservesExistingMode() throws IOException {
+        org.junit.jupiter.api.Assumptions.assumeTrue(Files.getFileStore(directory).supportsFileAttributeView("posix"));
+        Path ordinary = directory.resolve("ordinary.yml");
+        Files.writeString(ordinary, "ordinary");
+        Path output = directory.resolve("permissions.yml");
+        BuildYaml.write(output.toFile(), Map.of("value", "new"));
+        assertEquals(Files.getPosixFilePermissions(ordinary), Files.getPosixFilePermissions(output));
+        var permissions = PosixFilePermissions.fromString("rw-r-----");
+        Files.setPosixFilePermissions(output, permissions);
+        BuildYaml.write(output.toFile(), Map.of("value", "replacement"));
+        assertEquals(permissions, Files.getPosixFilePermissions(output));
     }
 }

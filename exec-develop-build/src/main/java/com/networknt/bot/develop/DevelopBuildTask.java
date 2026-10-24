@@ -219,7 +219,7 @@ public class DevelopBuildTask implements Command {
 				File filePath = getRepositoryPath(userHome, workspace, repo).toFile();
 
 				// load the configuration
-				Map<String, Object> loadedMap = ConfigUtils.getInstance().loadMapConfig(fileType, filePath);
+				Map<String, Object> loadedMap = ConfigUtils.loadRepositoryMapConfig(fileType, filePath);
 				if (loadedMap == null) {
 					logger.error("File could not be loaded: " + repo);
 					return -1;

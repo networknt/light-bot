@@ -13,7 +13,6 @@ import java.util.ServiceLoader;
 import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -35,19 +34,20 @@ public abstract class ConfigUtils {
 		return ConfigUtilsImpl.DEFAULT;
 	}
 
+	/** Merge inputs are repository files, never bundled defaults or service-provider fallbacks. */
+	static Map<String, Object> loadRepositoryMapConfig(String configName, File filePath) {
+		return ConfigUtilsImpl.loadMapConfig(configName, filePath, false);
+	}
+
 	private static final class ConfigUtilsImpl extends ConfigUtils {
 		private static final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
 
-		String CONFIG_EXT_JSON = ".json";
-		String CONFIG_EXT_YAML = ".yaml";
-		String CONFIG_EXT_YML = ".yml";
+		private static final String CONFIG_EXT_JSON = ".json";
+		private static final String CONFIG_EXT_YAML = ".yaml";
+		private static final String CONFIG_EXT_YML = ".yml";
 
 		private static final ConfigUtils DEFAULT = initialize();
 
-		private ConfigUtilsImpl() {
-			logger.warn("Loading build configuration with SnakeYAML Engine YAML 1.2 Core: legacy YAML 1.1 "
-					+ "boolean, numeric, and timestamp values may resolve differently. Review configuration before rollout.");
-		}
 
 		private static ConfigUtils initialize() {
 			Iterator<ConfigUtils> it;
@@ -57,55 +57,54 @@ public abstract class ConfigUtils {
 		}
 
 		/**
-		 * Load a config file as a map, specifying the file name as well as the directory from where it is loaded
+		 * Load a config file as a map. Application loading permits classpath fallback;
+		 * merge inputs use the repository-only loader instead.
 		 */
 		public Map<String, Object> loadMapConfig(String configName, File filePath) {
-			Map<String, Object> config = null;
-			Load yaml = BuildYaml.newLoad();
+			return loadMapConfig(configName, filePath, true);
+		}
 
-			String ymlFilename = configName + CONFIG_EXT_YML;
-			try (InputStream inStream = getConfigStream(ymlFilename, filePath)) {
-				if (inStream != null) {
-					config = (Map<String, Object>) yaml.loadFromInputStream(inStream);
+		@SuppressWarnings("unchecked")
+		private static Map<String, Object> loadMapConfig(String configName, File filePath, boolean classpathFallback) {
+			for (String extension : new String[]{CONFIG_EXT_YML, CONFIG_EXT_YAML, CONFIG_EXT_JSON}) {
+				String filename = configName + extension;
+				try (InputStream input = getConfigStream(filename, filePath, classpathFallback)) {
+					if (input == null) {
+						continue;
+					}
+					if (CONFIG_EXT_JSON.equals(extension)) {
+						Map<String, Object> config = Config.getInstance().getMapper().readValue(input,
+								new TypeReference<HashMap<String, Object>>() {});
+						if (config != null) {
+							return config;
+						}
+					} else {
+						logger.info("Loading {} using YAML 1.2 Core; legacy boolean, numeric and timestamp values may resolve differently", filename);
+						Object parsed;
+						try {
+							parsed = BuildYaml.newLoad().loadFromInputStream(input);
+						} catch (YamlEngineException e) {
+							throw new IllegalStateException("Unable to parse " + filename + " using YAML 1.2 Core", e);
+						}
+						if (parsed == null) {
+							continue;
+						}
+						if (!(parsed instanceof Map)) {
+							throw new IllegalStateException("Configuration " + filename + " must have a mapping root");
+						}
+						return (Map<String, Object>) parsed;
+					}
+				} catch (IOException e) {
+					logger.error("IOException loading " + filename, e);
 				}
-			} catch (YamlEngineException | ClassCastException e) {
-				throw new IllegalStateException("Unable to parse " + ymlFilename + " using YAML 1.2 Core", e);
-			} catch (IOException ioe) {
-				logger.error("IOException", ioe);
 			}
-			if (config != null)
-				return config;
-
-			String yamlFilename = configName + CONFIG_EXT_YAML;
-			try (InputStream inStream = getConfigStream(yamlFilename, filePath)) {
-				if (inStream != null) {
-					config = (Map<String, Object>) yaml.loadFromInputStream(inStream);
-				}
-			} catch (YamlEngineException | ClassCastException e) {
-				throw new IllegalStateException("Unable to parse " + yamlFilename + " using YAML 1.2 Core", e);
-			} catch (IOException ioe) {
-				logger.error("IOException", ioe);
-			}
-			if (config != null)
-				return config;
-
-			String configFilename = configName + CONFIG_EXT_JSON;
-			try (InputStream inStream = getConfigStream(configFilename, filePath)) {
-				if (inStream != null) {
-					config = Config.getInstance().getMapper().readValue(inStream,
-							new TypeReference<HashMap<String, Object>>() {
-							});
-				}
-			} catch (IOException ioe) {
-				logger.error("IOException", ioe);
-			}
-			return config;
+			return null;
 		}
 
 		/**
 		 * Get an input stream for a config file as a map, specifying the file name as well as the directory from where it is loaded
 		 */
-		private InputStream getConfigStream(String configFilename, File filePath) {
+		private static InputStream getConfigStream(String configFilename, File filePath, boolean classpathFallback) {
 
 			InputStream inStream = null;
 			try {
@@ -121,18 +120,21 @@ public abstract class ConfigUtils {
 				}
 				return inStream;
 			}
+			if (!classpathFallback) {
+				return null;
+			}
 			if (logger.isInfoEnabled()) {
 				logger.info(
 						"Trying to load config from classpath directory for file " + Encode.forJava(configFilename));
 			}
-			inStream = getClass().getClassLoader().getResourceAsStream(configFilename);
+			inStream = ConfigUtils.class.getClassLoader().getResourceAsStream(configFilename);
 			if (inStream != null) {
 				if (logger.isInfoEnabled()) {
 					logger.info("config loaded from classpath for " + Encode.forJava(configFilename));
 				}
 				return inStream;
 			}
-			inStream = getClass().getClassLoader().getResourceAsStream("config/" + configFilename);
+			inStream = ConfigUtils.class.getClassLoader().getResourceAsStream("config/" + configFilename);
 			if (inStream != null) {
 				if (logger.isInfoEnabled()) {
 					logger.info("Config loaded from default folder for " + Encode.forJava(configFilename));
