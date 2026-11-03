@@ -1,10 +1,10 @@
 package com.networknt.bot.core.cmd;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.networknt.bot.core.Command;
 import com.networknt.bot.core.Executor;
 import com.networknt.service.SingletonServiceFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import java.util.Map;
 public class SyncGitRepoCmd implements Command {
     private static final Logger logger = LoggerFactory.getLogger(SyncGitRepoCmd.class);
     private Executor executor = SingletonServiceFactory.getBean(Executor.class);
-    private ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
     private String source;
     private String target;
     private String organization;

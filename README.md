@@ -209,3 +209,18 @@ the preparation phase.
 The develop-build loader and merged-config writer use SnakeYAML Engine with
 YAML 1.2 Core resolution. Review the [migration notes](exec-develop-build/README.md)
 for scalar changes, dependency compatibility, and output behavior before rollout.
+
+## Jackson 3
+
+Light-bot uses Jackson 3.2.4, managed by the Jackson BOM, and the Jackson 3
+Light-4j `3.0.0-SNAPSHOT` artifacts. Resolve those snapshots from the configured
+snapshot repository or install the matching Light-4j and http-client sources
+locally before building. Light-4j 2.x is not compatible with this build because
+its configuration mapper exposes Jackson 2 types.
+
+Run `mvn clean verify` with Java 25 to test and package the CLI as
+`bot-cli/target/bot-cli.jar`. Jackson annotations retain their shared
+`com.fasterxml.jackson.annotation` package and 2.x version; core and databind use
+`tools.jackson` packages. The repository-list mapper uses Jackson 2 compatibility
+defaults to preserve parsing behavior, following the
+[Jackson migration guide](https://github.com/FasterXML/jackson/blob/main/jackson3/MIGRATING_TO_JACKSON_3.md).
